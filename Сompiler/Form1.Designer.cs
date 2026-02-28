@@ -31,10 +31,31 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             menuStrip1 = new MenuStrip();
             файлToolStripMenuItem = new ToolStripMenuItem();
+            создатьToolStripMenuItem = new ToolStripMenuItem();
+            открытьToolStripMenuItem = new ToolStripMenuItem();
+            сохранитьToolStripMenuItem = new ToolStripMenuItem();
+            сохранитьКакToolStripMenuItem = new ToolStripMenuItem();
+            выходToolStripMenuItem = new ToolStripMenuItem();
             правкаToolStripMenuItem = new ToolStripMenuItem();
+            отменитьToolStripMenuItem = new ToolStripMenuItem();
+            повторToolStripMenuItem = new ToolStripMenuItem();
+            вырезатьToolStripMenuItem = new ToolStripMenuItem();
+            копироватьToolStripMenuItem = new ToolStripMenuItem();
+            вставитьToolStripMenuItem = new ToolStripMenuItem();
+            удалитьToolStripMenuItem = new ToolStripMenuItem();
+            выделитьВсеToolStripMenuItem = new ToolStripMenuItem();
             текстToolStripMenuItem = new ToolStripMenuItem();
+            постановкаЗадачиToolStripMenuItem = new ToolStripMenuItem();
+            грамматикаToolStripMenuItem = new ToolStripMenuItem();
+            класификацияГрамматикиToolStripMenuItem = new ToolStripMenuItem();
+            методАнализаToolStripMenuItem = new ToolStripMenuItem();
+            тестовыйПримерToolStripMenuItem = new ToolStripMenuItem();
+            списокЛитературыToolStripMenuItem = new ToolStripMenuItem();
+            исходныйКодПргограммыToolStripMenuItem = new ToolStripMenuItem();
             пускToolStripMenuItem = new ToolStripMenuItem();
             справкаToolStripMenuItem = new ToolStripMenuItem();
+            вызовСправкиToolStripMenuItem = new ToolStripMenuItem();
+            оПрограммеToolStripMenuItem = new ToolStripMenuItem();
             локализацияToolStripMenuItem = new ToolStripMenuItem();
             видToolStripMenuItem = new ToolStripMenuItem();
             toolStrip1 = new ToolStrip();
@@ -51,37 +72,14 @@
             toolStripButton11 = new ToolStripButton();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             splitContainer1 = new SplitContainer();
-            dataGridView1 = new DataGridView();
-            dataGridView2 = new DataGridView();
-            создатьToolStripMenuItem = new ToolStripMenuItem();
-            открытьToolStripMenuItem = new ToolStripMenuItem();
-            сохранитьToolStripMenuItem = new ToolStripMenuItem();
-            сохранитьКакToolStripMenuItem = new ToolStripMenuItem();
-            выходToolStripMenuItem = new ToolStripMenuItem();
-            отменитьToolStripMenuItem = new ToolStripMenuItem();
-            повторToolStripMenuItem = new ToolStripMenuItem();
-            вырезатьToolStripMenuItem = new ToolStripMenuItem();
-            копироватьToolStripMenuItem = new ToolStripMenuItem();
-            вставитьToolStripMenuItem = new ToolStripMenuItem();
-            удалитьToolStripMenuItem = new ToolStripMenuItem();
-            выделитьВсеToolStripMenuItem = new ToolStripMenuItem();
-            постановкаЗадачиToolStripMenuItem = new ToolStripMenuItem();
-            грамматикаToolStripMenuItem = new ToolStripMenuItem();
-            класификацияГрамматикиToolStripMenuItem = new ToolStripMenuItem();
-            методАнализаToolStripMenuItem = new ToolStripMenuItem();
-            тестовыйПримерToolStripMenuItem = new ToolStripMenuItem();
-            списокЛитературыToolStripMenuItem = new ToolStripMenuItem();
-            исходныйКодПргограммыToolStripMenuItem = new ToolStripMenuItem();
-            вызовСправкиToolStripMenuItem = new ToolStripMenuItem();
-            оПрограммеToolStripMenuItem = new ToolStripMenuItem();
+            richTextBox1 = new RichTextBox();
+            richTextBox2 = new RichTextBox();
             menuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -102,6 +100,38 @@
             файлToolStripMenuItem.Size = new Size(59, 42);
             файлToolStripMenuItem.Text = "Файл";
             // 
+            // создатьToolStripMenuItem
+            // 
+            создатьToolStripMenuItem.Name = "создатьToolStripMenuItem";
+            создатьToolStripMenuItem.Size = new Size(192, 26);
+            создатьToolStripMenuItem.Text = "Создать";
+            // 
+            // открытьToolStripMenuItem
+            // 
+            открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
+            открытьToolStripMenuItem.Size = new Size(192, 26);
+            открытьToolStripMenuItem.Text = "Открыть";
+            // 
+            // сохранитьToolStripMenuItem
+            // 
+            сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
+            сохранитьToolStripMenuItem.Size = new Size(192, 26);
+            сохранитьToolStripMenuItem.Text = "Сохранить";
+            // 
+            // сохранитьКакToolStripMenuItem
+            // 
+            сохранитьКакToolStripMenuItem.Name = "сохранитьКакToolStripMenuItem";
+            сохранитьКакToolStripMenuItem.Size = new Size(192, 26);
+            сохранитьКакToolStripMenuItem.Text = "Сохранить как";
+            сохранитьКакToolStripMenuItem.Click += сохранитьКакToolStripMenuItem_Click;
+            // 
+            // выходToolStripMenuItem
+            // 
+            выходToolStripMenuItem.Name = "выходToolStripMenuItem";
+            выходToolStripMenuItem.Size = new Size(192, 26);
+            выходToolStripMenuItem.Text = "Выход";
+            выходToolStripMenuItem.Click += выходToolStripMenuItem_Click;
+            // 
             // правкаToolStripMenuItem
             // 
             правкаToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { отменитьToolStripMenuItem, повторToolStripMenuItem, вырезатьToolStripMenuItem, копироватьToolStripMenuItem, вставитьToolStripMenuItem, удалитьToolStripMenuItem, выделитьВсеToolStripMenuItem });
@@ -109,12 +139,98 @@
             правкаToolStripMenuItem.Size = new Size(74, 42);
             правкаToolStripMenuItem.Text = "Правка";
             // 
+            // отменитьToolStripMenuItem
+            // 
+            отменитьToolStripMenuItem.Name = "отменитьToolStripMenuItem";
+            отменитьToolStripMenuItem.Size = new Size(186, 26);
+            отменитьToolStripMenuItem.Text = "Отменить";
+            // 
+            // повторToolStripMenuItem
+            // 
+            повторToolStripMenuItem.Name = "повторToolStripMenuItem";
+            повторToolStripMenuItem.Size = new Size(186, 26);
+            повторToolStripMenuItem.Text = "Повтор";
+            // 
+            // вырезатьToolStripMenuItem
+            // 
+            вырезатьToolStripMenuItem.Name = "вырезатьToolStripMenuItem";
+            вырезатьToolStripMenuItem.Size = new Size(186, 26);
+            вырезатьToolStripMenuItem.Text = "Вырезать";
+            // 
+            // копироватьToolStripMenuItem
+            // 
+            копироватьToolStripMenuItem.Name = "копироватьToolStripMenuItem";
+            копироватьToolStripMenuItem.Size = new Size(186, 26);
+            копироватьToolStripMenuItem.Text = "Копировать";
+            // 
+            // вставитьToolStripMenuItem
+            // 
+            вставитьToolStripMenuItem.Name = "вставитьToolStripMenuItem";
+            вставитьToolStripMenuItem.Size = new Size(186, 26);
+            вставитьToolStripMenuItem.Text = "Вставить";
+            // 
+            // удалитьToolStripMenuItem
+            // 
+            удалитьToolStripMenuItem.Name = "удалитьToolStripMenuItem";
+            удалитьToolStripMenuItem.Size = new Size(186, 26);
+            удалитьToolStripMenuItem.Text = "Удалить";
+            удалитьToolStripMenuItem.Click += удалитьToolStripMenuItem_Click;
+            // 
+            // выделитьВсеToolStripMenuItem
+            // 
+            выделитьВсеToolStripMenuItem.Name = "выделитьВсеToolStripMenuItem";
+            выделитьВсеToolStripMenuItem.Size = new Size(186, 26);
+            выделитьВсеToolStripMenuItem.Text = "Выделить все";
+            выделитьВсеToolStripMenuItem.Click += выделитьВсеToolStripMenuItem_Click;
+            // 
             // текстToolStripMenuItem
             // 
             текстToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { постановкаЗадачиToolStripMenuItem, грамматикаToolStripMenuItem, класификацияГрамматикиToolStripMenuItem, методАнализаToolStripMenuItem, тестовыйПримерToolStripMenuItem, списокЛитературыToolStripMenuItem, исходныйКодПргограммыToolStripMenuItem });
             текстToolStripMenuItem.Name = "текстToolStripMenuItem";
             текстToolStripMenuItem.Size = new Size(59, 42);
             текстToolStripMenuItem.Text = "Текст";
+            // 
+            // постановкаЗадачиToolStripMenuItem
+            // 
+            постановкаЗадачиToolStripMenuItem.Name = "постановкаЗадачиToolStripMenuItem";
+            постановкаЗадачиToolStripMenuItem.Size = new Size(284, 26);
+            постановкаЗадачиToolStripMenuItem.Text = "Постановка задачи";
+            // 
+            // грамматикаToolStripMenuItem
+            // 
+            грамматикаToolStripMenuItem.Name = "грамматикаToolStripMenuItem";
+            грамматикаToolStripMenuItem.Size = new Size(284, 26);
+            грамматикаToolStripMenuItem.Text = "Грамматика";
+            // 
+            // класификацияГрамматикиToolStripMenuItem
+            // 
+            класификацияГрамматикиToolStripMenuItem.Name = "класификацияГрамматикиToolStripMenuItem";
+            класификацияГрамматикиToolStripMenuItem.Size = new Size(284, 26);
+            класификацияГрамматикиToolStripMenuItem.Text = "Класификация грамматики";
+            // 
+            // методАнализаToolStripMenuItem
+            // 
+            методАнализаToolStripMenuItem.Name = "методАнализаToolStripMenuItem";
+            методАнализаToolStripMenuItem.Size = new Size(284, 26);
+            методАнализаToolStripMenuItem.Text = "Метод анализа";
+            // 
+            // тестовыйПримерToolStripMenuItem
+            // 
+            тестовыйПримерToolStripMenuItem.Name = "тестовыйПримерToolStripMenuItem";
+            тестовыйПримерToolStripMenuItem.Size = new Size(284, 26);
+            тестовыйПримерToolStripMenuItem.Text = "Тестовый пример";
+            // 
+            // списокЛитературыToolStripMenuItem
+            // 
+            списокЛитературыToolStripMenuItem.Name = "списокЛитературыToolStripMenuItem";
+            списокЛитературыToolStripMenuItem.Size = new Size(284, 26);
+            списокЛитературыToolStripMenuItem.Text = "Список литературы";
+            // 
+            // исходныйКодПргограммыToolStripMenuItem
+            // 
+            исходныйКодПргограммыToolStripMenuItem.Name = "исходныйКодПргограммыToolStripMenuItem";
+            исходныйКодПргограммыToolStripMenuItem.Size = new Size(284, 26);
+            исходныйКодПргограммыToolStripMenuItem.Text = "Исходный код пргограммы";
             // 
             // пускToolStripMenuItem
             // 
@@ -128,6 +244,18 @@
             справкаToolStripMenuItem.Name = "справкаToolStripMenuItem";
             справкаToolStripMenuItem.Size = new Size(81, 42);
             справкаToolStripMenuItem.Text = "Справка";
+            // 
+            // вызовСправкиToolStripMenuItem
+            // 
+            вызовСправкиToolStripMenuItem.Name = "вызовСправкиToolStripMenuItem";
+            вызовСправкиToolStripMenuItem.Size = new Size(197, 26);
+            вызовСправкиToolStripMenuItem.Text = "Вызов справки";
+            // 
+            // оПрограммеToolStripMenuItem
+            // 
+            оПрограммеToolStripMenuItem.Name = "оПрограммеToolStripMenuItem";
+            оПрограммеToolStripMenuItem.Size = new Size(197, 26);
+            оПрограммеToolStripMenuItem.Text = "О программе";
             // 
             // локализацияToolStripMenuItem
             // 
@@ -148,7 +276,7 @@
             toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripButton3, toolStripButton4, toolStripButton5, toolStripButton6, toolStripButton7, toolStripButton8, toolStripButton9, toolStripButton10, toolStripButton11 });
             toolStrip1.Location = new Point(0, 46);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(1514, 80);
+            toolStrip1.Size = new Size(1514, 68);
             toolStrip1.Stretch = true;
             toolStrip1.TabIndex = 1;
             toolStrip1.Text = "toolStrip1";
@@ -277,167 +405,39 @@
             // splitContainer1
             // 
             splitContainer1.Dock = DockStyle.Fill;
-            splitContainer1.Location = new Point(0, 126);
+            splitContainer1.Location = new Point(0, 114);
             splitContainer1.Name = "splitContainer1";
             splitContainer1.Orientation = Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(dataGridView1);
+            splitContainer1.Panel1.Controls.Add(richTextBox1);
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(dataGridView2);
-            splitContainer1.Size = new Size(1514, 433);
-            splitContainer1.SplitterDistance = 238;
+            splitContainer1.Panel2.Controls.Add(richTextBox2);
+            splitContainer1.Size = new Size(1514, 445);
+            splitContainer1.SplitterDistance = 244;
             splitContainer1.TabIndex = 2;
             // 
-            // dataGridView1
+            // richTextBox1
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 0);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(1514, 238);
-            dataGridView1.TabIndex = 0;
-            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
+            richTextBox1.Dock = DockStyle.Fill;
+            richTextBox1.Location = new Point(0, 0);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.Size = new Size(1514, 244);
+            richTextBox1.TabIndex = 0;
+            richTextBox1.Text = "";
             // 
-            // dataGridView2
+            // richTextBox2
             // 
-            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Dock = DockStyle.Fill;
-            dataGridView2.Location = new Point(0, 0);
-            dataGridView2.Name = "dataGridView2";
-            dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(1514, 191);
-            dataGridView2.TabIndex = 0;
-            // 
-            // создатьToolStripMenuItem
-            // 
-            создатьToolStripMenuItem.Name = "создатьToolStripMenuItem";
-            создатьToolStripMenuItem.Size = new Size(224, 26);
-            создатьToolStripMenuItem.Text = "Создать";
-            // 
-            // открытьToolStripMenuItem
-            // 
-            открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
-            открытьToolStripMenuItem.Size = new Size(224, 26);
-            открытьToolStripMenuItem.Text = "Открыть";
-            // 
-            // сохранитьToolStripMenuItem
-            // 
-            сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
-            сохранитьToolStripMenuItem.Size = new Size(224, 26);
-            сохранитьToolStripMenuItem.Text = "Сохранить";
-            // 
-            // сохранитьКакToolStripMenuItem
-            // 
-            сохранитьКакToolStripMenuItem.Name = "сохранитьКакToolStripMenuItem";
-            сохранитьКакToolStripMenuItem.Size = new Size(224, 26);
-            сохранитьКакToolStripMenuItem.Text = "Сохранить как";
-            // 
-            // выходToolStripMenuItem
-            // 
-            выходToolStripMenuItem.Name = "выходToolStripMenuItem";
-            выходToolStripMenuItem.Size = new Size(224, 26);
-            выходToolStripMenuItem.Text = "Выход";
-            // 
-            // отменитьToolStripMenuItem
-            // 
-            отменитьToolStripMenuItem.Name = "отменитьToolStripMenuItem";
-            отменитьToolStripMenuItem.Size = new Size(224, 26);
-            отменитьToolStripMenuItem.Text = "Отменить";
-            // 
-            // повторToolStripMenuItem
-            // 
-            повторToolStripMenuItem.Name = "повторToolStripMenuItem";
-            повторToolStripMenuItem.Size = new Size(224, 26);
-            повторToolStripMenuItem.Text = "Повтор";
-            // 
-            // вырезатьToolStripMenuItem
-            // 
-            вырезатьToolStripMenuItem.Name = "вырезатьToolStripMenuItem";
-            вырезатьToolStripMenuItem.Size = new Size(224, 26);
-            вырезатьToolStripMenuItem.Text = "Вырезать";
-            // 
-            // копироватьToolStripMenuItem
-            // 
-            копироватьToolStripMenuItem.Name = "копироватьToolStripMenuItem";
-            копироватьToolStripMenuItem.Size = new Size(224, 26);
-            копироватьToolStripMenuItem.Text = "Копировать";
-            // 
-            // вставитьToolStripMenuItem
-            // 
-            вставитьToolStripMenuItem.Name = "вставитьToolStripMenuItem";
-            вставитьToolStripMenuItem.Size = new Size(224, 26);
-            вставитьToolStripMenuItem.Text = "Вставить";
-            // 
-            // удалитьToolStripMenuItem
-            // 
-            удалитьToolStripMenuItem.Name = "удалитьToolStripMenuItem";
-            удалитьToolStripMenuItem.Size = new Size(224, 26);
-            удалитьToolStripMenuItem.Text = "Удалить";
-            // 
-            // выделитьВсеToolStripMenuItem
-            // 
-            выделитьВсеToolStripMenuItem.Name = "выделитьВсеToolStripMenuItem";
-            выделитьВсеToolStripMenuItem.Size = new Size(224, 26);
-            выделитьВсеToolStripMenuItem.Text = "Выделить все";
-            // 
-            // постановкаЗадачиToolStripMenuItem
-            // 
-            постановкаЗадачиToolStripMenuItem.Name = "постановкаЗадачиToolStripMenuItem";
-            постановкаЗадачиToolStripMenuItem.Size = new Size(284, 26);
-            постановкаЗадачиToolStripMenuItem.Text = "Постановка задачи";
-            // 
-            // грамматикаToolStripMenuItem
-            // 
-            грамматикаToolStripMenuItem.Name = "грамматикаToolStripMenuItem";
-            грамматикаToolStripMenuItem.Size = new Size(284, 26);
-            грамматикаToolStripMenuItem.Text = "Грамматика";
-            // 
-            // класификацияГрамматикиToolStripMenuItem
-            // 
-            класификацияГрамматикиToolStripMenuItem.Name = "класификацияГрамматикиToolStripMenuItem";
-            класификацияГрамматикиToolStripMenuItem.Size = new Size(284, 26);
-            класификацияГрамматикиToolStripMenuItem.Text = "Класификация грамматики";
-            // 
-            // методАнализаToolStripMenuItem
-            // 
-            методАнализаToolStripMenuItem.Name = "методАнализаToolStripMenuItem";
-            методАнализаToolStripMenuItem.Size = new Size(284, 26);
-            методАнализаToolStripMenuItem.Text = "Метод анализа";
-            // 
-            // тестовыйПримерToolStripMenuItem
-            // 
-            тестовыйПримерToolStripMenuItem.Name = "тестовыйПримерToolStripMenuItem";
-            тестовыйПримерToolStripMenuItem.Size = new Size(284, 26);
-            тестовыйПримерToolStripMenuItem.Text = "Тестовый пример";
-            // 
-            // списокЛитературыToolStripMenuItem
-            // 
-            списокЛитературыToolStripMenuItem.Name = "списокЛитературыToolStripMenuItem";
-            списокЛитературыToolStripMenuItem.Size = new Size(284, 26);
-            списокЛитературыToolStripMenuItem.Text = "Список литературы";
-            // 
-            // исходныйКодПргограммыToolStripMenuItem
-            // 
-            исходныйКодПргограммыToolStripMenuItem.Name = "исходныйКодПргограммыToolStripMenuItem";
-            исходныйКодПргограммыToolStripMenuItem.Size = new Size(284, 26);
-            исходныйКодПргограммыToolStripMenuItem.Text = "Исходный код пргограммы";
-            // 
-            // вызовСправкиToolStripMenuItem
-            // 
-            вызовСправкиToolStripMenuItem.Name = "вызовСправкиToolStripMenuItem";
-            вызовСправкиToolStripMenuItem.Size = new Size(224, 26);
-            вызовСправкиToolStripMenuItem.Text = "Вызов справки";
-            // 
-            // оПрограммеToolStripMenuItem
-            // 
-            оПрограммеToolStripMenuItem.Name = "оПрограммеToolStripMenuItem";
-            оПрограммеToolStripMenuItem.Size = new Size(224, 26);
-            оПрограммеToolStripMenuItem.Text = "О программе";
+            richTextBox2.Dock = DockStyle.Fill;
+            richTextBox2.Enabled = false;
+            richTextBox2.Location = new Point(0, 0);
+            richTextBox2.Name = "richTextBox2";
+            richTextBox2.Size = new Size(1514, 197);
+            richTextBox2.TabIndex = 0;
+            richTextBox2.Text = "";
             // 
             // Form1
             // 
@@ -449,7 +449,7 @@
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
             Name = "Form1";
-            Text = "Form1";
+            Text = "Компилятор";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             toolStrip1.ResumeLayout(false);
@@ -458,8 +458,6 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             ResumeLayout(false);
         }
 
@@ -487,8 +485,6 @@
         private ToolStripButton toolStripButton11;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private SplitContainer splitContainer1;
-        private DataGridView dataGridView1;
-        private DataGridView dataGridView2;
         private ToolStripMenuItem создатьToolStripMenuItem;
         private ToolStripMenuItem открытьToolStripMenuItem;
         private ToolStripMenuItem сохранитьToolStripMenuItem;
@@ -510,5 +506,7 @@
         private ToolStripMenuItem исходныйКодПргограммыToolStripMenuItem;
         private ToolStripMenuItem вызовСправкиToolStripMenuItem;
         private ToolStripMenuItem оПрограммеToolStripMenuItem;
+        private RichTextBox richTextBox1;
+        private RichTextBox richTextBox2;
     }
 }
