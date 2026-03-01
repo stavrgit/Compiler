@@ -26,7 +26,6 @@ namespace Сompiler
             var editor = sender as FastColoredTextBox;
             if (editor == null) return;
 
-            // --- ФАЙЛЫ ---
             if (e.Control && e.KeyCode == Keys.N)
             {
                 form.New_Click(null, EventArgs.Empty);
@@ -45,16 +44,15 @@ namespace Сompiler
                 e.SuppressKeyPress = true;
             }
 
-            // --- РЕДАКТИРОВАНИЕ ---
             if (e.Control && e.KeyCode == Keys.Z)
             {
-                form.Undo_Click(null, EventArgs.Empty);
+                editor.Undo();
                 e.SuppressKeyPress = true;
             }
 
             if (e.Control && e.KeyCode == Keys.Y)
             {
-                form.Redo_Click(null, EventArgs.Empty);
+                editor.Redo();
                 e.SuppressKeyPress = true;
             }
 

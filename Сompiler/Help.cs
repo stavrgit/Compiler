@@ -9,24 +9,27 @@ namespace Сompiler
 {
     public class Help
     {
+        private string Lang => Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+
         public void Show_Help()
         {
-            string path = Path.Combine(Application.StartupPath, "help.html");
+            string file = Lang == "ru" ? "Справка.html" : "Help.html";
+            string path = Path.Combine(Application.StartupPath, file);
+
             if (File.Exists(path))
                 Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
             else
-                MessageBox.Show("Файл справки не найден.", "Справка");
+                MessageBox.Show($"Файл {file} не найден.", Lang == "ru" ? "Справка" : "Help");
         }
         public void Show_About()
         {
-            string path = Path.Combine(Application.StartupPath, "about.html");
+            string file = Lang == "ru" ? "О программе.html" : "About.html";
+            string path = Path.Combine(Application.StartupPath, file);
+
             if (File.Exists(path))
                 Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
             else
-                MessageBox.Show("Файл about.html не найден.", "О программе");
+                MessageBox.Show($"Файл {file} не найден.", Lang == "ru" ? "О программе" : "About");
         }
-
     }
-
-
 }

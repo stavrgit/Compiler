@@ -8,24 +8,26 @@ namespace Сompiler
 {
     public partial class Form1 : Form
     {
-        private readonly File_service file_service = new();
+        internal readonly File_service file_service = new();
         private readonly Editor _editor = new();
         private readonly Help help = new();
-        private System.Windows.Forms.Timer _typingTimer = new System.Windows.Forms.Timer();
-        private readonly Style keywordStyle = new TextStyle(Brushes.Blue, null, FontStyle.Bold);
-        private readonly Style commentStyle = new TextStyle(Brushes.Green, null, FontStyle.Italic);
-        private readonly Style numberStyle = new TextStyle(Brushes.DarkOrange, null, FontStyle.Regular);
+        internal System.Windows.Forms.Timer _typingTimer = new System.Windows.Forms.Timer();
         private Output _output;
         private HotkeyManager hotkeys;
-
+        private StatusBarService status;
+        public Syntax_Service syntax;
+        private Tab_Input tab_Input;
 
         public Form1()
         {
             InitializeComponent();
             _output = new Output(tabControlOutput, txtResults, gridErrors);
             Clicks();
-            tabControlEditor.SelectedIndexChanged += (s, e) => UpdateStatus();
+            tabControlEditor.SelectedIndexChanged += (s, e) => status.UpdateStatus();
             hotkeys = new HotkeyManager(this);
+            syntax = new Syntax_Service();
+            status = new StatusBarService(this);
+            tab_Input = new Tab_Input(this, hotkeys, status);
             _typingTimer.Interval = 150;
             _typingTimer.Tick += (s, e) =>
             {
@@ -33,9 +35,9 @@ namespace Сompiler
 
                 var editor = GetCurrentEditor();
                 if (editor != null)
-                    HighlightSyntax(editor);
+                    syntax.Highlight(editor);
 
-                UpdateStatus();
+                status.UpdateStatus();
             };
         }
         private void ReloadForm()
@@ -87,7 +89,7 @@ namespace Сompiler
             оПрограммеToolStripMenuItem.Click += About_Click;
             toolStripButton11.Click += About_Click;
         }
-        private FastColoredTextBox? GetCurrentEditor()
+        internal FastColoredTextBox? GetCurrentEditor()
         {
             if (tabControlEditor.TabCount == 0)
                 return null;
@@ -98,15 +100,15 @@ namespace Сompiler
 
             return tab.Controls[0] as FastColoredTextBox;
         }
-        public void New_Click(object sender, EventArgs e)
+        internal void New_Click(object sender, EventArgs e)
         {
             New_Tab("Новый файл", "");
             var editor = GetCurrentEditor();
             file_service.New_File(GetCurrentEditor());
             tabControlEditor.SelectedTab.Text = file_service.CurrentFileName;
-            UpdateStatus();
+            status.UpdateStatus();
         }
-        public void Open_Click(object sender, EventArgs e)
+        internal void Open_Click(object sender, EventArgs e)
         {
             using var dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -117,7 +119,7 @@ namespace Сompiler
                 tabControlEditor.SelectedTab.Tag = dialog.FileName;
             }
         }
-        public void Save_Click(object sender, EventArgs e)
+        internal void Save_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
@@ -131,7 +133,7 @@ namespace Сompiler
                 сохранитьКакToolStripMenuItem_Click(sender, e);
             }
         }
-        public void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
+        internal void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
@@ -144,44 +146,44 @@ namespace Сompiler
                 tabControlEditor.SelectedTab.Tag = dialog.FileName;
             }
         }
-        public void выходToolStripMenuItem_Click(object sender, EventArgs e) => Application.Exit();
-        public void Undo_Click(object sender, EventArgs e)
+        internal void выходToolStripMenuItem_Click(object sender, EventArgs e) => Application.Exit();
+        internal void Undo_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Undo(editor);
         }
-        public void Redo_Click(object sender, EventArgs e)
+        internal void Redo_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Redo(editor);
         }
-        public void Cut_Click(object sender, EventArgs e)
+        internal void Cut_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Cut(editor);
         }
-        public void Copy_Click(object sender, EventArgs e)
+        internal void Copy_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Copy(editor);
         }
-        public void Paste_Click(object sender, EventArgs e)
+        internal void Paste_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Paste(editor);
         }
-        public void удалитьToolStripMenuItem_Click(object sender, EventArgs e)
+        internal void удалитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Delete(editor);
         }
-        public void выделитьВсеToolStripMenuItem_Click(object sender, EventArgs e)
+        internal void выделитьВсеToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
@@ -204,101 +206,9 @@ namespace Сompiler
         }
         private void New_Tab(string title, string text = "")
         {
-            var tab = new TabPage(title);
-            tab.Tag = null;
-
-            var editor = new FastColoredTextBox
-            {
-                Dock = DockStyle.Fill,
-                Font = new Font("Consolas", 12),
-                Text = text,
-                BorderStyle = BorderStyle.None,
-                Language = Language.Custom,
-                ShowLineNumbers = true,
-                WordWrap = false,
-                AllowDrop = true
-            };
-            editor.SelectionChanged += (s, e) =>
-            {
-                UpdateStatus();
-            };
-            editor.TextChanged += (s, e) =>
-            {
-                file_service.IsModified = true;
-                _typingTimer.Stop();
-                _typingTimer.Start();
-            };
-
-            editor.DragEnter += (s, e) =>
-            {
-                if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                    e.Effect = DragDropEffects.Copy;
-            };
-
-            editor.DragDrop += (s, e) =>
-            {
-                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (files.Length > 0)
-                {
-                    string path = files[0];
-
-                    file_service.Load_File(editor, path);
-
-                    tab.Text = Path.GetFileName(path);
-                    tab.Tag = path;
-
-                    HighlightSyntax(editor);
-                    UpdateStatus();
-                }
-            };
-
-            tab.Controls.Add(editor);
+            var tab = tab_Input.Create(title, text);
             tabControlEditor.TabPages.Add(tab);
             tabControlEditor.SelectedTab = tab;
-            hotkeys.Attach(editor);
-        }
-        private void UpdateStatus()
-        {
-            var editor = GetCurrentEditor();
-            if (editor == null)
-            {
-                statusFileName.Text = "";
-                statusCursor.Text = "";
-                statusLines.Text = "";
-                statusSize.Text = "";
-                return;
-            }
-
-            statusFileName.Text = tabControlEditor.SelectedTab.Text + (file_service.IsModified ? " *" : "");
-
-            int line = editor.Selection.Start.iLine + 1;
-            int col = editor.Selection.Start.iChar + 1;
-            statusCursor.Text = $"Line: {line}, Column: {col}";
-
-            statusLines.Text = $"Lines: {editor.LinesCount}";
-
-            if (tabControlEditor.SelectedTab.Tag is string path)
-            {
-                long size = new FileInfo(path).Length;
-                statusSize.Text = $"Size: {size} bytes";
-            }
-            else
-            {
-                statusSize.Text = $"Size: {Encoding.UTF8.GetByteCount(editor.Text)} bytes";
-            }
-
-            statusLang.Text = "Lang: " + Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName.ToUpper();
-        }
-        private void HighlightSyntax(FastColoredTextBox editor)
-        {
-            var range = editor.Range;
-
-            range.ClearStyle(keywordStyle, commentStyle, numberStyle);
-            range.SetStyle(commentStyle, @"//.*$", RegexOptions.Multiline);
-            range.SetStyle(numberStyle, @"\b\d+\b");
-
-            string keywords = string.Join("|", Syntax_Words.Keywords.Select(Regex.Escape));
-            range.SetStyle(keywordStyle, $@"\b({keywords})\b");
         }
     }
 }
