@@ -15,11 +15,13 @@ namespace Сompiler
         private readonly Style keywordStyle = new TextStyle(Brushes.Blue, null, FontStyle.Bold);
         private readonly Style commentStyle = new TextStyle(Brushes.Green, null, FontStyle.Italic);
         private readonly Style numberStyle = new TextStyle(Brushes.DarkOrange, null, FontStyle.Regular);
+        private Output _output;
 
 
         public Form1()
         {
             InitializeComponent();
+            _output = new Output(tabControlOutput, txtResults, gridErrors);
             Clicks();
             tabControlEditor.SelectedIndexChanged += (s, e) => UpdateStatus();
             _typingTimer.Interval = 150;

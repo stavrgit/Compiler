@@ -29,7 +29,17 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            splitContainer1 = new SplitContainer();
             tabControlEditor = new TabControl();
+            tabControlOutput = new TabControl();
+            tabPage1 = new TabPage();
+            txtResults = new TextBox();
+            tabPage2 = new TabPage();
+            gridErrors = new DataGridView();
+            FilePath = new DataGridViewTextBoxColumn();
+            Line = new DataGridViewTextBoxColumn();
+            Column = new DataGridViewTextBoxColumn();
+            Message = new DataGridViewTextBoxColumn();
             menuStrip1 = new MenuStrip();
             файлToolStripMenuItem = new ToolStripMenuItem();
             создатьToolStripMenuItem = new ToolStripMenuItem();
@@ -81,10 +91,33 @@
             statusLines = new ToolStripStatusLabel();
             statusSize = new ToolStripStatusLabel();
             statusLang = new ToolStripStatusLabel();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            tabControlOutput.SuspendLayout();
+            tabPage1.SuspendLayout();
+            tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)gridErrors).BeginInit();
             menuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             statusStrip.SuspendLayout();
             SuspendLayout();
+            // 
+            // splitContainer1
+            // 
+            resources.ApplyResources(splitContainer1, "splitContainer1");
+            splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            resources.ApplyResources(splitContainer1.Panel1, "splitContainer1.Panel1");
+            splitContainer1.Panel1.Controls.Add(tabControlEditor);
+            // 
+            // splitContainer1.Panel2
+            // 
+            resources.ApplyResources(splitContainer1.Panel2, "splitContainer1.Panel2");
+            splitContainer1.Panel2.Controls.Add(tabControlOutput);
             // 
             // tabControlEditor
             // 
@@ -92,6 +125,70 @@
             tabControlEditor.AllowDrop = true;
             tabControlEditor.Name = "tabControlEditor";
             tabControlEditor.SelectedIndex = 0;
+            // 
+            // tabControlOutput
+            // 
+            resources.ApplyResources(tabControlOutput, "tabControlOutput");
+            tabControlOutput.Controls.Add(tabPage1);
+            tabControlOutput.Controls.Add(tabPage2);
+            tabControlOutput.Name = "tabControlOutput";
+            tabControlOutput.SelectedIndex = 0;
+            // 
+            // tabPage1
+            // 
+            resources.ApplyResources(tabPage1, "tabPage1");
+            tabPage1.Controls.Add(txtResults);
+            tabPage1.Name = "tabPage1";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // txtResults
+            // 
+            resources.ApplyResources(txtResults, "txtResults");
+            txtResults.Name = "txtResults";
+            txtResults.ReadOnly = true;
+            // 
+            // tabPage2
+            // 
+            resources.ApplyResources(tabPage2, "tabPage2");
+            tabPage2.Controls.Add(gridErrors);
+            tabPage2.Name = "tabPage2";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // gridErrors
+            // 
+            resources.ApplyResources(gridErrors, "gridErrors");
+            gridErrors.AllowUserToAddRows = false;
+            gridErrors.AllowUserToDeleteRows = false;
+            gridErrors.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            gridErrors.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            gridErrors.Columns.AddRange(new DataGridViewColumn[] { FilePath, Line, Column, Message });
+            gridErrors.Name = "gridErrors";
+            gridErrors.ReadOnly = true;
+            gridErrors.RowHeadersVisible = false;
+            // 
+            // FilePath
+            // 
+            resources.ApplyResources(FilePath, "FilePath");
+            FilePath.Name = "FilePath";
+            FilePath.ReadOnly = true;
+            // 
+            // Line
+            // 
+            resources.ApplyResources(Line, "Line");
+            Line.Name = "Line";
+            Line.ReadOnly = true;
+            // 
+            // Column
+            // 
+            resources.ApplyResources(Column, "Column");
+            Column.Name = "Column";
+            Column.ReadOnly = true;
+            // 
+            // Message
+            // 
+            resources.ApplyResources(Message, "Message");
+            Message.Name = "Message";
+            Message.ReadOnly = true;
             // 
             // menuStrip1
             // 
@@ -378,12 +475,21 @@
             // 
             resources.ApplyResources(this, "$this");
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(tabControlEditor);
+            Controls.Add(splitContainer1);
             Controls.Add(toolStrip1);
             Controls.Add(menuStrip1);
             Controls.Add(statusStrip);
             MainMenuStrip = menuStrip1;
             Name = "Form1";
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            tabControlOutput.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
+            tabPage2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)gridErrors).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             toolStrip1.ResumeLayout(false);
@@ -448,5 +554,15 @@
         private ToolStripStatusLabel statusLines;
         private ToolStripStatusLabel statusSize;
         private ToolStripStatusLabel statusLang;
+        private SplitContainer splitContainer1;
+        private TabControl tabControlOutput;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private TextBox txtResults;
+        private DataGridView gridErrors;
+        private DataGridViewTextBoxColumn FilePath;
+        private DataGridViewTextBoxColumn Line;
+        private DataGridViewTextBoxColumn Column;
+        private DataGridViewTextBoxColumn Message;
     }
 }
