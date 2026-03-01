@@ -21,6 +21,10 @@ namespace Сompiler
         public Form1()
         {
             InitializeComponent();
+            tabControlEditor.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tabControlEditor.Padding = new Point(20, 4);
+            tabControlEditor.DrawItem += TabControlEditor_DrawItem;
+            tabControlEditor.MouseDown += TabControlEditor_MouseDown;
             _output = new Output(tabControlOutput, txtResults, gridErrors);
             Clicks();
             tabControlEditor.SelectedIndexChanged += (s, e) => status.UpdateStatus();
@@ -209,6 +213,49 @@ namespace Сompiler
             var tab = tab_Input.Create(title, text);
             tabControlEditor.TabPages.Add(tab);
             tabControlEditor.SelectedTab = tab;
+        }
+        private void TabControlEditor_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            var tab = tabControlEditor.TabPages[e.Index];
+            var rect = e.Bounds;
+            int paddingRight = 12; 
+            int size = 7;         
+            int offsetTop = 3;     
+
+            TextRenderer.DrawText(
+                e.Graphics,
+                tab.Text,
+                tab.Font,
+                new Point(rect.X + 8, rect.Y + 6),
+                tab.ForeColor
+            );
+            Rectangle closeRect = new Rectangle(
+                rect.Right - paddingRight,
+                rect.Top + offsetTop,
+                size,
+                size
+            );
+
+            using (Pen pen = new Pen(Color.Black, 2))
+            {
+                e.Graphics.DrawLine(pen, closeRect.Left, closeRect.Top, closeRect.Right, closeRect.Bottom);
+                e.Graphics.DrawLine(pen, closeRect.Right, closeRect.Top, closeRect.Left, closeRect.Bottom);
+            }
+
+            tab.Tag = closeRect;
+        }
+        private void TabControlEditor_MouseDown(object sender, MouseEventArgs e)
+        {
+            for (int i = 0; i < tabControlEditor.TabPages.Count; i++)
+            {
+                var tab = tabControlEditor.TabPages[i];
+
+                if (tab.Tag is Rectangle closeRect && closeRect.Contains(e.Location))
+                {
+                    tabControlEditor.TabPages.RemoveAt(i);
+                    break;
+                }
+            }
         }
     }
 }

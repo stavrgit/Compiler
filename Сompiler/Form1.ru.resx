@@ -276,6 +276,48 @@
   <data name="правкаToolStripMenuItem.Text" xml:space="preserve">
     <value>Правка</value>
   </data>
+  <data name="постановкаЗадачиToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>288, 26</value>
+  </data>
+  <data name="постановкаЗадачиToolStripMenuItem.Text" xml:space="preserve">
+    <value>Постановка задачи</value>
+  </data>
+  <data name="грамматикаToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>288, 26</value>
+  </data>
+  <data name="грамматикаToolStripMenuItem.Text" xml:space="preserve">
+    <value>Грамматика</value>
+  </data>
+  <data name="класификацияГрамматикиToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>288, 26</value>
+  </data>
+  <data name="класификацияГрамматикиToolStripMenuItem.Text" xml:space="preserve">
+    <value>Классификация грамматики</value>
+  </data>
+  <data name="методАнализаToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>288, 26</value>
+  </data>
+  <data name="методАнализаToolStripMenuItem.Text" xml:space="preserve">
+    <value>Метод анализа</value>
+  </data>
+  <data name="тестовыйПримерToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>288, 26</value>
+  </data>
+  <data name="тестовыйПримерToolStripMenuItem.Text" xml:space="preserve">
+    <value>Тестовый пример</value>
+  </data>
+  <data name="списокЛитературыToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>288, 26</value>
+  </data>
+  <data name="списокЛитературыToolStripMenuItem.Text" xml:space="preserve">
+    <value>Список литературы</value>
+  </data>
+  <data name="исходныйКодПргограммыToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>288, 26</value>
+  </data>
+  <data name="исходныйКодПргограммыToolStripMenuItem.Text" xml:space="preserve">
+    <value>Исходный код программы</value>
+  </data>
   <data name="текстToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>59, 42</value>
   </data>
@@ -516,23 +558,35 @@
         uhYAAAAASUVORK5CYII=
 </value>
   </data>
+  <data name="statusFileName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>96, 20</value>
+  </data>
   <data name="statusFileName.Text" xml:space="preserve">
-    <value>New file</value>
+    <value>Новый файл</value>
+  </data>
+  <data name="statusCursor.Size" type="System.Drawing.Size, System.Drawing">
+    <value>137, 20</value>
   </data>
   <data name="statusCursor.Text" xml:space="preserve">
-    <value>Line:  , Column:</value>
+    <value>Строка:  , Колонка:</value>
+  </data>
+  <data name="statusLines.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 20</value>
   </data>
   <data name="statusLines.Text" xml:space="preserve">
-    <value>Lines:</value>
+    <value>Строки:</value>
   </data>
   <data name="statusSize.Size" type="System.Drawing.Size, System.Drawing">
-    <value>86, 20</value>
+    <value>115, 20</value>
   </data>
   <data name="statusSize.Text" xml:space="preserve">
-    <value> Size:  bytes</value>
+    <value> Размер:  байта</value>
+  </data>
+  <data name="statusLang.Size" type="System.Drawing.Size, System.Drawing">
+    <value>46, 20</value>
   </data>
   <data name="statusLang.Text" xml:space="preserve">
-    <value>Lang:</value>
+    <value>Язык;</value>
   </data>
   <data name="statusStrip.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 533</value>
@@ -542,6 +596,27 @@
   </data>
   <data name="statusStrip.Text" xml:space="preserve">
     <value>statusStrip1</value>
+  </data>
+  <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 16</value>
+  </data>
+  <data name="toolStripStatusLabel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 16</value>
+  </data>
+  <data name="toolStripStatusLabel3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 16</value>
+  </data>
+  <data name="toolStripStatusLabel4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 16</value>
+  </data>
+  <data name="toolStripStatusLabel5.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 16</value>
+  </data>
+  <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 511</value>
+  </data>
+  <data name="statusStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1514, 22</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Компилятор</value>

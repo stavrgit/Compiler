@@ -88,7 +88,6 @@
             statusStrip = new StatusStrip();
             statusFileName = new ToolStripStatusLabel();
             statusCursor = new ToolStripStatusLabel();
-            statusLines = new ToolStripStatusLabel();
             statusSize = new ToolStripStatusLabel();
             statusLang = new ToolStripStatusLabel();
             statusStrip1 = new StatusStrip();
@@ -97,6 +96,7 @@
             toolStripStatusLabel3 = new ToolStripStatusLabel();
             toolStripStatusLabel4 = new ToolStripStatusLabel();
             toolStripStatusLabel5 = new ToolStripStatusLabel();
+            statusLines = new ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -463,11 +463,6 @@
             resources.ApplyResources(statusCursor, "statusCursor");
             statusCursor.Name = "statusCursor";
             // 
-            // statusLines
-            // 
-            resources.ApplyResources(statusLines, "statusLines");
-            statusLines.Name = "statusLines";
-            // 
             // statusSize
             // 
             resources.ApplyResources(statusSize, "statusSize");
@@ -509,6 +504,11 @@
             // 
             resources.ApplyResources(toolStripStatusLabel5, "toolStripStatusLabel5");
             toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+            // 
+            // statusLines
+            // 
+            resources.ApplyResources(statusLines, "statusLines");
+            statusLines.Name = "statusLines";
             // 
             // Form1
             // 
@@ -593,7 +593,6 @@
         private StatusStrip statusStrip;
         internal ToolStripStatusLabel statusFileName;
         internal ToolStripStatusLabel statusCursor;
-        internal ToolStripStatusLabel statusLines;
         internal ToolStripStatusLabel statusSize;
         internal ToolStripStatusLabel statusLang;
         private SplitContainer splitContainer1;
@@ -612,5 +611,6 @@
         internal ToolStripStatusLabel toolStripStatusLabel3;
         internal ToolStripStatusLabel toolStripStatusLabel4;
         internal ToolStripStatusLabel toolStripStatusLabel5;
+        internal ToolStripStatusLabel statusLines;
     }
 }
