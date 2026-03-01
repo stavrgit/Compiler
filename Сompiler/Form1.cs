@@ -16,6 +16,7 @@ namespace Сompiler
         private readonly Style commentStyle = new TextStyle(Brushes.Green, null, FontStyle.Italic);
         private readonly Style numberStyle = new TextStyle(Brushes.DarkOrange, null, FontStyle.Regular);
         private Output _output;
+        private HotkeyManager hotkeys;
 
 
         public Form1()
@@ -24,6 +25,7 @@ namespace Сompiler
             _output = new Output(tabControlOutput, txtResults, gridErrors);
             Clicks();
             tabControlEditor.SelectedIndexChanged += (s, e) => UpdateStatus();
+            hotkeys = new HotkeyManager(this);
             _typingTimer.Interval = 150;
             _typingTimer.Tick += (s, e) =>
             {
@@ -96,7 +98,7 @@ namespace Сompiler
 
             return tab.Controls[0] as FastColoredTextBox;
         }
-        private void New_Click(object sender, EventArgs e)
+        public void New_Click(object sender, EventArgs e)
         {
             New_Tab("Новый файл", "");
             var editor = GetCurrentEditor();
@@ -104,7 +106,7 @@ namespace Сompiler
             tabControlEditor.SelectedTab.Text = file_service.CurrentFileName;
             UpdateStatus();
         }
-        private void Open_Click(object sender, EventArgs e)
+        public void Open_Click(object sender, EventArgs e)
         {
             using var dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -115,7 +117,7 @@ namespace Сompiler
                 tabControlEditor.SelectedTab.Tag = dialog.FileName;
             }
         }
-        private void Save_Click(object sender, EventArgs e)
+        public void Save_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
@@ -129,7 +131,7 @@ namespace Сompiler
                 сохранитьКакToolStripMenuItem_Click(sender, e);
             }
         }
-        private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
+        public void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
@@ -142,44 +144,44 @@ namespace Сompiler
                 tabControlEditor.SelectedTab.Tag = dialog.FileName;
             }
         }
-        private void выходToolStripMenuItem_Click(object sender, EventArgs e) => Application.Exit();
-        private void Undo_Click(object sender, EventArgs e)
+        public void выходToolStripMenuItem_Click(object sender, EventArgs e) => Application.Exit();
+        public void Undo_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Undo(editor);
         }
-        private void Redo_Click(object sender, EventArgs e)
+        public void Redo_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Redo(editor);
         }
-        private void Cut_Click(object sender, EventArgs e)
+        public void Cut_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Cut(editor);
         }
-        private void Copy_Click(object sender, EventArgs e)
+        public void Copy_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Copy(editor);
         }
-        private void Paste_Click(object sender, EventArgs e)
+        public void Paste_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Paste(editor);
         }
-        private void удалитьToolStripMenuItem_Click(object sender, EventArgs e)
+        public void удалитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
             _editor.Delete(editor);
         }
-        private void выделитьВсеToolStripMenuItem_Click(object sender, EventArgs e)
+        public void выделитьВсеToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null) return;
@@ -253,6 +255,7 @@ namespace Сompiler
             tab.Controls.Add(editor);
             tabControlEditor.TabPages.Add(tab);
             tabControlEditor.SelectedTab = tab;
+            hotkeys.Attach(editor);
         }
         private void UpdateStatus()
         {
