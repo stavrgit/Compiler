@@ -23,4 +23,15 @@
     </EmbeddedResource>
   </ItemGroup>
 
+	<ItemGroup>
+		<Reference Include="FastColoredTextBox">
+			<HintPath>Libs\FastColoredTextBox.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Libs\FastColoredTextBox.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
 </Project>

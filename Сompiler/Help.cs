@@ -1,22 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Сompiler
 {
-    public class Hepl
+    public class Help
     {
-        public void ShowHelp()
+        public void Show_Help()
         {
-            MessageBox.Show("Это справка по программе.", "Справка");
+            string path = Path.Combine(Application.StartupPath, "help.html");
+            if (File.Exists(path))
+                Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+            else
+                MessageBox.Show("Файл справки не найден.", "Справка");
+        }
+        public void Show_About()
+        {
+            string path = Path.Combine(Application.StartupPath, "about.html");
+            if (File.Exists(path))
+                Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+            else
+                MessageBox.Show("Файл about.html не найден.", "О программе");
         }
 
-        public void ShowAbout()
-        {
-            MessageBox.Show("Текстовый редактор\nВерсия 1.0\nАвтор: Sasuke", "О программе");
-        }
     }
+
 
 }

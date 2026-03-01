@@ -3,49 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FastColoredTextBoxNS;
 
 namespace Сompiler
 {
     public class Editor
     {
-        public void Undo(RichTextBox edit)
+        public void Undo(FastColoredTextBox edit)
         {
-            if (edit.CanUndo)
-                edit.Undo();
+            edit.Undo();
         }
 
-        public void Redo(RichTextBox edit)
+        public void Redo(FastColoredTextBox edit)
         {
-            if (edit.CanRedo)
-                edit.Redo();
+            edit.Redo();
         }
 
-        public void Cut(RichTextBox edit)
+        public void Cut(FastColoredTextBox edit)
         {
             edit.Cut();
         }
 
-        public void Copy(RichTextBox edit)
+        public void Copy(FastColoredTextBox edit)
         {
             edit.Copy();
         }
 
-        public void Paste(RichTextBox edit)
+        public void Paste(FastColoredTextBox edit)
         {
             edit.Paste();
         }
 
-        public void Delete(RichTextBox edit)
+        public void Delete(FastColoredTextBox edit)
         {
-            edit.SelectedText = "";
+            edit.ClearSelected();
         }
 
-        public void SelectAll(RichTextBox edit)
+        public void SelectAll(FastColoredTextBox edit)
         {
             edit.SelectAll();
         }
-        public void ShowHelp() { }
-        public void ShowAbout() { }
     }
-
 }
