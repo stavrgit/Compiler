@@ -141,28 +141,28 @@
   <data name="tabPage1.Text" xml:space="preserve">
     <value>Результаты</value>
   </data>
-  <data name="FilePath.HeaderText" xml:space="preserve">
-    <value>FilePath</value>
+  <data name="Code.HeaderText" xml:space="preserve">
+    <value>Код</value>
   </data>
-  <data name="FilePath.MinimumWidth" type="System.Int32, mscorlib">
+  <data name="Code.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="Line.HeaderText" xml:space="preserve">
-    <value>Line</value>
+  <data name="Type.HeaderText" xml:space="preserve">
+    <value>Тип</value>
   </data>
-  <data name="Line.MinimumWidth" type="System.Int32, mscorlib">
+  <data name="Type.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="Column.HeaderText" xml:space="preserve">
-    <value>Column</value>
+  <data name="Lexeme.HeaderText" xml:space="preserve">
+    <value>Лексема</value>
   </data>
-  <data name="Column.MinimumWidth" type="System.Int32, mscorlib">
+  <data name="Lexeme.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="Message.HeaderText" xml:space="preserve">
-    <value>Message</value>
+  <data name="Position.HeaderText" xml:space="preserve">
+    <value>Положение</value>
   </data>
-  <data name="Message.MinimumWidth" type="System.Int32, mscorlib">
+  <data name="Position.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
   <data name="gridErrors.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -596,27 +596,6 @@
   </data>
   <data name="statusStrip.Text" xml:space="preserve">
     <value>statusStrip1</value>
-  </data>
-  <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 16</value>
-  </data>
-  <data name="toolStripStatusLabel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 16</value>
-  </data>
-  <data name="toolStripStatusLabel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 16</value>
-  </data>
-  <data name="toolStripStatusLabel4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 16</value>
-  </data>
-  <data name="toolStripStatusLabel5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 16</value>
-  </data>
-  <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 511</value>
-  </data>
-  <data name="statusStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1514, 22</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Компилятор</value>

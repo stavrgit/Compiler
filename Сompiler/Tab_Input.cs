@@ -22,7 +22,9 @@ namespace Сompiler
 
         public TabPage Create(string title, string text)
         {
+
             var tab = new TabPage(title);
+
             var editor = new FastColoredTextBox
             {
                 Dock = DockStyle.Fill,
@@ -33,16 +35,18 @@ namespace Сompiler
                 ShowLineNumbers = true,
                 WordWrap = false,
                 AllowDrop = true
+
+            };
+
+            tab.Tag = new FileTabInfo
+            {
+                Path = null,
+                IsModified = false
             };
 
             editor.SelectionChanged += (s, e) => status.UpdateStatus();
-            editor.TextChanged += (s, e) =>
-            {
-                form.file_service.IsModified = true;
-                form._typingTimer.Stop();
-                form._typingTimer.Start();
-            };
-
+            editor.TextChangedDelayed += form.Editor_TextChanged;
+            editor.DelayedTextChangedInterval = 1;
             editor.DragEnter += (s, e) =>
             {
                 if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -58,7 +62,12 @@ namespace Сompiler
                     form.file_service.Load_File(editor, path);
 
                     tab.Text = Path.GetFileName(path);
-                    tab.Tag = path;
+
+                    if (tab.Tag is FileTabInfo info)
+                    {
+                        info.Path = path;
+                        info.IsModified = false;
+                    }
 
                     form.syntax.Highlight(editor);
                     status.UpdateStatus();
@@ -67,7 +76,6 @@ namespace Сompiler
 
             tab.Controls.Add(editor);
             hotkeys.Attach(editor);
-
             return tab;
         }
     }

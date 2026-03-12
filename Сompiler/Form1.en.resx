@@ -122,28 +122,10 @@
     <value>1514, 237</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="tabControlOutput.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="tabControlOutput.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1514, 195</value>
-  </data>
-  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1514, 436</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
-    <value>237</value>
-  </data>
-  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1506, 162</value>
-  </data>
-  <data name="tabPage1.Text" xml:space="preserve">
-    <value>Results</value>
-  </data>
   <data name="txtResults.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="txtResults.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -153,11 +135,23 @@
   <data name="txtResults.Size" type="System.Drawing.Size, System.Drawing">
     <value>1500, 156</value>
   </data>
-  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
     <value>1506, 162</value>
   </data>
-  <data name="tabPage2.Text" xml:space="preserve">
-    <value>Errors</value>
+  <data name="tabPage1.Text" xml:space="preserve">
+    <value>Results</value>
+  </data>
+  <data name="Code.MinimumWidth" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="Type.MinimumWidth" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="Lexeme.MinimumWidth" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="Position.MinimumWidth" type="System.Int32, mscorlib">
+    <value>6</value>
   </data>
   <data name="gridErrors.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -165,29 +159,23 @@
   <data name="gridErrors.Size" type="System.Drawing.Size, System.Drawing">
     <value>1500, 156</value>
   </data>
-  <data name="FilePath.HeaderText" xml:space="preserve">
-    <value>FilePath</value>
+  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1506, 162</value>
   </data>
-  <data name="FilePath.MinimumWidth" type="System.Int32, mscorlib">
-    <value>6</value>
+  <data name="tabPage2.Text" xml:space="preserve">
+    <value>Errors</value>
   </data>
-  <data name="Line.HeaderText" xml:space="preserve">
-    <value>Line</value>
+  <data name="tabControlOutput.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
-  <data name="Line.MinimumWidth" type="System.Int32, mscorlib">
-    <value>6</value>
+  <data name="tabControlOutput.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1514, 195</value>
   </data>
-  <data name="Column.HeaderText" xml:space="preserve">
-    <value>Column</value>
+  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1514, 436</value>
   </data>
-  <data name="Column.MinimumWidth" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="Message.HeaderText" xml:space="preserve">
-    <value>Message</value>
-  </data>
-  <data name="Message.MinimumWidth" type="System.Int32, mscorlib">
-    <value>6</value>
+  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
+    <value>237</value>
   </data>
   <data name="создатьToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>147, 26</value>
@@ -465,12 +453,6 @@
   <data name="toolStripButton11.Text" xml:space="preserve">
     <value>About</value>
   </data>
-  <data name="statusStrip.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 537</value>
-  </data>
-  <data name="statusStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1514, 22</value>
-  </data>
   <data name="statusFileName.Size" type="System.Drawing.Size, System.Drawing">
     <value>0, 16</value>
   </data>
@@ -486,40 +468,10 @@
   <data name="statusLang.Size" type="System.Drawing.Size, System.Drawing">
     <value>0, 16</value>
   </data>
-  <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 511</value>
+  <data name="statusStrip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 537</value>
   </data>
-  <data name="statusStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1514, 26</value>
-  </data>
-  <data name="statusStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="statusStrip1.Text" xml:space="preserve">
-    <value>statusStrip1</value>
-  </data>
-  <data name="toolStripStatusLabel1.Text" xml:space="preserve">
-    <value>New file</value>
-  </data>
-  <data name="toolStripStatusLabel2.Text" xml:space="preserve">
-    <value>Line:  , Column:</value>
-  </data>
-  <data name="toolStripStatusLabel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>45, 20</value>
-  </data>
-  <data name="toolStripStatusLabel3.Text" xml:space="preserve">
-    <value>Lines:</value>
-  </data>
-  <data name="toolStripStatusLabel4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>86, 20</value>
-  </data>
-  <data name="toolStripStatusLabel4.Text" xml:space="preserve">
-    <value> Size:  bytes</value>
-  </data>
-  <data name="toolStripStatusLabel5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 20</value>
-  </data>
-  <data name="toolStripStatusLabel5.Text" xml:space="preserve">
-    <value>Lang:</value>
+  <data name="statusStrip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1514, 22</value>
   </data>
 </root>

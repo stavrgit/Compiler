@@ -36,10 +36,10 @@
             txtResults = new TextBox();
             tabPage2 = new TabPage();
             gridErrors = new DataGridView();
-            FilePath = new DataGridViewTextBoxColumn();
-            Line = new DataGridViewTextBoxColumn();
-            Column = new DataGridViewTextBoxColumn();
-            Message = new DataGridViewTextBoxColumn();
+            Code = new DataGridViewTextBoxColumn();
+            Type = new DataGridViewTextBoxColumn();
+            Lexeme = new DataGridViewTextBoxColumn();
+            Position = new DataGridViewTextBoxColumn();
             menuStrip1 = new MenuStrip();
             файлToolStripMenuItem = new ToolStripMenuItem();
             создатьToolStripMenuItem = new ToolStripMenuItem();
@@ -88,15 +88,9 @@
             statusStrip = new StatusStrip();
             statusFileName = new ToolStripStatusLabel();
             statusCursor = new ToolStripStatusLabel();
+            statusLines = new ToolStripStatusLabel();
             statusSize = new ToolStripStatusLabel();
             statusLang = new ToolStripStatusLabel();
-            statusStrip1 = new StatusStrip();
-            toolStripStatusLabel1 = new ToolStripStatusLabel();
-            toolStripStatusLabel2 = new ToolStripStatusLabel();
-            toolStripStatusLabel3 = new ToolStripStatusLabel();
-            toolStripStatusLabel4 = new ToolStripStatusLabel();
-            toolStripStatusLabel5 = new ToolStripStatusLabel();
-            statusLines = new ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -108,7 +102,6 @@
             menuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             statusStrip.SuspendLayout();
-            statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // splitContainer1
@@ -168,34 +161,35 @@
             gridErrors.AllowUserToDeleteRows = false;
             gridErrors.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             gridErrors.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            gridErrors.Columns.AddRange(new DataGridViewColumn[] { FilePath, Line, Column, Message });
+            gridErrors.Columns.AddRange(new DataGridViewColumn[] { Code, Type, Lexeme, Position });
             gridErrors.Name = "gridErrors";
             gridErrors.ReadOnly = true;
             gridErrors.RowHeadersVisible = false;
+            gridErrors.CellClick += gridErrors_CellClick;
             // 
-            // FilePath
+            // Code
             // 
-            resources.ApplyResources(FilePath, "FilePath");
-            FilePath.Name = "FilePath";
-            FilePath.ReadOnly = true;
+            resources.ApplyResources(Code, "Code");
+            Code.Name = "Code";
+            Code.ReadOnly = true;
             // 
-            // Line
+            // Type
             // 
-            resources.ApplyResources(Line, "Line");
-            Line.Name = "Line";
-            Line.ReadOnly = true;
+            resources.ApplyResources(Type, "Type");
+            Type.Name = "Type";
+            Type.ReadOnly = true;
             // 
-            // Column
+            // Lexeme
             // 
-            resources.ApplyResources(Column, "Column");
-            Column.Name = "Column";
-            Column.ReadOnly = true;
+            resources.ApplyResources(Lexeme, "Lexeme");
+            Lexeme.Name = "Lexeme";
+            Lexeme.ReadOnly = true;
             // 
-            // Message
+            // Position
             // 
-            resources.ApplyResources(Message, "Message");
-            Message.Name = "Message";
-            Message.ReadOnly = true;
+            resources.ApplyResources(Position, "Position");
+            Position.Name = "Position";
+            Position.ReadOnly = true;
             // 
             // menuStrip1
             // 
@@ -463,6 +457,11 @@
             resources.ApplyResources(statusCursor, "statusCursor");
             statusCursor.Name = "statusCursor";
             // 
+            // statusLines
+            // 
+            resources.ApplyResources(statusLines, "statusLines");
+            statusLines.Name = "statusLines";
+            // 
             // statusSize
             // 
             resources.ApplyResources(statusSize, "statusSize");
@@ -473,48 +472,10 @@
             resources.ApplyResources(statusLang, "statusLang");
             statusLang.Name = "statusLang";
             // 
-            // statusStrip1
-            // 
-            resources.ApplyResources(statusStrip1, "statusStrip1");
-            statusStrip1.ImageScalingSize = new Size(20, 20);
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2, toolStripStatusLabel3, toolStripStatusLabel4, toolStripStatusLabel5 });
-            statusStrip1.Name = "statusStrip1";
-            // 
-            // toolStripStatusLabel1
-            // 
-            resources.ApplyResources(toolStripStatusLabel1, "toolStripStatusLabel1");
-            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            // 
-            // toolStripStatusLabel2
-            // 
-            resources.ApplyResources(toolStripStatusLabel2, "toolStripStatusLabel2");
-            toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            // 
-            // toolStripStatusLabel3
-            // 
-            resources.ApplyResources(toolStripStatusLabel3, "toolStripStatusLabel3");
-            toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            // 
-            // toolStripStatusLabel4
-            // 
-            resources.ApplyResources(toolStripStatusLabel4, "toolStripStatusLabel4");
-            toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            // 
-            // toolStripStatusLabel5
-            // 
-            resources.ApplyResources(toolStripStatusLabel5, "toolStripStatusLabel5");
-            toolStripStatusLabel5.Name = "toolStripStatusLabel5";
-            // 
-            // statusLines
-            // 
-            resources.ApplyResources(statusLines, "statusLines");
-            statusLines.Name = "statusLines";
-            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(statusStrip1);
             Controls.Add(splitContainer1);
             Controls.Add(toolStrip1);
             Controls.Add(menuStrip1);
@@ -536,8 +497,6 @@
             toolStrip1.PerformLayout();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
-            statusStrip1.ResumeLayout(false);
-            statusStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -601,16 +560,10 @@
         private TabPage tabPage2;
         private TextBox txtResults;
         private DataGridView gridErrors;
-        private DataGridViewTextBoxColumn FilePath;
-        private DataGridViewTextBoxColumn Line;
-        private DataGridViewTextBoxColumn Column;
-        private DataGridViewTextBoxColumn Message;
-        private StatusStrip statusStrip1;
-        internal ToolStripStatusLabel toolStripStatusLabel1;
-        internal ToolStripStatusLabel toolStripStatusLabel2;
-        internal ToolStripStatusLabel toolStripStatusLabel3;
-        internal ToolStripStatusLabel toolStripStatusLabel4;
-        internal ToolStripStatusLabel toolStripStatusLabel5;
         internal ToolStripStatusLabel statusLines;
+        private DataGridViewTextBoxColumn Code;
+        private DataGridViewTextBoxColumn Type;
+        private DataGridViewTextBoxColumn Lexeme;
+        private DataGridViewTextBoxColumn Position;
     }
 }

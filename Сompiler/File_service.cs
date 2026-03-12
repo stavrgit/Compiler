@@ -29,12 +29,29 @@ namespace Сompiler
             CurrentFileName = Path.GetFileName(path);
             IsModified = false;
         }
-        public void Save_File(FastColoredTextBox editor, string path)
+        public bool Save_File(FastColoredTextBox editor, string? path)
         {
-            File.WriteAllText(path, editor.Text);
-            CurrentFilePath = path;
-            CurrentFileName = Path.GetFileName(path);
-            IsModified = false;
+            try
+            {
+                if (path == null)
+                {
+                    using SaveFileDialog sfd = new SaveFileDialog();
+                    sfd.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+
+                    if (sfd.ShowDialog() != DialogResult.OK)
+                        return false;
+
+                    path = sfd.FileName;
+                }
+
+                File.WriteAllText(path, editor.Text);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
+
     }
 }

@@ -2,6 +2,7 @@ using System.ComponentModel.Design;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using FastColoredTextBoxNS;
 
 namespace Сompiler
@@ -32,6 +33,7 @@ namespace Сompiler
             syntax = new Syntax_Service();
             status = new StatusBarService(this);
             tab_Input = new Tab_Input(this, hotkeys, status);
+            this.FormClosing += Form1_FormClosing;
             _typingTimer.Interval = 150;
             _typingTimer.Tick += (s, e) =>
             {
@@ -46,10 +48,50 @@ namespace Сompiler
         }
         private void ReloadForm()
         {
+            var savedTabs = new List<(string title, string text, string? path, bool modified)>();
+
+            foreach (TabPage tab in tabControlEditor.TabPages)
+            {
+                if (tab.Controls.Count == 0)
+                    continue;
+
+                var editor = tab.Controls[0] as FastColoredTextBox;
+                if (editor == null)
+                    continue;
+
+                var info = tab.Tag as FileTabInfo;
+
+                savedTabs.Add((
+                    tab.Text,
+                    editor.Text,
+                    info?.Path,
+                    info?.IsModified ?? false
+                ));
+            }
+
             Controls.Clear();
             InitializeComponent();
             Clicks();
+
+            hotkeys = new HotkeyManager(this);
+            syntax = new Syntax_Service();
+            status = new StatusBarService(this);
+            tab_Input = new Tab_Input(this, hotkeys, status);
+
+            foreach (var t in savedTabs)
+            {
+                var tab = tab_Input.Create(t.title, t.text);
+                var info = tab.Tag as FileTabInfo;
+                info.Path = t.path;
+                info.IsModified = t.modified;
+
+                tabControlEditor.TabPages.Add(tab);
+            }
+
+            status.UpdateStatus();
         }
+
+
         private void englishToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("en");
@@ -92,6 +134,9 @@ namespace Сompiler
 
             оПрограммеToolStripMenuItem.Click += About_Click;
             toolStripButton11.Click += About_Click;
+
+            пускToolStripMenuItem.Click += buttonRun_Click;
+            toolStripButton9.Click += buttonRun_Click;
         }
         internal FastColoredTextBox? GetCurrentEditor()
         {
@@ -218,9 +263,9 @@ namespace Сompiler
         {
             var tab = tabControlEditor.TabPages[e.Index];
             var rect = e.Bounds;
-            int paddingRight = 12; 
-            int size = 7;         
-            int offsetTop = 3;     
+            int paddingRight = 12;
+            int size = 7;
+            int offsetTop = 3;
 
             TextRenderer.DrawText(
                 e.Graphics,
@@ -257,5 +302,142 @@ namespace Сompiler
                 }
             }
         }
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (TabPage tab in tabControlEditor.TabPages)
+            {
+                if (tab.Tag is FileTabInfo info && info.IsModified)
+                {
+                    var editor = tab.Controls[0] as FastColoredTextBox;
+
+                    var result = MessageBox.Show(
+                        Lang("У вас есть несохранённые изменения. Сохранить файл?",
+                             "You have unsaved changes. Save the file?"),
+                        Lang("Подтверждение", "Confirmation"),
+                        MessageBoxButtons.YesNoCancel,
+                        MessageBoxIcon.Warning
+                    );
+
+                    if (result == DialogResult.Cancel)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    if (result == DialogResult.Yes)
+                    {
+                        if (!file_service.Save_File(editor, info.Path))
+                        {
+                            e.Cancel = true;
+                            return;
+                        }
+
+                        info.IsModified = false;
+                    }
+                }
+            }
+
+            var exitResult = MessageBox.Show(
+                Lang("Вы действительно хотите выйти?",
+                     "Do you really want to exit?"),
+                Lang("Подтверждение выхода",
+                     "Exit confirmation"),
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (exitResult == DialogResult.No)
+                e.Cancel = true;
+        }
+
+
+        private string Lang(string ru, string en)
+        {
+            return Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "ru" ? ru : en;
+        }
+        internal void Editor_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var editor = (FastColoredTextBox)sender;
+            syntax.Highlight(editor);
+        }
+
+        private void buttonRun_Click(object sender, EventArgs e)
+        {
+            gridErrors.Rows.Clear();
+
+            // получаем активную вкладку
+            var tab = tabControlEditor.SelectedTab;
+            if (tab == null) return;
+
+            // получаем editor внутри вкладки
+            var editor = tab.Controls[0] as FastColoredTextBox;
+            if (editor == null) return;
+
+            string text = editor.Text;
+
+            var scanner = new Scanner(text);
+            var tokens = scanner.Analyze();
+
+            foreach (var t in tokens)
+            {
+                string lex = t.Lexeme == " " ? "пробел" : t.Lexeme;
+
+                gridErrors.Rows.Add(
+                    t.Code,
+                    t.Type,
+                    lex,
+                    $"{t.Line}: {t.Start}-{t.End}"
+                );
+            }
+        }
+        private void gridErrors_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            var row = gridErrors.Rows[e.RowIndex];
+            int code = Convert.ToInt32(row.Cells[0].Value);
+
+            if (code != 11) return;
+
+            string pos = row.Cells[3].Value?.ToString();
+            if (string.IsNullOrWhiteSpace(pos)) return;
+
+            // Убираем пробелы, табы, \r
+            pos = pos.Replace(" ", "").Replace("\t", "").Replace("\r", "");
+
+            int line = 1;
+            int col = 1;
+
+            // Формат "1:1-3"
+            if (pos.Contains(":"))
+            {
+                var parts = pos.Split(':', '-', StringSplitOptions.RemoveEmptyEntries);
+
+                if (parts.Length >= 2)
+                {
+                    int.TryParse(parts[0], out line);
+                    int.TryParse(parts[1], out col);
+                }
+            }
+            else
+            {
+                // Формат "1-3" или "3"
+                var parts = pos.Split('-', StringSplitOptions.RemoveEmptyEntries);
+
+                if (parts.Length >= 1)
+                    int.TryParse(parts[0], out col);
+            }
+
+            var tab = tabControlEditor.SelectedTab;
+            if (tab == null) return;
+
+            var editor = tab.Controls[0] as FastColoredTextBox;
+            if (editor == null) return;
+
+            editor.Selection.Start = new Place(col - 1, line - 1);
+            editor.DoSelectionVisible();
+            editor.Focus();
+        }
+
     }
 }
