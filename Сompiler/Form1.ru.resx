@@ -324,6 +324,12 @@
   <data name="текстToolStripMenuItem.Text" xml:space="preserve">
     <value>Текст</value>
   </data>
+  <data name="парсерToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 26</value>
+  </data>
+  <data name="парсерToolStripMenuItem.Text" xml:space="preserve">
+    <value>Парсер</value>
+  </data>
   <data name="пускToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>55, 42</value>
   </data>

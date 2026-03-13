@@ -91,6 +91,7 @@
             statusLines = new ToolStripStatusLabel();
             statusSize = new ToolStripStatusLabel();
             statusLang = new ToolStripStatusLabel();
+            парсерToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -318,6 +319,7 @@
             // пускToolStripMenuItem
             // 
             resources.ApplyResources(пускToolStripMenuItem, "пускToolStripMenuItem");
+            пускToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { парсерToolStripMenuItem });
             пускToolStripMenuItem.Name = "пускToolStripMenuItem";
             // 
             // справкаToolStripMenuItem
@@ -472,6 +474,12 @@
             resources.ApplyResources(statusLang, "statusLang");
             statusLang.Name = "statusLang";
             // 
+            // парсерToolStripMenuItem
+            // 
+            resources.ApplyResources(парсерToolStripMenuItem, "парсерToolStripMenuItem");
+            парсерToolStripMenuItem.Name = "парсерToolStripMenuItem";
+            парсерToolStripMenuItem.Click += парсерToolStripMenuItem_Click;
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
@@ -565,5 +573,6 @@
         private DataGridViewTextBoxColumn Type;
         private DataGridViewTextBoxColumn Lexeme;
         private DataGridViewTextBoxColumn Position;
+        private ToolStripMenuItem парсерToolStripMenuItem;
     }
 }

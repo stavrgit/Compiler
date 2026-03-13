@@ -349,8 +349,6 @@ namespace Сompiler
             if (exitResult == DialogResult.No)
                 e.Cancel = true;
         }
-
-
         private string Lang(string ru, string en)
         {
             return Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "ru" ? ru : en;
@@ -439,5 +437,18 @@ namespace Сompiler
             editor.Focus();
         }
 
+        private void парсерToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var editor = GetCurrentEditor();
+            if (editor == null)
+            {
+                MessageBox.Show("Нет открытого файла.");
+                return;
+            }
+
+            string code = editor.Text;
+            string result = Parser.RunParser(code);
+            MessageBox.Show(result, "Результат parser.exe");
+        }
     }
 }
