@@ -139,7 +139,7 @@
     <value>1506, 184</value>
   </data>
   <data name="tabPage1.Text" xml:space="preserve">
-    <value>Результаты</value>
+    <value>будущее(наверное)</value>
   </data>
   <data name="Code.HeaderText" xml:space="preserve">
     <value>Код</value>
@@ -165,17 +165,17 @@
   <data name="Position.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="gridErrors.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="gridScanner.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="gridErrors.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="gridScanner.Size" type="System.Drawing.Size, System.Drawing">
     <value>1500, 178</value>
   </data>
   <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
     <value>1506, 184</value>
   </data>
   <data name="tabPage2.Text" xml:space="preserve">
-    <value>Ошибки</value>
+    <value>Сканер</value>
   </data>
   <data name="tabControlOutput.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -325,7 +325,7 @@
     <value>Текст</value>
   </data>
   <data name="парсерToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
+    <value>144, 26</value>
   </data>
   <data name="парсерToolStripMenuItem.Text" xml:space="preserve">
     <value>Парсер</value>

@@ -38,10 +38,16 @@ namespace Сompiler
 
             };
 
-            tab.Tag = new FileTabInfo
+            tab.Tag = new File_Info
             {
                 Path = null,
                 IsModified = false
+            };
+
+            editor.TextChanged += (s, e) =>
+            {
+                if (tab.Tag is File_Info info)
+                    info.IsModified = true;
             };
 
             editor.SelectionChanged += (s, e) => status.UpdateStatus();
@@ -63,7 +69,7 @@ namespace Сompiler
 
                     tab.Text = Path.GetFileName(path);
 
-                    if (tab.Tag is FileTabInfo info)
+                    if (tab.Tag is File_Info info)
                     {
                         info.Path = path;
                         info.IsModified = false;

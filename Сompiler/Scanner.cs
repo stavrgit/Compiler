@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Сompiler
 {
@@ -14,12 +12,13 @@ namespace Сompiler
         private int _col = 1;
 
         private static readonly string[] Forbidden =
-         {
+        {
             "int", "float", "double", "string", "char", "bool",
             "if", "else", "for", "return", "break", "continue",
             "class", "public", "private", "protected", "static",
             "void", "new", "using", "namespace"
         };
+
         public Scanner(string text)
         {
             _text = text ?? string.Empty;
@@ -32,6 +31,7 @@ namespace Сompiler
             while (!EOF())
             {
                 char c = Peek();
+
                 if (c == ' ')
                 {
                     tokens.Add(new Token(3, "разделитель", " ", _line, _col, _col));
@@ -76,6 +76,7 @@ namespace Сompiler
 
             return tokens;
         }
+
         private Token ReadIdentifier()
         {
             int start = _col;
@@ -95,7 +96,6 @@ namespace Сompiler
             return new Token(2, "идентификатор", lex, _line, start, _col - 1);
         }
 
-
         private Token ReadNumber()
         {
             int start = _col;
@@ -106,7 +106,7 @@ namespace Сompiler
 
             string lex = _text.Substring(startPos, _pos - startPos);
 
-            return new Token(10, "число", lex, _line, start, _col - 1);
+            return new Token(10, "целое без знака", lex, _line, start, _col - 1);
         }
 
         private Token ReadSymbol()
@@ -114,6 +114,7 @@ namespace Сompiler
             int start = _col;
             char c = Peek();
 
+            // ; :
             if (c == ';')
             {
                 Advance();
@@ -125,7 +126,7 @@ namespace Сompiler
                 Advance();
                 return new Token(8, "начало блока", ":", _line, start, _col - 1);
             }
-            
+
             if ("=<>!".Contains(c))
                 return ReadOperator(start);
 
@@ -136,7 +137,7 @@ namespace Сompiler
         private Token ReadOperator(int start)
         {
             char first = Peek();
-            Advance();
+            Advance(); 
 
             if (!EOF() && Peek() == '=')
             {
@@ -160,10 +161,10 @@ namespace Сompiler
                 '=' => new Token(4, "присваивание", "=", _line, start, _col - 1),
                 '<' => new Token(5, "оператор сравнения", "<", _line, start, _col - 1),
                 '>' => new Token(5, "оператор сравнения", ">", _line, start, _col - 1),
+                '!' => Token.Error("!", _line, start, _col - 1),
                 _ => Token.Error(first.ToString(), _line, start, _col - 1)
             };
         }
-
         private bool EOF() => _pos >= _text.Length;
         private char Peek() => _text[_pos];
         private void Advance() { _pos++; _col++; }

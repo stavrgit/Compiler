@@ -30,15 +30,25 @@ namespace Сompiler
                     process.StandardInput.Write(input);
                     process.StandardInput.Close();
 
-                    string output = process.StandardOutput.ReadToEnd();
-                    string error = process.StandardError.ReadToEnd();
+                    string stdout = process.StandardOutput.ReadToEnd();
+                    string stderr = process.StandardError.ReadToEnd();
 
                     process.WaitForExit();
 
-                    if (!string.IsNullOrWhiteSpace(error))
-                        output += "\n[ERROR]\n" + error;
+                    string combined = stdout + "\n" + stderr;
 
-                    return output;
+                    if (combined.Contains("Lexical error"))
+                    {
+                        string msg = ExtractError(combined);
+                        return "Лексическая ошибка:\n" + msg;
+                    }
+
+                    if (combined.Contains("Syntax error"))
+                    {
+                        string msg = ExtractError(combined);
+                        return "Синтаксическая ошибка:\n" + msg;
+                    }
+                    return "Синтаксический анализ: все хорошо";
                 }
             }
             catch (Exception ex)
@@ -46,5 +56,16 @@ namespace Сompiler
                 return "Ошибка запуска parser.exe:\n" + ex.Message;
             }
         }
+
+        private static string ExtractError(string text)
+        {
+            foreach (var line in text.Split('\n'))
+            {
+                if (line.Contains("error", StringComparison.OrdinalIgnoreCase))
+                    return line.Trim();
+            }
+            return text.Trim();
+        }
     }
+
 }

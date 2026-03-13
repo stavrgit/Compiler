@@ -16,12 +16,12 @@ namespace Сompiler
 
         public void New_File(FastColoredTextBox editor)
         {
-            CurrentFileName = $"Новый файл_{newFileCounter}";
-            newFileCounter++;
+            CurrentFileName = $"Новый файл_{newFileCounter++}";
             CurrentFilePath = null;
             IsModified = false;
-            editor?.Clear();
+            editor.Text = ""; 
         }
+
         public void Load_File(FastColoredTextBox editor, string path)
         {
             editor.Text = File.ReadAllText(path);
@@ -29,7 +29,7 @@ namespace Сompiler
             CurrentFileName = Path.GetFileName(path);
             IsModified = false;
         }
-        public bool Save_File(FastColoredTextBox editor, string? path)
+        public string? Save_File(FastColoredTextBox editor, string? path)
         {
             try
             {
@@ -39,19 +39,21 @@ namespace Сompiler
                     sfd.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
 
                     if (sfd.ShowDialog() != DialogResult.OK)
-                        return false;
+                        return null;
 
                     path = sfd.FileName;
                 }
 
                 File.WriteAllText(path, editor.Text);
-                return true;
+                CurrentFilePath = path;
+                CurrentFileName = Path.GetFileName(path);
+                IsModified = false;
+                return path;
             }
             catch
             {
-                return false;
+                return null;
             }
         }
-
     }
 }
