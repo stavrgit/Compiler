@@ -31,3 +31,19 @@ result = value;
 начало блока :
 
 конец конструкции ;
+
+## Диаграмма состояний:
+<img width="503" height="752" alt="image" src="https://github.com/user-attachments/assets/8678af60-52df-4b26-a9f4-8b8b4594c33e" />
+
+## Тестовые примеры:
+while x < 10: y = y + 1;
+<img width="1894" height="1000" alt="image" src="https://github.com/user-attachments/assets/07d8da3b-51c2-475e-ad68-472229c57be7" />
+
+while x @ 5: y = 1; (с ошибкой)
+<img width="1886" height="805" alt="image" src="https://github.com/user-attachments/assets/c8f3b0c3-235d-4c57-a49c-01ff27e38123" />
+
+while counter < 100:
+    value = 10;
+    result = value;   (многострочный)
+<img width="1876" height="867" alt="image" src="https://github.com/user-attachments/assets/b8b742d2-bfda-4483-af46-7951941ec8cb" />
+
