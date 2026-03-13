@@ -212,3 +212,11 @@ void yyerror(const char *s)
 }
 ## Классификация
 Bison работает с контекстно‑свободными грамматиками (тип 2) и строит LALR(1)‑парсер.
+
+## Тестовые примеры:
+1) правильный
+ <img width="1023" height="371" alt="image" src="https://github.com/user-attachments/assets/28d4b34c-b176-49e9-bfdb-54a2da87b6c4" />
+2) неправильный
+   <img width="1002" height="363" alt="image" src="https://github.com/user-attachments/assets/0e70b36f-f27a-48a7-882c-6b1da0ab8df6" />
+3) многострочный
+   <img width="1014" height="499" alt="image" src="https://github.com/user-attachments/assets/4252d9ec-883e-42a0-9840-a0c65f40643b" />
