@@ -33,7 +33,10 @@
             tabControlEditor = new TabControl();
             tabControlOutput = new TabControl();
             tabPage1 = new TabPage();
-            txtResults = new TextBox();
+            dataGridParser = new DataGridView();
+            Неверный = new DataGridViewTextBoxColumn();
+            Местоположение = new DataGridViewTextBoxColumn();
+            Описание = new DataGridViewTextBoxColumn();
             tabPage2 = new TabPage();
             gridScanner = new DataGridView();
             Code = new DataGridViewTextBoxColumn();
@@ -65,6 +68,7 @@
             исходныйКодПргограммыToolStripMenuItem = new ToolStripMenuItem();
             пускToolStripMenuItem = new ToolStripMenuItem();
             парсерToolStripMenuItem = new ToolStripMenuItem();
+            сканерToolStripMenuItem = new ToolStripMenuItem();
             справкаToolStripMenuItem = new ToolStripMenuItem();
             вызовСправкиToolStripMenuItem = new ToolStripMenuItem();
             оПрограммеToolStripMenuItem = new ToolStripMenuItem();
@@ -98,6 +102,7 @@
             splitContainer1.SuspendLayout();
             tabControlOutput.SuspendLayout();
             tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridParser).BeginInit();
             tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gridScanner).BeginInit();
             menuStrip1.SuspendLayout();
@@ -138,15 +143,36 @@
             // tabPage1
             // 
             resources.ApplyResources(tabPage1, "tabPage1");
-            tabPage1.Controls.Add(txtResults);
+            tabPage1.Controls.Add(dataGridParser);
             tabPage1.Name = "tabPage1";
             tabPage1.UseVisualStyleBackColor = true;
             // 
-            // txtResults
+            // dataGridParser
             // 
-            resources.ApplyResources(txtResults, "txtResults");
-            txtResults.Name = "txtResults";
-            txtResults.ReadOnly = true;
+            resources.ApplyResources(dataGridParser, "dataGridParser");
+            dataGridParser.AllowUserToAddRows = false;
+            dataGridParser.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridParser.Columns.AddRange(new DataGridViewColumn[] { Неверный, Местоположение, Описание });
+            dataGridParser.Name = "dataGridParser";
+            dataGridParser.RowHeadersVisible = false;
+            // 
+            // Неверный
+            // 
+            Неверный.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            resources.ApplyResources(Неверный, "Неверный");
+            Неверный.Name = "Неверный";
+            // 
+            // Местоположение
+            // 
+            Местоположение.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            resources.ApplyResources(Местоположение, "Местоположение");
+            Местоположение.Name = "Местоположение";
+            // 
+            // Описание
+            // 
+            Описание.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            resources.ApplyResources(Описание, "Описание");
+            Описание.Name = "Описание";
             // 
             // tabPage2
             // 
@@ -319,14 +345,19 @@
             // пускToolStripMenuItem
             // 
             resources.ApplyResources(пускToolStripMenuItem, "пускToolStripMenuItem");
-            пускToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { парсерToolStripMenuItem });
+            пускToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { парсерToolStripMenuItem, сканерToolStripMenuItem });
             пускToolStripMenuItem.Name = "пускToolStripMenuItem";
             // 
             // парсерToolStripMenuItem
             // 
             resources.ApplyResources(парсерToolStripMenuItem, "парсерToolStripMenuItem");
             парсерToolStripMenuItem.Name = "парсерToolStripMenuItem";
-            парсерToolStripMenuItem.Click += парсерToolStripMenuItem_Click;
+            // 
+            // сканерToolStripMenuItem
+            // 
+            resources.ApplyResources(сканерToolStripMenuItem, "сканерToolStripMenuItem");
+            сканерToolStripMenuItem.Name = "сканерToolStripMenuItem";
+            сканерToolStripMenuItem.Click += сканерToolStripMenuItem_Click;
             // 
             // справкаToolStripMenuItem
             // 
@@ -496,7 +527,7 @@
             splitContainer1.ResumeLayout(false);
             tabControlOutput.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
-            tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridParser).EndInit();
             tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)gridScanner).EndInit();
             menuStrip1.ResumeLayout(false);
@@ -566,7 +597,6 @@
         private TabControl tabControlOutput;
         private TabPage tabPage1;
         private TabPage tabPage2;
-        private TextBox txtResults;
         private DataGridView gridScanner;
         internal ToolStripStatusLabel statusLines;
         private DataGridViewTextBoxColumn Code;
@@ -574,5 +604,10 @@
         private DataGridViewTextBoxColumn Lexeme;
         private DataGridViewTextBoxColumn Position;
         private ToolStripMenuItem парсерToolStripMenuItem;
+        private DataGridView dataGridParser;
+        private DataGridViewTextBoxColumn Неверный;
+        private DataGridViewTextBoxColumn Местоположение;
+        private DataGridViewTextBoxColumn Описание;
+        private ToolStripMenuItem сканерToolStripMenuItem;
     }
 }

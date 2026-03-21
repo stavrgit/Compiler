@@ -1,37 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows.Forms;
 
 namespace Сompiler
 {
     public class Output
     {
-        private readonly TextBox txtResults;
-        private readonly DataGridView gridErrors;
-        private readonly TabControl tabControl;
+        private readonly TabControl tabControlOutput;
+        private readonly DataGridView dataGridParser;  
+        private readonly DataGridView gridScanner;      
 
-        public Output(TabControl tabControl, TextBox txtResults, DataGridView gridErrors)
+        public Output(TabControl tabControlOutput, DataGridView dataGridParser, DataGridView gridScanner)
         {
-            this.tabControl = tabControl;
-            this.txtResults = txtResults;
-            this.gridErrors = gridErrors;
+            this.tabControlOutput = tabControlOutput;
+            this.dataGridParser = dataGridParser;
+            this.gridScanner = gridScanner;
         }
 
-        public void AddResult(string text)
+        public void AddParserError(string fragment, int line, int column, string message)
         {
-            txtResults.AppendText(text + Environment.NewLine);
-            tabControl.SelectedIndex = 0;
+            dataGridParser.Rows.Add(fragment, $"{line}:{column}", message);
+            tabControlOutput.SelectedIndex = 0; 
         }
 
-        public void AddError(string file, int line, int column, string message)
+        public void ClearParserErrors()
         {
-            gridErrors.Rows.Add(file, line, column, message);
-            tabControl.SelectedIndex = 1;
+            dataGridParser.Rows.Clear();
         }
-        public void ClearResults() => txtResults.Clear();
-        public void ClearErrors() => gridErrors.Rows.Clear();
+
+        public void AddScannerToken(int code, string type, string lexeme, string position)
+        {
+            gridScanner.Rows.Add(code, type, lexeme, position);
+            tabControlOutput.SelectedIndex = 1; 
+        }
+
+        public void ClearScannerTokens()
+        {
+            gridScanner.Rows.Clear();
+        }
     }
-
 }

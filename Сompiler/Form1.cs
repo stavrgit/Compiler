@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using FastColoredTextBoxNS;
 
 namespace Сompiler
@@ -27,7 +28,7 @@ namespace Сompiler
             tabControlEditor.Padding = new Point(20, 4);
             tabControlEditor.DrawItem += TabControlEditor_DrawItem;
             tabControlEditor.MouseDown += TabControlEditor_MouseDown;
-            _output = new Output(tabControlOutput, txtResults, gridScanner);
+            _output = new Output(tabControlOutput, dataGridParser, gridScanner);
             Clicks();
             tabControlEditor.SelectedIndexChanged += (s, e) => status.UpdateStatus();
             hotkeys = new HotkeyManager(this);
@@ -131,8 +132,9 @@ namespace Сompiler
             оПрограммеToolStripMenuItem.Click += About_Click;
             toolStripButton11.Click += About_Click;
 
-            пускToolStripMenuItem.Click += buttonRun_Click;
             toolStripButton9.Click += buttonRun_Click;
+            пускToolStripMenuItem.Click += buttonRun_Click;
+            парсерToolStripMenuItem.Click += buttonRun_Click;
         }
         internal FastColoredTextBox? GetCurrentEditor()
         {
@@ -387,6 +389,104 @@ namespace Сompiler
 
         private void buttonRun_Click(object sender, EventArgs e)
         {
+            var editor = GetCurrentEditor();
+            if (editor == null)
+                return;
+
+            string code = editor.Text;
+
+            _output.ClearParserErrors();
+            _output.ClearScannerTokens();
+
+            // Сканер
+            var scanner = new Scanner(code);
+            var tokens = scanner.Analyze();
+
+            foreach (var t in tokens)
+            {
+                string pos = $"{t.Line}:{t.Start}-{t.End}";
+                _output.AddScannerToken(t.Code, t.Type, t.Lexeme, pos);
+            }
+
+            // Парсер
+            var parser = new Parser(tokens);
+            parser.ParseProgram();
+
+            bool hasErrors = parser.Errors.Count > 0;
+
+            if (hasErrors)
+            {
+                // Вывод ошибок
+                foreach (var err in parser.Errors)
+                {
+                    int row = dataGridParser.Rows.Add(err.Fragment, $"{err.Line}:{err.Col}", err.Message);
+
+                    // Красная подсветка
+                    var r = dataGridParser.Rows[row];
+                    r.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
+                    r.DefaultCellStyle.ForeColor = Color.DarkRed;
+                }
+
+                MessageBox.Show("Обнаружены ошибки в коде.", "Парсер", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                // Одна зелёная строка
+                int row = dataGridParser.Rows.Add("—", "—", "Ошибок не обнаружено");
+
+                var r = dataGridParser.Rows[row];
+                r.DefaultCellStyle.BackColor = Color.FromArgb(200, 255, 200);
+                r.DefaultCellStyle.ForeColor = Color.DarkGreen;
+
+                MessageBox.Show("Ошибок не обнаружено.", "Парсер", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            tabControlOutput.SelectedIndex = 0;
+        }
+
+        private void gridScanner_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            var editor = GetCurrentEditor();
+            if (editor == null) return;
+
+            string pos = gridScanner.Rows[e.RowIndex].Cells[3].Value?.ToString();
+            if (string.IsNullOrWhiteSpace(pos)) return;
+
+            var p = pos.Split(':', '-');
+            int line = int.Parse(p[0].Trim()) - 1;
+            int start = int.Parse(p[1].Trim()) - 1;
+            int end = int.Parse(p[2].Trim());
+
+            editor.Selection.Start = new Place(start, line);
+            editor.Selection.End = new Place(end, line);
+            editor.Navigate(line);
+            editor.Focus();
+        }
+
+        private void dataGridParser_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            var editor = GetCurrentEditor();
+            if (editor == null) return;
+
+            string pos = dataGridParser.Rows[e.RowIndex].Cells[1].Value?.ToString();
+            if (string.IsNullOrWhiteSpace(pos) || pos == "—") return;
+
+            var p = pos.Split(':');
+            int line = int.Parse(p[0]) - 1;
+            int col = int.Parse(p[1]) - 1;
+
+            editor.Selection.Start = new Place(col, line);
+            editor.Selection.End = new Place(col + 1, line);
+            editor.Navigate(line);
+            editor.Focus();
+        }
+
+        private void сканерToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             gridScanner.Rows.Clear();
 
             var tab = tabControlEditor.SelectedTab;
@@ -418,45 +518,11 @@ namespace Сompiler
 
                 if (t.Type == "ошибка" || t.Code == 11)
                 {
-                    row.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200); 
-                    row.DefaultCellStyle.ForeColor = Color.DarkRed;                
+                    row.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
+                    row.DefaultCellStyle.ForeColor = Color.DarkRed;
                     row.DefaultCellStyle.Font = new Font(gridScanner.Font, FontStyle.Bold);
                 }
             }
-        }
-        private void парсерToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var editor = GetCurrentEditor();
-            if (editor == null)
-            {
-                MessageBox.Show("Нет открытого файла.");
-                return;
-            }
-
-            string code = editor.Text;
-            string result = Parser.RunParser(code);
-            MessageBox.Show(result, "Результат parser.exe");
-        }
-
-        private void gridScanner_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-
-            var editor = GetCurrentEditor();
-            if (editor == null) return;
-
-            string pos = gridScanner.Rows[e.RowIndex].Cells[3].Value?.ToString();
-            if (string.IsNullOrWhiteSpace(pos)) return;
-    
-            var p = pos.Split(':', '-');
-            int line = int.Parse(p[0].Trim()) - 1;
-            int start = int.Parse(p[1].Trim()) - 1;
-            int end = int.Parse(p[2].Trim());
-
-            editor.Selection.Start = new Place(start, line);
-            editor.Selection.End = new Place(end, line);
-            editor.Navigate(line);
-            editor.Focus();
         }
     }
 }
