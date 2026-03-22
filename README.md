@@ -1,11 +1,12 @@
 #                                                 Лабораторная работа 2. Разработка лексического анализатора (сканера)
 
                                                                                       
-##                                                                                   Цель работы.
-Изучить назначение и принципы работы лексического анализатора в структуре компилятора. Спроектировать алгоритм (диаграмму состояний) и выполнить программную реализацию сканера для выделения лексем из входного текста. Интегрировать разработанный модуль в ранее созданный графический интерфейс языкового процессора.
+##                                                                                 Цель работы.
+Изучить назначение и принципы работы синтаксического анализатора в структуре компилятора. Спроектировать грамматику, построить соответствующую схему метода анализа грамматики и выполнить программную реализацию парсера с нейтрализацией синтаксических ошибок методом Айронса. Интегрировать разработанный модуль в ранее созданный графический интерфейс языкового процессора.
 
+## Маст Денис АВТ - 313
 ## Постановка задачи.
-Разработать лексический анализатор (сканер) в соответствии с индивидуальным вариантом задания, интегрировать его в приложение из лабораторной работы №1 и обеспечить наглядный вывод результатов..
+Разработать синтаксический анализатор (парсер) в соответствии с индивидуальным вариантом курсовой (расчетно-графической) работы, интегрировать его в приложение из лабораторной работы №1 и обеспечить наглядный вывод результатов анализа.
 
 ## Вариант задания:
 <img width="494" height="83" alt="image" src="https://github.com/user-attachments/assets/3b508c78-70c5-4e05-a225-e1d0c4288cbb" />
@@ -117,109 +118,126 @@ S = <Программа>
 Грамматика относится к контекстно‑свободным (тип 2) т.к. слева всегда один нетерминал, справа — произвольная последовательность терминалов и нетерминалов,
 правила не зависят от контекста.
 
+## Метод анализа
+## Рекурсвиный спуск
+<img width="1024" height="486" alt="image" src="https://github.com/user-attachments/assets/40626d0f-0c4b-4bec-9af2-edd7bb69bbb6" />
 
-## Грамматика FLEX
-%{
-    #include "parser.tab.h"
-%}
+## Диагностика и нейтрализация синтаксических ошибок.
 
-WS      [ \t\r\n]+
-ID      [a-zA-Z][a-zA-Z0-9]*
-NUM     [0-9]+
+Разрабатываемый синтаксический анализатор основан на контекстно‑свободной грамматике (тип‑2 по классификации Хомского) и реализован методом рекурсивного спуска.
+Это определяет специфику поведения алгоритма Айронса при обработке ошибок.
+В КС‑грамматике, построенной для конструкции:
+while <логическое выражение> : <список операторов>
+каждый нетерминал соответствует отдельной рекурсивной функции.
+Поэтому в процессе разбора в каждый момент времени активно только одно правило грамматики, которое и формирует текущую ветвь дерева разбора.
 
-%%
 
-"while"         { return WHILE; }
 
-"<="            { return LE; }
-">="            { return GE; }
-"=="            { return EQ; }
-"!="            { return NE; }
-"<"             { return '<'; }
-">"             { return '>'; }
+## грамматика ANTLR
+grammar antler;
 
-":"             { return ':'; }
-";"             { return ';'; }
-"="             { return '='; }
+options { language = CSharp; }
 
-{NUM}           { yylval.ival = atoi(yytext); return NUMBER; }
-{ID}            { return IDENT; }
+ID      : LETTER (LETTER | DIGIT | '_')* ;
+INT     : DIGIT+ ;
 
-{WS}            { /* skip */ }
+fragment LETTER : [a-zA-Z] ;
+fragment DIGIT  : [0-9] ;
 
-.               { printf("Lexical error: %s\n", yytext); exit(1); }
+WS      : [ \t\r\n]+ -> skip ;
 
-%%
-## Классификация
-FLEX использует регулярные выражения и это регулярная грамматика (тип 3).
+AND : 'and' | '&&';
+OR  : 'or'  | '||';
 
-## грамматика BISON
-%{
-#include <stdio.h>
-#include <stdlib.h>
-
-void yyerror(const char *s);
-int yylex(void);
-%}
-
-%union {
-    int ival;
-}
-
-%token WHILE
-%token IDENT
-%token NUMBER
-%token LE GE EQ NE
-
-%type <ival> NUMBER
-
-%start Program
-
-%%
-
-Program
-    : WhileStmt
+program
+    : operatorWhile EOF
     ;
 
-WhileStmt
-    : WHILE Condition ':' StmtList
+operatorWhile
+    : 'while' logicalExpr ':' stmtList?
     ;
 
-Condition
-    : IDENT RelOp NUMBER
+stmtList
+    : statement stmtList
+    |
     ;
 
-RelOp
-    : '<'
-    | '>'
-    | LE
-    | GE
-    | EQ
-    | NE
+statement
+    : assignStmt
+    | logicalExpr ';'
     ;
 
-StmtList
-    : StmtList Stmt
-    | Stmt
+assignStmt
+    : ID assignOp logicalExpr ';'
     ;
 
-Stmt
-    : IDENT '=' Expr ';'
+assignOp
+    : '=' | '+=' | '-=' | '*=' | '/='
     ;
 
-Expr
-    : IDENT
-    | NUMBER
+logicalExpr
+    : orExpr
     ;
 
-%%
+orExpr
+    : andExpr orTail
+    ;
 
-void yyerror(const char *s)
-{
-    printf("Синтаксическая ошибка: %s\n", s);
-}
-## Классификация
-Bison работает с контекстно‑свободными грамматиками (тип 2) и строит LALR(1)‑парсер.
+orTail
+    : OR andExpr orTail
+    |
+    ;
+
+andExpr
+    : relExpr andTail
+    ;
+
+andTail
+    : AND relExpr andTail
+    |
+    ;
+
+relExpr
+    : addExpr relTail
+    ;
+
+relTail
+    : relOp addExpr
+    |
+    ;
+
+relOp
+    : '<' | '>' | '<=' | '>=' | '==' | '!='
+    ;
+
+addExpr
+    : mulExpr addTail
+    ;
+
+addTail
+    : '+' mulExpr addTail
+    | '-' mulExpr addTail
+    |
+    ;
+
+mulExpr
+    : factor mulTail
+    ;
+
+mulTail
+    : '*' factor mulTail
+    | '/' factor mulTail
+    |
+    ;
+
+factor
+    : ID
+    | INT
+    | '(' logicalExpr ')'
+    | 'not' factor
+    | '!' factor
+    ;
+
 
 ## Тестовые примеры:
 1) правильный
