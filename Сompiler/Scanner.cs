@@ -87,7 +87,7 @@ namespace Сompiler
 
             while (!EOF() && (char.IsLetterOrDigit(Peek()) || Peek() == '_'))
                 Advance();
-
+            
             string lex = _text.Substring(startPos, _pos - startPos);
 
             if (lex == "while")

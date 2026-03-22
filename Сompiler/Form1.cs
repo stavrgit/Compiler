@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using FastColoredTextBoxNS;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Сompiler
 {
@@ -133,7 +134,7 @@ namespace Сompiler
             toolStripButton11.Click += About_Click;
 
             toolStripButton9.Click += buttonRun_Click;
-            пускToolStripMenuItem.Click += buttonRun_Click;
+            //пускToolStripMenuItem.Click += buttonRun_Click;
             парсерToolStripMenuItem.Click += buttonRun_Click;
         }
         internal FastColoredTextBox? GetCurrentEditor()
@@ -398,7 +399,6 @@ namespace Сompiler
             _output.ClearParserErrors();
             _output.ClearScannerTokens();
 
-            // Сканер
             var scanner = new Scanner(code);
             var tokens = scanner.Analyze();
 
@@ -408,7 +408,6 @@ namespace Сompiler
                 _output.AddScannerToken(t.Code, t.Type, t.Lexeme, pos);
             }
 
-            // Парсер
             var parser = new Parser(tokens);
             parser.ParseProgram();
 
@@ -416,12 +415,10 @@ namespace Сompiler
 
             if (hasErrors)
             {
-                // Вывод ошибок
                 foreach (var err in parser.Errors)
                 {
                     int row = dataGridParser.Rows.Add(err.Fragment, $"{err.Line}:{err.Col}", err.Message);
 
-                    // Красная подсветка
                     var r = dataGridParser.Rows[row];
                     r.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
                     r.DefaultCellStyle.ForeColor = Color.DarkRed;
@@ -431,7 +428,6 @@ namespace Сompiler
             }
             else
             {
-                // Одна зелёная строка
                 int row = dataGridParser.Rows.Add("—", "—", "Ошибок не обнаружено");
 
                 var r = dataGridParser.Rows[row];
@@ -467,62 +463,133 @@ namespace Сompiler
 
         private void dataGridParser_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0) return;
+            var row = dataGridParser.CurrentRow;
+            if (row == null)
+                return;
 
+            string location = row.Cells[1].Value?.ToString();
+            if (string.IsNullOrWhiteSpace(location))
+                return;
+
+            MessageBox.Show(location);
+
+            var parts = location.Split(':');
+            if (parts.Length != 2)
+                return;
+
+            if (!int.TryParse(parts[0].Trim(), out int line))
+                return;
+
+            string colPart = parts[1].Split('-')[0].Trim();
+
+            if (!int.TryParse(colPart, out int pos))
+                return;
+
+            NavigateToPosition(line, pos);
+        }
+
+        private void NavigateToPosition(int line, int pos)
+        {
             var editor = GetCurrentEditor();
-            if (editor == null) return;
+            if (editor == null || editor.LinesCount == 0)
+                return;
 
-            string pos = dataGridParser.Rows[e.RowIndex].Cells[1].Value?.ToString();
-            if (string.IsNullOrWhiteSpace(pos) || pos == "—") return;
+            int lineIndex = Math.Max(0, line - 1);
+            if (lineIndex >= editor.LinesCount)
+                return;
 
-            var p = pos.Split(':');
-            int line = int.Parse(p[0]) - 1;
-            int col = int.Parse(p[1]) - 1;
+            int columnIndex = Math.Max(0, pos - 1);
 
-            editor.Selection.Start = new Place(col, line);
-            editor.Selection.End = new Place(col + 1, line);
-            editor.Navigate(line);
+            int lineLength = editor.Lines[lineIndex].Length;
+            columnIndex = Math.Min(columnIndex, lineLength);
+
+            var place = new FastColoredTextBoxNS.Place(columnIndex, lineIndex);
+
+            editor.Selection.Start = place;
+            editor.Selection.End = place;
+
+            editor.DoSelectionVisible();
             editor.Focus();
         }
 
-        private void сканерToolStripMenuItem_Click(object sender, EventArgs e)
+        private void antlerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            gridScanner.Rows.Clear();
+            var editor = GetCurrentEditor();
+            if (editor == null)
+                return;
 
-            var tab = tabControlEditor.SelectedTab;
-            if (tab == null) return;
+            dataGridParser.Rows.Clear();
+            string code = editor.Text;
 
-            var editor = tab.Controls[0] as FastColoredTextBox;
-            if (editor == null) return;
+            var inputStream = new Antlr4.Runtime.AntlrInputStream(code);
+            var antlrLexer = new antlerLexer(inputStream);
+            var antlrTokens = new Antlr4.Runtime.CommonTokenStream(antlrLexer);
+            var antlrParser = new antlerParser(antlrTokens);
 
-            string text = editor.Text;
+            var antlrErrors = new List<string>();
 
-            var scanner = new Scanner(editor.Text);
-            var tokens = scanner.Analyze();
+            antlrParser.RemoveErrorListeners();
+            antlrParser.AddErrorListener(new AntlrErrorCollector(antlrErrors));
 
-            syntax.ClearErrors(editor);
+            antlrParser.program();
 
-            foreach (var t in tokens)
+            if (antlrErrors.Count > 0)
             {
-                string lex = t.Lexeme == " " ? "пробел" : t.Lexeme;
-
-                gridScanner.Rows.Add(
-                    t.Code,
-                    t.Type,
-                    lex,
-                    $"{t.Line}: {t.Start}-{t.End}"
-                );
-
-                int rowIndex = gridScanner.Rows.Count - 1;
-                var row = gridScanner.Rows[rowIndex];
-
-                if (t.Type == "ошибка" || t.Code == 11)
+                foreach (var err in antlrErrors)
                 {
-                    row.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
-                    row.DefaultCellStyle.ForeColor = Color.DarkRed;
-                    row.DefaultCellStyle.Font = new Font(gridScanner.Font, FontStyle.Bold);
+                    int row = dataGridParser.Rows.Add("ANTLR", "—", err);
+                    var r = dataGridParser.Rows[row];
+                    r.DefaultCellStyle.BackColor = Color.FromArgb(255, 230, 200);
+                    r.DefaultCellStyle.ForeColor = Color.DarkRed;
                 }
             }
+            else
+            {
+                int row = dataGridParser.Rows.Add("ANTLR", "—", "Ошибок нет");
+                var r = dataGridParser.Rows[row];
+                r.DefaultCellStyle.BackColor = Color.FromArgb(220, 255, 220);
+                r.DefaultCellStyle.ForeColor = Color.DarkGreen;
+            }
+        }
+
+        private void пускToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void постановкаЗадачиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            help.Show_Task();
+        }
+
+        private void грамматикаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            help.Show_Grammar();
+        }
+
+        private void класификацияГрамматикиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            help.Show_GrammarClassification();
+        }
+
+        private void методАнализаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            help.Show_AnalysisMethod();
+        }
+
+        private void тестовыйПримерToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            help.Show_TestExample();
+        }
+
+        private void списокЛитературыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            help.Show_Literature();
+        }
+
+        private void исходныйКодПргограммыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            help.Show_SourceCode();
         }
     }
 }

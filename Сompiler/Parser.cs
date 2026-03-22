@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Antlr4.Runtime.Atn;
+using System;
 using System.Collections.Generic;
 
 namespace Сompiler
@@ -13,197 +14,90 @@ namespace Сompiler
         private Token Current =>
             _pos < _tokens.Count ? _tokens[_pos] : _tokens[_tokens.Count - 1];
 
+        private enum ParseResult { Ok, Error }
+
+        private readonly Stack<string> _context = new();
+
+        private static readonly string[] SyncTokens = { ";", ")", ":", "while" };
+        private bool _errorInCurrentNode = false;
+
+
         public Parser(List<Token> tokens)
         {
             _tokens = tokens;
-            Console.WriteLine("=== USING NEW PARSER ===");
         }
 
-        // ---------------------------------------------------------
-        //  ВХОДНАЯ ТОЧКА
-        // ---------------------------------------------------------
-        public void ParseProgram()
+        private void InsertQ(string lexeme)
         {
-            ParseWhile();
+            var fake = new Token(
+                2,
+                "исправление",
+                lexeme,
+                Current.Line,
+                Current.Start,
+                Current.Start
+            );
+
+            _tokens.Insert(_pos, fake);
         }
 
-        // ---------------------------------------------------------
-        //  while <LogicExpr> : <StmtList>
-        // ---------------------------------------------------------
-        private bool ParseWhile()
+        private string BuildQ(string broken)
         {
-            int start = _pos;
-
-            if (Current.Lexeme != "while")
+            return broken switch
             {
-                while (_pos < _tokens.Count &&
-                       Current.Lexeme != "while" &&
-                       Current.Lexeme != ":")
-                    _pos++;
-
-                int end = Math.Max(start, _pos - 1);
-                ErrorRange(start, end, "Ожидалось 'while'");
-                return false;
-            }
-
-            ExpectLexeme("while");
-            ExpectSpaceAfterKeyword();
-
-            if (!ParseLogicExpr())
-            {
-                SyncTo(":");
-                if (Current.Lexeme == ":")
-                    _pos++;
-                return false;
-            }
-
-            ExpectLexeme(":");
-
-            ParseStmtList();
-            return true;
+                "Factor" => "i",
+                "MulExpr" => "0",
+                "AddExpr" => "0",
+                "RelExpr" => "0",
+                "AndExpr" => "0",
+                "OrExpr" => "0",
+                "LogicExpr" => "0",
+                _ => "0"
+            };
         }
 
-        // ---------------------------------------------------------
-        //  ЛОГИКА (and/or/not и &&/||/!)
-        // ---------------------------------------------------------
-        private bool ParseLogicExpr()
+        private void SyncTo(params string[] lexemes)
         {
-            return ParseOrExpr();
+            while (_pos < _tokens.Count &&
+                   Array.IndexOf(lexemes, Current.Lexeme) == -1)
+                _pos++;
         }
 
-
-
-        private bool ParseOrExpr()
+        private ParseResult IronError(string expected)
         {
-            int start = _pos;
+            int startPos = _pos;
+            Token j = Current;
 
-            if (!ParseAndExpr())
-            {
-                ErrorRange(start, _pos - 1, "Ошибка в логическом выражении");
-                return false;
-            }
-
-            while (Current.Lexeme == "or" || Current.Lexeme == "||" || Current.Code == 31)
+            var bad = Current;
+            while (_pos < _tokens.Count &&
+                   _tokens[_pos].Lexeme == bad.Lexeme &&
+                   _tokens[_pos].Code == bad.Code)
             {
                 _pos++;
-                if (!ParseAndExpr())
-                {
-                    ErrorRange(start, _pos - 1, "Ошибка в логическом выражении");
-                    return false;
-                }
             }
 
-            return true;
+            int endPos = _pos - 1;
+
+            string broken = _context.Count > 0 ? _context.Peek() : "Factor";
+            string q = BuildQ(broken);
+
+            InsertQ(q);
+
+            ErrorRange(startPos, endPos, $"Ожидался {expected}");
+
+            return ParseResult.Ok;
         }
-
-        private bool ParseAndExpr()
+        private ParseResult ParseFactor()
         {
-            int start = _pos;
-
-            if (!ParseRelExpr())
-            {
-                ErrorRange(start, _pos - 1, "Ошибка в логическом выражении");
-                return false;
-            }
-
-            while (Current.Lexeme == "and" || Current.Lexeme == "&&" || Current.Code == 30)
-            {
-                _pos++;
-                if (!ParseRelExpr())
-                {
-                    ErrorRange(start, _pos - 1, "Ошибка в логическом выражении");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private bool ParseRelExpr()
-        {
-            int start = _pos;
-
-            if (!ParseAddExpr())
-            {
-                ErrorRange(start, _pos - 1, "Ошибка в условии");
-                return false;
-            }
-
-            if (IsCompareOp(Current))
-            {
-                _pos++;
-                if (!ParseAddExpr())
-                {
-                    ErrorRange(start, _pos - 1, "Ошибка в условии");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private bool IsCompareOp(Token t)
-        {
-            return t.Lexeme is "<" or ">" or "<=" or ">=" or "==" or "!=";
-        }
-
-        // ---------------------------------------------------------
-        //  АРИФМЕТИКА
-        // ---------------------------------------------------------
-        private bool ParseAddExpr()
-        {
-            int start = _pos;
-
-            if (!ParseMulExpr())
-            {
-                ErrorRange(start, _pos - 1, "Ошибка в арифметическом выражении");
-                return false;
-            }
-
-            while (Current.Lexeme is "+" or "-")
-            {
-                _pos++;
-                if (!ParseMulExpr())
-                {
-                    ErrorRange(start, _pos - 1, "Ошибка в арифметическом выражении");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private bool ParseMulExpr()
-        {
-            int start = _pos;
-
-            if (!ParseFactor())
-            {
-                ErrorRange(start, _pos - 1, "Ошибка в арифметическом выражении");
-                return false;
-            }
-
-            while (Current.Lexeme is "*" or "/")
-            {
-                _pos++;
-                if (!ParseFactor())
-                {
-                    ErrorRange(start, _pos - 1, "Ошибка в арифметическом выражении");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private bool ParseFactor()
-        {
+            _context.Push("Factor");
             var t = Current;
 
             if (t.Lexeme == "not" || t.Lexeme == "!" || t.Code == 32)
             {
                 _pos++;
-                return ParseFactor();
+                var r = ParseFactor();
+                _context.Pop();
+                return r;
             }
 
             if (t.Lexeme == "(")
@@ -211,91 +105,325 @@ namespace Сompiler
                 int start = _pos;
                 _pos++;
 
-                if (!ParseLogicExpr())
+                var r = ParseLogicExpr();
+                if (r == ParseResult.Error)
                 {
-                    ErrorRange(start, _pos - 1, "Ошибка в логическом выражении");
-                    return false;
+                    SyncTo(")");
+                    if (Current.Lexeme == ")") _pos++;
+                    _context.Pop();
+                    return ParseResult.Ok;
                 }
 
                 if (Current.Lexeme == ")")
                 {
                     _pos++;
-                    return true;
+                    _context.Pop();
+                    return ParseResult.Ok;
                 }
 
                 ErrorRange(start, _pos - 1, "Ожидалась ')'");
-                return false;
+                _context.Pop();
+                return ParseResult.Ok;
             }
 
             if (t.Code == 2 || t.Code == 10)
             {
                 _pos++;
-                return true;
+                _context.Pop();
+                return ParseResult.Ok;
             }
 
-            Error(t, "Ожидался идентификатор или число");
-            return false;
+            var res = IronError("идентификатор или число");
+            _context.Pop();
+            return res;
         }
-
-        // ---------------------------------------------------------
-        //  СПИСОК ОПЕРАТОРОВ
-        // ---------------------------------------------------------
-        private void ParseStmtList()
+        private ParseResult ParseMulExpr()
         {
-            while (_pos < _tokens.Count &&
-                   Current.Lexeme != "" &&
-                   Current.Lexeme != "while")
+            _context.Push("MulExpr");
+
+            var r = ParseFactor();
+            if (r == ParseResult.Error)
             {
-                ParseStmt();
+                _context.Pop();
+                return ParseResult.Error;
             }
+
+            while (Current.Lexeme is "*" or "/")
+            {
+                _pos++;
+                r = ParseFactor();
+                if (r == ParseResult.Error)
+                {
+                    _context.Pop();
+                    return ParseResult.Error;
+                }
+            }
+
+            _context.Pop();
+            return ParseResult.Ok;
+        }
+        private ParseResult ParseAddExpr()
+        {
+            _context.Push("AddExpr");
+
+            var r = ParseMulExpr();
+            if (r == ParseResult.Error)
+            {
+                _context.Pop();
+                return ParseResult.Error;
+            }
+
+            while (Current.Lexeme is "+" or "-")
+            {
+                _pos++;
+                r = ParseMulExpr();
+                if (r == ParseResult.Error)
+                {
+                    _context.Pop();
+                    return ParseResult.Error;
+                }
+            }
+
+            _context.Pop();
+            return ParseResult.Ok;
+        }
+        private bool IsCompareOp(Token t)
+        {
+            return t.Lexeme is "<" or ">" or "<=" or ">=" or "==" or "!=";
         }
 
-        // ---------------------------------------------------------
-        //  ОПЕРАТОР
-        // ---------------------------------------------------------
-        private bool ParseStmt()
+        private ParseResult ParseRelExpr()
         {
-            int start = _pos;
+            _context.Push("RelExpr");
 
-            if (Current.Code != 2)
+            var r = ParseAddExpr();
+            if (r == ParseResult.Error)
             {
-                Error(Current, "Ожидался идентификатор");
+                _context.Pop();
+                return ParseResult.Error;
+            }
+
+            if (IsCompareOp(Current))
+            {
+                _pos++;
+                r = ParseAddExpr();
+                if (r == ParseResult.Error)
+                {
+                    _context.Pop();
+                    return ParseResult.Error;
+                }
+            }
+
+            _context.Pop();
+            return ParseResult.Ok;
+        }
+        private ParseResult ParseAndExpr()
+        {
+            _context.Push("AndExpr");
+
+            var r = ParseRelExpr();
+            if (r == ParseResult.Error)
+            {
+                _context.Pop();
+                return ParseResult.Error;
+            }
+
+            while (Current.Lexeme is "and" or "&&")
+            {
+                _pos++;
+                r = ParseRelExpr();
+                if (r == ParseResult.Error)
+                {
+                    _context.Pop();
+                    return ParseResult.Error;
+                }
+            }
+
+            _context.Pop();
+            return ParseResult.Ok;
+        }
+
+        private ParseResult ParseOrExpr()
+        {
+            _context.Push("OrExpr");
+
+            var r = ParseAndExpr();
+            if (r == ParseResult.Error)
+            {
+                _context.Pop();
+                return ParseResult.Error;
+            }
+
+            while (Current.Lexeme is "or" or "||")
+            {
+                _pos++;
+                r = ParseAndExpr();
+                if (r == ParseResult.Error)
+                {
+                    _context.Pop();
+                    return ParseResult.Error;
+                }
+            }
+
+            _context.Pop();
+            return ParseResult.Ok;
+        }
+
+        private ParseResult ParseLogicExpr()
+        {
+            _context.Push("LogicExpr");
+            var r = ParseOrExpr();
+            _context.Pop();
+            return r;
+        }
+        private ParseResult ParseStmt()
+        {
+            _errorInCurrentNode = false;
+
+            int start = _pos; 
+
+            if (Current.Code == 2)
+            {
+                _pos++;
+
+                if (Current.Lexeme is "=" or "+=" or "-=" or "*=" or "/=")
+                {
+                    _pos++;
+
+                    _context.Push("LogicExpr");
+                    var r = ParseLogicExpr();
+                    _context.Pop();
+
+                    if (r == ParseResult.Error)
+                    {
+                        SyncTo(";");
+                        if (Current.Lexeme == ";") _pos++;
+                        return ParseResult.Error;
+                    }
+
+                    ExpectLexeme(";");
+                    return ParseResult.Ok;
+                }
+
+                _pos = start;
+
+                _context.Push("LogicExpr");
+                if (ParseLogicExpr() == ParseResult.Ok)
+                {
+                    _context.Pop();
+                    ExpectLexeme(";");
+                    return ParseResult.Ok;
+                }
+                _context.Pop();
+
+                _pos = start;
+                ErrorRange(start, start, "Ожидалось присваивание или выражение");
                 SyncTo(";");
                 if (Current.Lexeme == ";") _pos++;
-                return false;
+                return ParseResult.Error;
+            }
+
+            ErrorRange(start, start, "Ожидался идентификатор");
+            SyncTo(";");
+            if (Current.Lexeme == ";") _pos++;
+            return ParseResult.Error;
+        }
+
+        private ParseResult ParseWhile()
+        {
+            _errorInCurrentNode = false;
+
+            if (Current.Lexeme != "while")
+            {
+                int start = _pos;
+                SyncTo("while", "");
+                int end = _pos - 1;
+                if (end < start) end = start;
+
+                ErrorRange(start, end, "Ожидалось 'while'");
+                return ParseResult.Ok;
             }
 
             _pos++;
 
-            if (Current.Lexeme is "=" or "+=" or "-=" or "*=" or "/=")
-            {
-                _pos++;
+            _context.Push("LogicExpr");
+            var r = ParseLogicExpr();
+            _context.Pop();
 
-                if (Current.Code is 2 or 10)
+            if (r == ParseResult.Error)
+            {
+                IronError("логическое выражение");
+                SyncTo(":");
+            }
+
+            if (Current.Lexeme == ":")
+                _pos++;
+            else
+            {
+                ErrorRange(_pos, _pos, "Ожидалось ':'");
+                SyncTo("+=", "-=", "*=", "/=", ";", "while");
+            }
+
+            while (_pos < _tokens.Count &&
+                   Current.Lexeme != "while" &&
+                   Current.Lexeme != "")
+            {
+                ParseStmt();
+            }
+
+            return ParseResult.Ok;
+        }
+        public void ParseProgram()
+        {
+            _pos = 0;      
+            Errors.Clear(); 
+
+            while (_pos < _tokens.Count && Current.Lexeme != "")
+            {
+                if (Current.Lexeme == "while")
                 {
-                    _pos++;
+                    var r = ParseWhile();
+                    if (r == ParseResult.Error)
+                        return;
                 }
                 else
                 {
-                    Error(Current, "Ожидался идентификатор или число");
-                    SyncTo(";");
-                    if (Current.Lexeme == ";") _pos++;
-                    return false;
+                    int startPos = _pos;
+                    SyncTo("while", "");
+
+                    int endPos = _pos - 1;
+                    if (endPos < startPos) endPos = startPos;
+
+                    ErrorRange(startPos, endPos, "Ожидалось 'while'");
                 }
 
-                ExpectLexeme(";");
-                return true;
             }
+        }
+        private void Error(Token t, string msg)
+        {
+            AddErrorOnce(new ParseError(t.Lexeme, t.Line, t.Start, msg));
+        }
+        private void ErrorRange(int startPos, int endPos, string msg)
+        {
+            if (startPos < 0 || startPos >= _tokens.Count)
+                return;
 
-            Error(Current, "Ожидалось '=' или '+=' или '-=' или '*=' или '/='");
-            SyncTo(";");
-            if (Current.Lexeme == ";") _pos++;
-            return false;
+            if (startPos > endPos)
+                endPos = startPos;
+
+            endPos = Math.Min(endPos, _tokens.Count - 1);
+
+            string fragment = "";
+            for (int i = startPos; i <= endPos; i++)
+                fragment += _tokens[i].Lexeme + " ";
+
+            fragment = fragment.Trim();
+
+            var t = _tokens[startPos];
+
+            AddErrorOnce(new ParseError(fragment, t.Line, t.Start, msg));
         }
 
-        // ---------------------------------------------------------
-        //  EXPECT
-        // ---------------------------------------------------------
         private Token ExpectLexeme(string lex)
         {
             var t = Current;
@@ -307,75 +435,23 @@ namespace Сompiler
             }
 
             Error(t, $"Ожидалось '{lex}'");
-            return InsertFake(lex, t.Code, "fake");
-        }
 
-        private void ExpectSpaceAfterKeyword()
-        {
-            if (_pos == 0 || _pos >= _tokens.Count)
-                return;
-
-            var kw = _tokens[_pos - 1];
-            var next = Current;
-
-            if (next.Line == kw.Line && next.Start != kw.End + 2)
-                Error(next, "После ключевого слова должен быть пробел");
-        }
-
-        // ---------------------------------------------------------
-        //  СИНХРОНИЗАЦИЯ
-        // ---------------------------------------------------------
-        private void SyncTo(params string[] lexemes)
-        {
-            while (_pos < _tokens.Count &&
-                   Array.IndexOf(lexemes, Current.Lexeme) == -1)
-                _pos++;
-        }
-
-        // ---------------------------------------------------------
-        //  ОШИБКИ
-        // ---------------------------------------------------------
-        private void Error(Token t, string msg)
-        {
-            Errors.Add(new ParseError(t.Lexeme, t.Line, t.Start, msg));
-        }
-
-        private void ErrorRange(int startPos, int endPos, string msg)
-        {
-            if (startPos < 0 || startPos >= _tokens.Count)
-                return;
-
-
-            endPos = Math.Min(endPos, _tokens.Count - 1);
-
-            string fragment = "";
-            for (int i = startPos; i <= endPos; i++)
-                fragment += _tokens[i].Lexeme + " ";
-
-            fragment = fragment.Trim();
-
-            var t = _tokens[startPos];
-            Errors.Add(new ParseError(fragment, t.Line, t.Start, msg));
-
-            if (startPos > endPos)
-            {
-                // показываем хотя бы текущий токен
-                startPos = endPos = Math.Min(_pos, _tokens.Count - 1);
-            }
-            if (string.IsNullOrWhiteSpace(fragment))
-                fragment = _tokens[startPos].Lexeme;
-        }
-
-        private Token InsertFake(string lexeme, int code, string type)
-        {
             return new Token(
-                code,
-                type,
-                lexeme,
-                Current.Line,
-                Current.Start,
-                Current.Start
+                2,
+                "fake",
+                lex,
+                t.Line,
+                t.Start,
+                t.Start
             );
+        }
+        private void AddErrorOnce(ParseError err)
+        {
+            if (_errorInCurrentNode)
+                return;
+
+            Errors.Add(err);
+            _errorInCurrentNode = true;
         }
     }
 }

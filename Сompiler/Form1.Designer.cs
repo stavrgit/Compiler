@@ -68,7 +68,7 @@
             исходныйКодПргограммыToolStripMenuItem = new ToolStripMenuItem();
             пускToolStripMenuItem = new ToolStripMenuItem();
             парсерToolStripMenuItem = new ToolStripMenuItem();
-            сканерToolStripMenuItem = new ToolStripMenuItem();
+            antlerToolStripMenuItem = new ToolStripMenuItem();
             справкаToolStripMenuItem = new ToolStripMenuItem();
             вызовСправкиToolStripMenuItem = new ToolStripMenuItem();
             оПрограммеToolStripMenuItem = new ToolStripMenuItem();
@@ -311,41 +311,48 @@
             // 
             resources.ApplyResources(постановкаЗадачиToolStripMenuItem, "постановкаЗадачиToolStripMenuItem");
             постановкаЗадачиToolStripMenuItem.Name = "постановкаЗадачиToolStripMenuItem";
+            постановкаЗадачиToolStripMenuItem.Click += постановкаЗадачиToolStripMenuItem_Click;
             // 
             // грамматикаToolStripMenuItem
             // 
             resources.ApplyResources(грамматикаToolStripMenuItem, "грамматикаToolStripMenuItem");
             грамматикаToolStripMenuItem.Name = "грамматикаToolStripMenuItem";
+            грамматикаToolStripMenuItem.Click += грамматикаToolStripMenuItem_Click;
             // 
             // класификацияГрамматикиToolStripMenuItem
             // 
             resources.ApplyResources(класификацияГрамматикиToolStripMenuItem, "класификацияГрамматикиToolStripMenuItem");
             класификацияГрамматикиToolStripMenuItem.Name = "класификацияГрамматикиToolStripMenuItem";
+            класификацияГрамматикиToolStripMenuItem.Click += класификацияГрамматикиToolStripMenuItem_Click;
             // 
             // методАнализаToolStripMenuItem
             // 
             resources.ApplyResources(методАнализаToolStripMenuItem, "методАнализаToolStripMenuItem");
             методАнализаToolStripMenuItem.Name = "методАнализаToolStripMenuItem";
+            методАнализаToolStripMenuItem.Click += методАнализаToolStripMenuItem_Click;
             // 
             // тестовыйПримерToolStripMenuItem
             // 
             resources.ApplyResources(тестовыйПримерToolStripMenuItem, "тестовыйПримерToolStripMenuItem");
             тестовыйПримерToolStripMenuItem.Name = "тестовыйПримерToolStripMenuItem";
+            тестовыйПримерToolStripMenuItem.Click += тестовыйПримерToolStripMenuItem_Click;
             // 
             // списокЛитературыToolStripMenuItem
             // 
             resources.ApplyResources(списокЛитературыToolStripMenuItem, "списокЛитературыToolStripMenuItem");
             списокЛитературыToolStripMenuItem.Name = "списокЛитературыToolStripMenuItem";
+            списокЛитературыToolStripMenuItem.Click += списокЛитературыToolStripMenuItem_Click;
             // 
             // исходныйКодПргограммыToolStripMenuItem
             // 
             resources.ApplyResources(исходныйКодПргограммыToolStripMenuItem, "исходныйКодПргограммыToolStripMenuItem");
             исходныйКодПргограммыToolStripMenuItem.Name = "исходныйКодПргограммыToolStripMenuItem";
+            исходныйКодПргограммыToolStripMenuItem.Click += исходныйКодПргограммыToolStripMenuItem_Click;
             // 
             // пускToolStripMenuItem
             // 
             resources.ApplyResources(пускToolStripMenuItem, "пускToolStripMenuItem");
-            пускToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { парсерToolStripMenuItem, сканерToolStripMenuItem });
+            пускToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { парсерToolStripMenuItem, antlerToolStripMenuItem });
             пускToolStripMenuItem.Name = "пускToolStripMenuItem";
             // 
             // парсерToolStripMenuItem
@@ -353,11 +360,11 @@
             resources.ApplyResources(парсерToolStripMenuItem, "парсерToolStripMenuItem");
             парсерToolStripMenuItem.Name = "парсерToolStripMenuItem";
             // 
-            // сканерToolStripMenuItem
+            // antlerToolStripMenuItem
             // 
-            resources.ApplyResources(сканерToolStripMenuItem, "сканерToolStripMenuItem");
-            сканерToolStripMenuItem.Name = "сканерToolStripMenuItem";
-            сканерToolStripMenuItem.Click += сканерToolStripMenuItem_Click;
+            resources.ApplyResources(antlerToolStripMenuItem, "antlerToolStripMenuItem");
+            antlerToolStripMenuItem.Name = "antlerToolStripMenuItem";
+            antlerToolStripMenuItem.Click += antlerToolStripMenuItem_Click;
             // 
             // справкаToolStripMenuItem
             // 
@@ -605,9 +612,9 @@
         private DataGridViewTextBoxColumn Position;
         private ToolStripMenuItem парсерToolStripMenuItem;
         private DataGridView dataGridParser;
+        private ToolStripMenuItem antlerToolStripMenuItem;
         private DataGridViewTextBoxColumn Неверный;
         private DataGridViewTextBoxColumn Местоположение;
         private DataGridViewTextBoxColumn Описание;
-        private ToolStripMenuItem сканерToolStripMenuItem;
     }
 }
