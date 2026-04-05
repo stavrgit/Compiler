@@ -96,6 +96,7 @@
             statusLines = new ToolStripStatusLabel();
             statusSize = new ToolStripStatusLabel();
             statusLang = new ToolStripStatusLabel();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -518,10 +519,17 @@
             resources.ApplyResources(statusLang, "statusLang");
             statusLang.Name = "statusLang";
             // 
+            // button1
+            // 
+            resources.ApplyResources(button1, "button1");
+            button1.Name = "button1";
+            button1.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(button1);
             Controls.Add(splitContainer1);
             Controls.Add(toolStrip1);
             Controls.Add(menuStrip1);
@@ -616,5 +624,6 @@
         private DataGridViewTextBoxColumn Неверный;
         private DataGridViewTextBoxColumn Местоположение;
         private DataGridViewTextBoxColumn Описание;
+        private Button button1;
     }
 }

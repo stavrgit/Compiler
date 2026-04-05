@@ -12,7 +12,9 @@ namespace Сompiler
         public List<ParseError> Errors { get; } = new();
 
         private Token Current =>
-            _pos < _tokens.Count ? _tokens[_pos] : _tokens[_tokens.Count - 1];
+        _pos < _tokens.Count
+        ? _tokens[_pos]
+        : new Token(0, "EOF", "", 0, 0, 0);
 
         private enum ParseResult { Ok, Error }
 
@@ -52,9 +54,14 @@ namespace Сompiler
                 "AndExpr" => "0",
                 "OrExpr" => "0",
                 "LogicExpr" => "0",
+                "Stmt" => ";",        
+                "While" => "while",    
+                "Colon" => ":",       
+                "Semicolon" => ";",       
                 _ => "0"
             };
         }
+
 
         private void SyncTo(params string[] lexemes)
         {
@@ -66,25 +73,19 @@ namespace Сompiler
         private ParseResult IronError(string expected)
         {
             int startPos = _pos;
-            Token j = Current;
 
-            var bad = Current;
-            while (_pos < _tokens.Count &&
-                   _tokens[_pos].Lexeme == bad.Lexeme &&
-                   _tokens[_pos].Code == bad.Code)
-            {
-                _pos++;
-            }
+            // 1. Пропускаем плохой токен (выкидываем whil или лишнюю скобку)
+            if (_pos < _tokens.Count) _pos++;
 
-            int endPos = _pos - 1;
-
+            // 2. Вставляем заглушку
             string broken = _context.Count > 0 ? _context.Peek() : "Factor";
             string q = BuildQ(broken);
-
             InsertQ(q);
 
-            ErrorRange(startPos, endPos, $"Ожидался {expected}");
+            // 3. Сдвигаем pos ЗА вставленный токен, чтобы парсер считал его "пройденным"
+            _pos++;
 
+            ErrorRange(startPos, startPos, $"Ожидался {expected}");
             return ParseResult.Ok;
         }
         private ParseResult ParseFactor()
@@ -187,36 +188,49 @@ namespace Сompiler
             _context.Pop();
             return ParseResult.Ok;
         }
-        private bool IsCompareOp(Token t)
+        private bool IsAnyOperator(Token t)
         {
-            return t.Lexeme is "<" or ">" or "<=" or ">=" or "==" or "!=";
+            return t.Lexeme is "+" or "-" or "*" or "/" or
+                   "<" or ">" or "<=" or ">=" or "==" or "!=" or
+                   "and" or "&&" or "or" or "||";
         }
 
         private ParseResult ParseRelExpr()
         {
             _context.Push("RelExpr");
-
             var r = ParseAddExpr();
-            if (r == ParseResult.Error)
-            {
-                _context.Pop();
-                return ParseResult.Error;
-            }
 
-            if (IsCompareOp(Current))
+            // Если мы встретили токен, который завершает условие или строку
+            if (Current.Lexeme == ":" || Current.Lexeme == ";" || Current.Lexeme == ")")
             {
-                _pos++;
-                r = ParseAddExpr();
-                if (r == ParseResult.Error)
+                if (!_errorInCurrentNode)
                 {
-                    _context.Pop();
-                    return ParseResult.Error;
+                    // Мы ждали оператор, а выражение резко оборвалось
+                    Error(Current, "Ожидался оператор");
                 }
+                _context.Pop();
+                return ParseResult.Ok; // Выходим "мягко", давая ParseWhile увидеть ':'
             }
 
+            // Если это не оператор и не символ остановки — вот это реальный мусор
+            if (!IsAnyOperator(Current))
+            {
+                if (!_errorInCurrentNode)
+                {
+                    IronError("оператор"); // IronError сам удалит мусор и вставит заглушку
+                }
+                _errorInCurrentNode = true;
+                _context.Pop();
+                return ParseResult.Ok;
+            }
+
+            _pos++; // Пропускаем реальный оператор
+            r = ParseAddExpr();
             _context.Pop();
-            return ParseResult.Ok;
+            return r;
         }
+
+
         private ParseResult ParseAndExpr()
         {
             _context.Push("AndExpr");
@@ -271,16 +285,20 @@ namespace Сompiler
 
         private ParseResult ParseLogicExpr()
         {
+
             _context.Push("LogicExpr");
             var r = ParseOrExpr();
             _context.Pop();
+
             return r;
         }
+
         private ParseResult ParseStmt()
         {
-            _errorInCurrentNode = false;
 
-            int start = _pos; 
+            _context.Push("Stmt");
+
+            int start = _pos;
 
             if (Current.Code == 2)
             {
@@ -290,114 +308,124 @@ namespace Сompiler
                 {
                     _pos++;
 
-                    _context.Push("LogicExpr");
                     var r = ParseLogicExpr();
+
+                    _context.Push("Semicolon");
+                    if (Current.Lexeme == ";")
+                        _pos++;
+                    else
+                        IronError("';'");
+
                     _context.Pop();
 
-                    if (r == ParseResult.Error)
-                    {
-                        SyncTo(";");
-                        if (Current.Lexeme == ";") _pos++;
-                        return ParseResult.Error;
-                    }
-
-                    ExpectLexeme(";");
+                    _context.Pop();
                     return ParseResult.Ok;
                 }
 
                 _pos = start;
-
-                _context.Push("LogicExpr");
-                if (ParseLogicExpr() == ParseResult.Ok)
-                {
-                    _context.Pop();
-                    ExpectLexeme(";");
-                    return ParseResult.Ok;
-                }
-                _context.Pop();
-
-                _pos = start;
-                ErrorRange(start, start, "Ожидалось присваивание или выражение");
-                SyncTo(";");
-                if (Current.Lexeme == ";") _pos++;
-                return ParseResult.Error;
             }
 
-            ErrorRange(start, start, "Ожидался идентификатор");
+            var r2 = ParseLogicExpr();
+
+            if (r2 == ParseResult.Ok)
+            {
+                _context.Push("Semicolon");
+                if (Current.Lexeme == ";")
+                    _pos++;
+                else
+                    IronError("';'");
+
+                _context.Pop();
+
+                _context.Pop();
+                return ParseResult.Ok;
+            }
+
+            ErrorRange(start, start, "Ожидалось присваивание или выражение");
             SyncTo(";");
-            if (Current.Lexeme == ";") _pos++;
+
+            if (Current.Lexeme == ";")
+                _pos++;
+
+            _context.Pop();
             return ParseResult.Error;
         }
 
         private ParseResult ParseWhile()
         {
-            _errorInCurrentNode = false;
 
-            if (Current.Lexeme != "while")
-            {
-                int start = _pos;
-                SyncTo("while", "");
-                int end = _pos - 1;
-                if (end < start) end = start;
+            _context.Push("While");
+            if (Current.Lexeme != "while") IronError("while");
+            else _pos++;
 
-                ErrorRange(start, end, "Ожидалось 'while'");
-                return ParseResult.Ok;
-            }
-
-            _pos++;
-
-            _context.Push("LogicExpr");
-            var r = ParseLogicExpr();
             _context.Pop();
+            _errorInCurrentNode = false; // Сброс после 'while'
 
-            if (r == ParseResult.Error)
-            {
-                IronError("логическое выражение");
-                SyncTo(":");
-            }
+            // Парсим условие
+            ParseLogicExpr();
 
+            // После выражения парсер может быть в состоянии ошибки. 
+            // Если мы видим ':', нужно позволить его распарсить.
             if (Current.Lexeme == ":")
+            {
+                _errorInCurrentNode = false; // Сброс, чтобы не игнорировать двоеточие
                 _pos++;
+            }
             else
             {
-                ErrorRange(_pos, _pos, "Ожидалось ':'");
-                SyncTo("+=", "-=", "*=", "/=", ";", "while");
+                _context.Push("Colon");
+                IronError(":");
+                _context.Pop();
             }
 
+            // --- тело ---
             while (_pos < _tokens.Count &&
-                   Current.Lexeme != "while" &&
-                   Current.Lexeme != "")
+                    Current.Lexeme != "while" &&
+                    Current.Lexeme != "")
             {
+                int before = _pos;
+
                 ParseStmt();
+
+                if (_pos == before)
+                    _pos++; // 🔥 защита
             }
+
 
             return ParseResult.Ok;
         }
+
+
         public void ParseProgram()
         {
-            _pos = 0;      
-            Errors.Clear(); 
+            _pos = 0;
+            Errors.Clear();
 
-            while (_pos < _tokens.Count && Current.Lexeme != "")
+            while (_pos < _tokens.Count && Current.Lexeme != "EOF" && Current.Lexeme != "")
             {
-                if (Current.Lexeme == "while")
+                _errorInCurrentNode = false;
+                int before = _pos;
+
+                // Если это "while" ИЛИ (это идентификатор И за ним нет "=")
+                if (Current.Lexeme == "while" || (Current.Code == 2 && !IsAssignmentNext()))
                 {
-                    var r = ParseWhile();
-                    if (r == ParseResult.Error)
-                        return;
+                    ParseWhile();
                 }
                 else
                 {
-                    int startPos = _pos;
-                    SyncTo("while", "");
-
-                    int endPos = _pos - 1;
-                    if (endPos < startPos) endPos = startPos;
-
-                    ErrorRange(startPos, endPos, "Ожидалось 'while'");
+                    ParseStmt();
                 }
 
+                if (_pos == before) _pos++;
             }
+        }
+
+        // Вспомогательный метод (Lookahead на 1 токен)
+        private bool IsAssignmentNext()
+        {
+            if (_pos + 1 >= _tokens.Count) return false;
+            string next = _tokens[_pos + 1].Lexeme;
+            return next is "=" or "+=" or "-=" or "*=" or "/=";
         }
         private void Error(Token t, string msg)
         {
@@ -435,6 +463,8 @@ namespace Сompiler
             }
 
             Error(t, $"Ожидалось '{lex}'");
+
+           
 
             return new Token(
                 2,

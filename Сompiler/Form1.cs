@@ -66,7 +66,6 @@ namespace Сompiler
                     info?.IsModified ?? false
                 ));
             }
-
             Controls.Clear();
             InitializeComponent();
             Clicks();
@@ -423,7 +422,6 @@ namespace Сompiler
                     r.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
                     r.DefaultCellStyle.ForeColor = Color.DarkRed;
                 }
-
                 MessageBox.Show("Обнаружены ошибки в коде.", "Парсер", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
@@ -503,7 +501,7 @@ namespace Сompiler
             int lineLength = editor.Lines[lineIndex].Length;
             columnIndex = Math.Min(columnIndex, lineLength);
 
-            var place = new FastColoredTextBoxNS.Place(columnIndex, lineIndex);
+            var place = new Place(columnIndex, lineIndex);
 
             editor.Selection.Start = place;
             editor.Selection.End = place;
@@ -591,5 +589,21 @@ namespace Сompiler
         {
             help.Show_SourceCode();
         }
+        private void DataGridParser_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridParser.SelectedRows.Count == 0)
+                return;
+
+            int index = dataGridParser.SelectedRows[0].Index;
+            if (index < 0 || index >= lastMatches.Count)
+                return;
+
+            var m = lastMatches[index];
+
+            syntax.ClearSearch(fastColoredTextBox1);
+
+            syntax.HighlightSearch(fastColoredTextBox1, m.Index, m.Length);
+        }
+
     }
 }
