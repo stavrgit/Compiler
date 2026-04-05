@@ -330,14 +330,8 @@
   <data name="текстToolStripMenuItem.Text" xml:space="preserve">
     <value>Текст</value>
   </data>
-  <data name="парсерToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 26</value>
-  </data>
   <data name="парсерToolStripMenuItem.Text" xml:space="preserve">
     <value>Парсер</value>
-  </data>
-  <data name="antlerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 26</value>
   </data>
   <data name="antlerToolStripMenuItem.Text" xml:space="preserve">
     <value>Antler</value>
@@ -351,8 +345,11 @@
   <data name="регистарционныйНомерToolStripMenuItem.Text" xml:space="preserve">
     <value>Регистарционный номер</value>
   </data>
-  <data name="рВToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 26</value>
+  <data name="никнеймГрафToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>268, 26</value>
+  </data>
+  <data name="никнеймГрафToolStripMenuItem.Text" xml:space="preserve">
+    <value>Никнейм (Граф)</value>
   </data>
   <data name="рВToolStripMenuItem.Text" xml:space="preserve">
     <value>РВ</value>

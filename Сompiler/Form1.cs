@@ -21,8 +21,9 @@ namespace Сompiler
         private StatusBarService status;
         public Syntax_Service syntax;
         private Tab_Input tab_Input;
-        private List<Match> lastMatches = new();
+        private List<MatchInfo> lastMatches = new();
         private string currentPattern;
+        private SearchService search = new SearchService();
         private Dictionary<TabPage, Rectangle> closeButtons = new();
         public Form1()
         {
@@ -544,8 +545,11 @@ namespace Сompiler
         private void RunSearch()
         {
             var editor = GetCurrentEditor();
-            if (editor == null)
+            if (editor == null || string.IsNullOrWhiteSpace(editor.Text))
+            {
+                MessageBox.Show("Нет текста для поиска.", "Поиск", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
+            }
 
             if (string.IsNullOrEmpty(currentPattern))
             {
@@ -555,8 +559,27 @@ namespace Сompiler
 
             string text = editor.Text;
 
-            lastMatches = Regex.Matches(text, currentPattern).Cast<Match>().ToList();
+            lastMatches = search.RunRegexSearch(text, currentPattern);
 
+            FillGrid(text, "РВ");
+        }
+        private void RunAutomatonSearch()
+        {
+            var editor = GetCurrentEditor();
+            if (editor == null || string.IsNullOrWhiteSpace(editor.Text))
+            {
+                MessageBox.Show("Нет текста для поиска.", "Поиск", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string text = editor.Text;
+
+            lastMatches = search.RunAutomatonSearch(text);
+
+            FillGrid(text, "Автомат");
+        }
+        private void FillGrid(string text, string mode)
+        {
             dataGridParser.Rows.Clear();
 
             int total = lastMatches.Count;
@@ -566,35 +589,34 @@ namespace Сompiler
                 int line = text[..m.Index].Count(c => c == '\n') + 1;
                 int col = m.Index - text.LastIndexOf('\n', m.Index);
 
-                string description = $"Длина: {m.Length}, Всего: {total}";
+                string description = $"{mode}, Длина: {m.Length}, Всего совпадений: {total}";
 
-                int rowIndex = dataGridParser.Rows.Add(m.Value, $"{line}:{col}", description);
+                int rowIndex = dataGridParser.Rows.Add(
+                    m.Value,
+                    $"{line}:{col}",
+                    description
+                );
 
-                dataGridParser.Rows[rowIndex].Tag = m; 
+                dataGridParser.Rows[rowIndex].Tag = m;
             }
         }
-
         private void dataGridParser_SelectionChanged(object sender, EventArgs e)
         {
-            var row = dataGridParser.CurrentRow;
-            if (row == null)
+            if (dataGridParser.CurrentRow == null)
                 return;
 
-            int matchIndex = row.Index;
-            if (matchIndex < 0 || matchIndex >= lastMatches.Count)
+            var m = dataGridParser.CurrentRow.Tag as MatchInfo;
+            if (m == null)
                 return;
 
             var editor = GetCurrentEditor();
             if (editor == null)
                 return;
 
-            var m = lastMatches[matchIndex];
             editor.Selection.Start = editor.PositionToPlace(m.Index);
             editor.Selection.End = editor.PositionToPlace(m.Index + m.Length);
             editor.DoSelectionVisible();
         }
-
-
         private void идентификаторToolStripMenuItem_Click(object sender, EventArgs e)
         {
             currentPattern = @"[A-Za-z$_][0-9]*";
@@ -611,6 +633,11 @@ namespace Сompiler
         {
             currentPattern = @"[A-HJ-NPR-Z0-9]{17}";
             RunSearch();
+        }
+       
+        private void никнеймГрафToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RunAutomatonSearch();
         }
     }
 }

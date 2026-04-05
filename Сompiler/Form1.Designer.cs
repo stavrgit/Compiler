@@ -34,6 +34,9 @@
             tabControlOutput = new TabControl();
             tabPage1 = new TabPage();
             dataGridParser = new DataGridView();
+            Неверный = new DataGridViewTextBoxColumn();
+            Местоположение = new DataGridViewTextBoxColumn();
+            Описание = new DataGridViewTextBoxColumn();
             tabPage2 = new TabPage();
             gridScanner = new DataGridView();
             Code = new DataGridViewTextBoxColumn();
@@ -97,9 +100,7 @@
             statusLines = new ToolStripStatusLabel();
             statusSize = new ToolStripStatusLabel();
             statusLang = new ToolStripStatusLabel();
-            Неверный = new DataGridViewTextBoxColumn();
-            Местоположение = new DataGridViewTextBoxColumn();
-            Описание = new DataGridViewTextBoxColumn();
+            никнеймГрафToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -159,6 +160,27 @@
             dataGridParser.Columns.AddRange(new DataGridViewColumn[] { Неверный, Местоположение, Описание });
             dataGridParser.Name = "dataGridParser";
             dataGridParser.RowHeadersVisible = false;
+            // 
+            // Неверный
+            // 
+            Неверный.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            resources.ApplyResources(Неверный, "Неверный");
+            Неверный.Name = "Неверный";
+            Неверный.ReadOnly = true;
+            // 
+            // Местоположение
+            // 
+            Местоположение.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            resources.ApplyResources(Местоположение, "Местоположение");
+            Местоположение.Name = "Местоположение";
+            Местоположение.ReadOnly = true;
+            // 
+            // Описание
+            // 
+            Описание.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            resources.ApplyResources(Описание, "Описание");
+            Описание.Name = "Описание";
+            Описание.ReadOnly = true;
             // 
             // tabPage2
             // 
@@ -355,7 +377,7 @@
             // рВToolStripMenuItem
             // 
             resources.ApplyResources(рВToolStripMenuItem, "рВToolStripMenuItem");
-            рВToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { идентификаторToolStripMenuItem, никнеймToolStripMenuItem, регистарционныйНомерToolStripMenuItem });
+            рВToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { идентификаторToolStripMenuItem, никнеймToolStripMenuItem, регистарционныйНомерToolStripMenuItem, никнеймГрафToolStripMenuItem });
             рВToolStripMenuItem.Name = "рВToolStripMenuItem";
             // 
             // идентификаторToolStripMenuItem
@@ -528,26 +550,11 @@
             resources.ApplyResources(statusLang, "statusLang");
             statusLang.Name = "statusLang";
             // 
-            // Неверный
+            // никнеймГрафToolStripMenuItem
             // 
-            Неверный.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            resources.ApplyResources(Неверный, "Неверный");
-            Неверный.Name = "Неверный";
-            Неверный.ReadOnly = true;
-            // 
-            // Местоположение
-            // 
-            Местоположение.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            resources.ApplyResources(Местоположение, "Местоположение");
-            Местоположение.Name = "Местоположение";
-            Местоположение.ReadOnly = true;
-            // 
-            // Описание
-            // 
-            Описание.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            resources.ApplyResources(Описание, "Описание");
-            Описание.Name = "Описание";
-            Описание.ReadOnly = true;
+            resources.ApplyResources(никнеймГрафToolStripMenuItem, "никнеймГрафToolStripMenuItem");
+            никнеймГрафToolStripMenuItem.Name = "никнеймГрафToolStripMenuItem";
+            никнеймГрафToolStripMenuItem.Click += никнеймГрафToolStripMenuItem_Click;
             // 
             // Form1
             // 
@@ -651,5 +658,6 @@
         private DataGridViewTextBoxColumn Неверный;
         private DataGridViewTextBoxColumn Местоположение;
         private DataGridViewTextBoxColumn Описание;
+        private ToolStripMenuItem никнеймГрафToolStripMenuItem;
     }
 }
