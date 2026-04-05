@@ -121,6 +121,9 @@
   <data name="tabControlEditor.Size" type="System.Drawing.Size, System.Drawing">
     <value>1514, 211</value>
   </data>
+  <data name="Неверный.HeaderText" xml:space="preserve">
+    <value>фрагмент</value>
+  </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Неверный.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
@@ -338,6 +341,21 @@
   </data>
   <data name="antlerToolStripMenuItem.Text" xml:space="preserve">
     <value>Antler</value>
+  </data>
+  <data name="идентификаторToolStripMenuItem.Text" xml:space="preserve">
+    <value>Идентификатор</value>
+  </data>
+  <data name="никнеймToolStripMenuItem.Text" xml:space="preserve">
+    <value>Никнейм</value>
+  </data>
+  <data name="регистарционныйНомерToolStripMenuItem.Text" xml:space="preserve">
+    <value>Регистарционный номер</value>
+  </data>
+  <data name="рВToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 26</value>
+  </data>
+  <data name="рВToolStripMenuItem.Text" xml:space="preserve">
+    <value>РВ</value>
   </data>
   <data name="пускToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>55, 42</value>
@@ -611,12 +629,6 @@
   </data>
   <data name="statusStrip.Text" xml:space="preserve">
     <value>statusStrip1</value>
-  </data>
-  <data name="button1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>94, 29</value>
-  </data>
-  <data name="button1.Text" xml:space="preserve">
-    <value>button1</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Компилятор</value>

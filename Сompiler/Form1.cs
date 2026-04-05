@@ -21,6 +21,8 @@ namespace Сompiler
         private StatusBarService status;
         public Syntax_Service syntax;
         private Tab_Input tab_Input;
+        private List<Match> lastMatches = new();
+        private string currentPattern;
         private Dictionary<TabPage, Rectangle> closeButtons = new();
         public Form1()
         {
@@ -102,6 +104,8 @@ namespace Сompiler
         }
         private void Clicks()
         {
+            dataGridParser.SelectionChanged += dataGridParser_SelectionChanged;
+
             создатьToolStripMenuItem.Click += New_Click;
             toolStripButton1.Click += New_Click;
 
@@ -458,58 +462,6 @@ namespace Сompiler
             editor.Navigate(line);
             editor.Focus();
         }
-
-        private void dataGridParser_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            var row = dataGridParser.CurrentRow;
-            if (row == null)
-                return;
-
-            string location = row.Cells[1].Value?.ToString();
-            if (string.IsNullOrWhiteSpace(location))
-                return;
-
-            MessageBox.Show(location);
-
-            var parts = location.Split(':');
-            if (parts.Length != 2)
-                return;
-
-            if (!int.TryParse(parts[0].Trim(), out int line))
-                return;
-
-            string colPart = parts[1].Split('-')[0].Trim();
-
-            if (!int.TryParse(colPart, out int pos))
-                return;
-
-            NavigateToPosition(line, pos);
-        }
-
-        private void NavigateToPosition(int line, int pos)
-        {
-            var editor = GetCurrentEditor();
-            if (editor == null || editor.LinesCount == 0)
-                return;
-
-            int lineIndex = Math.Max(0, line - 1);
-            if (lineIndex >= editor.LinesCount)
-                return;
-
-            int columnIndex = Math.Max(0, pos - 1);
-
-            int lineLength = editor.Lines[lineIndex].Length;
-            columnIndex = Math.Min(columnIndex, lineLength);
-
-            var place = new Place(columnIndex, lineIndex);
-
-            editor.Selection.Start = place;
-            editor.Selection.End = place;
-
-            editor.DoSelectionVisible();
-            editor.Focus();
-        }
-
         private void antlerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
@@ -589,21 +541,76 @@ namespace Сompiler
         {
             help.Show_SourceCode();
         }
-        private void DataGridParser_SelectionChanged(object sender, EventArgs e)
+        private void RunSearch()
         {
-            if (dataGridParser.SelectedRows.Count == 0)
+            var editor = GetCurrentEditor();
+            if (editor == null)
                 return;
 
-            int index = dataGridParser.SelectedRows[0].Index;
-            if (index < 0 || index >= lastMatches.Count)
+            if (string.IsNullOrEmpty(currentPattern))
+            {
+                MessageBox.Show("Выберите тип поиска.");
                 return;
+            }
 
-            var m = lastMatches[index];
+            string text = editor.Text;
 
-            syntax.ClearSearch(fastColoredTextBox1);
+            lastMatches = Regex.Matches(text, currentPattern).Cast<Match>().ToList();
 
-            syntax.HighlightSearch(fastColoredTextBox1, m.Index, m.Length);
+            dataGridParser.Rows.Clear();
+
+            int total = lastMatches.Count;
+
+            foreach (var m in lastMatches)
+            {
+                int line = text[..m.Index].Count(c => c == '\n') + 1;
+                int col = m.Index - text.LastIndexOf('\n', m.Index);
+
+                string description = $"Длина: {m.Length}, Всего: {total}";
+
+                int rowIndex = dataGridParser.Rows.Add(m.Value, $"{line}:{col}", description);
+
+                dataGridParser.Rows[rowIndex].Tag = m; 
+            }
         }
 
+        private void dataGridParser_SelectionChanged(object sender, EventArgs e)
+        {
+            var row = dataGridParser.CurrentRow;
+            if (row == null)
+                return;
+
+            int matchIndex = row.Index;
+            if (matchIndex < 0 || matchIndex >= lastMatches.Count)
+                return;
+
+            var editor = GetCurrentEditor();
+            if (editor == null)
+                return;
+
+            var m = lastMatches[matchIndex];
+            editor.Selection.Start = editor.PositionToPlace(m.Index);
+            editor.Selection.End = editor.PositionToPlace(m.Index + m.Length);
+            editor.DoSelectionVisible();
+        }
+
+
+        private void идентификаторToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            currentPattern = @"[A-Za-z$_][0-9]*";
+            RunSearch();
+        }
+
+        private void никнеймToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            currentPattern = @"[a-z0-9_-]{8,16}";
+            RunSearch();
+        }
+
+        private void регистарционныйНомерToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            currentPattern = @"[A-HJ-NPR-Z0-9]{17}";
+            RunSearch();
+        }
     }
 }
