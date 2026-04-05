@@ -589,21 +589,5 @@ namespace Сompiler
         {
             help.Show_SourceCode();
         }
-        private void DataGridParser_SelectionChanged(object sender, EventArgs e)
-        {
-            if (dataGridParser.SelectedRows.Count == 0)
-                return;
-
-            int index = dataGridParser.SelectedRows[0].Index;
-            if (index < 0 || index >= lastMatches.Count)
-                return;
-
-            var m = lastMatches[index];
-
-            syntax.ClearSearch(fastColoredTextBox1);
-
-            syntax.HighlightSearch(fastColoredTextBox1, m.Index, m.Length);
-        }
-
     }
 }
