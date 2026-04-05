@@ -243,6 +243,6 @@ factor
 1) правильный
  <img width="1397" height="508" alt="image" src="https://github.com/user-attachments/assets/0ba9466e-f657-4fd4-bdff-5851314e75cb" />
 2) неправильный
-<img width="1371" height="479" alt="image" src="https://github.com/user-attachments/assets/a750ab06-ac87-40e0-923d-9ddcdd52b072" />
+<img width="1321" height="381" alt="image" src="https://github.com/user-attachments/assets/c163c0a0-41b1-43e4-a172-5c63de80eaba" />
 3) многострочный
-<img width="1327" height="385" alt="image" src="https://github.com/user-attachments/assets/811d8434-3caa-48a3-8935-788565e7909f" />
+<img width="1309" height="390" alt="image" src="https://github.com/user-attachments/assets/b1e3c7cd-88a8-4660-91fc-283ca22455c6" />
