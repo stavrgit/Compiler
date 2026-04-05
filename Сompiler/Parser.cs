@@ -66,16 +66,12 @@ namespace Сompiler
         private ParseResult IronError(string expected)
         {
             int startPos = _pos;
-
-            // 1. Пропускаем плохой токен (выкидываем whil или лишнюю скобку)
             if (_pos < _tokens.Count) _pos++;
 
-            // 2. Вставляем заглушку
             string broken = _context.Count > 0 ? _context.Peek() : "Factor";
             string q = BuildQ(broken);
             InsertQ(q);
 
-            // 3. Сдвигаем pos ЗА вставленный токен, чтобы парсер считал его "пройденным"
             _pos++;
 
             ErrorRange(startPos, startPos, $"Ожидался {expected}");
@@ -194,9 +190,6 @@ namespace Сompiler
 
             string lex = Current.Lexeme;
 
-            // 1. Стоп-символы, которые считаем ошибкой
-            // ':' — ошибка ТОЛЬКО если мы НЕ в условии while
-            // ';' — ошибка ТОЛЬКО если мы НЕ в выражении Stmt
             if ((lex == ":" && !_inWhileCondition) ||
                 (lex == ";" && !_inStmtExpr) ||
                 lex == ")")
@@ -208,7 +201,6 @@ namespace Сompiler
                 return ParseResult.Ok;
             }
 
-            // 2. Нормальный стоп: ':' в while или ';' в Stmt
             if ((lex == ":" && _inWhileCondition) ||
                 (lex == ";" && _inStmtExpr))
             {
@@ -216,14 +208,12 @@ namespace Сompiler
                 return ParseResult.Ok;
             }
 
-            // 3. Пустая строка — НЕ мусор, просто конец выражения
             if (lex == "")
             {
                 _context.Pop();
                 return ParseResult.Ok;
             }
 
-            // 4. Мусор: не оператор, не стоп-символ
             if (!IsAnyOperator(Current))
             {
                 if (!_errorInCurrentNode)
@@ -234,7 +224,6 @@ namespace Сompiler
                 return ParseResult.Ok;
             }
 
-            // 5. Реальный оператор
             _pos++;
             r = ParseAddExpr();
             _context.Pop();
@@ -265,7 +254,6 @@ namespace Сompiler
             _context.Pop();
             return ParseResult.Ok;
         }
-
         private ParseResult ParseOrExpr()
         {
             _context.Push("OrExpr");
@@ -305,7 +293,6 @@ namespace Сompiler
 
             int start = _pos;
 
-            // Присваивание
             if (Current.Code == 2)
             {
                 _pos++;
@@ -314,7 +301,6 @@ namespace Сompiler
                 {
                     _pos++;
 
-                    // ВАЖНО: включаем режим выражения Stmt
                     _inStmtExpr = true;
                     var r = ParseLogicExpr();
                     _inStmtExpr = false;
@@ -333,7 +319,6 @@ namespace Сompiler
                 _pos = start;
             }
 
-            // Просто выражение
             _inStmtExpr = true;
             var r2 = ParseLogicExpr();
             _inStmtExpr = false;
@@ -368,16 +353,13 @@ namespace Сompiler
             else _pos++;
 
             _context.Pop();
-            _errorInCurrentNode = false; // Сброс после 'while'
+            _errorInCurrentNode = false; 
 
-            // Парсим условие
             ParseLogicExpr();
 
-            // После выражения парсер может быть в состоянии ошибки. 
-            // Если мы видим ':', нужно позволить его распарсить.
             if (Current.Lexeme == ":")
             {
-                _errorInCurrentNode = false; // Сброс, чтобы не игнорировать двоеточие
+                _errorInCurrentNode = false; 
                 _pos++;
             }
             else
@@ -387,7 +369,6 @@ namespace Сompiler
                 _context.Pop();
             }
 
-            // --- тело ---
             while (_pos < _tokens.Count &&
                     Current.Lexeme != "while" &&
                     Current.Lexeme != "")
@@ -397,7 +378,7 @@ namespace Сompiler
                 ParseStmt();
 
                 if (_pos == before)
-                    _pos++; // 🔥 защита
+                    _pos++; 
             }
 
 
@@ -413,7 +394,6 @@ namespace Сompiler
                 _errorInCurrentNode = false;
                 int before = _pos;
 
-                // Если это "while" ИЛИ (это идентификатор И за ним нет "=")
                 if (Current.Lexeme == "while" || (Current.Code == 2 && !IsAssignmentNext()))
                 {
                     ParseWhile();
@@ -426,8 +406,6 @@ namespace Сompiler
                 if (_pos == before) _pos++;
             }
         }
-
-        // Вспомогательный метод (Lookahead на 1 токен)
         private bool IsAssignmentNext()
         {
             if (_pos + 1 >= _tokens.Count) return false;
