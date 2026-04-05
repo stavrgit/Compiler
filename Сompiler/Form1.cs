@@ -102,6 +102,8 @@ namespace Сompiler
         }
         private void Clicks()
         {
+            dataGridParser.SelectionChanged += dataGridParser_SelectionChanged;
+
             создатьToolStripMenuItem.Click += New_Click;
             toolStripButton1.Click += New_Click;
 
@@ -437,79 +439,6 @@ namespace Сompiler
 
             tabControlOutput.SelectedIndex = 0;
         }
-
-        private void gridScanner_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-
-            var editor = GetCurrentEditor();
-            if (editor == null) return;
-
-            string pos = gridScanner.Rows[e.RowIndex].Cells[3].Value?.ToString();
-            if (string.IsNullOrWhiteSpace(pos)) return;
-
-            var p = pos.Split(':', '-');
-            int line = int.Parse(p[0].Trim()) - 1;
-            int start = int.Parse(p[1].Trim()) - 1;
-            int end = int.Parse(p[2].Trim());
-
-            editor.Selection.Start = new Place(start, line);
-            editor.Selection.End = new Place(end, line);
-            editor.Navigate(line);
-            editor.Focus();
-        }
-
-        private void dataGridParser_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            var row = dataGridParser.CurrentRow;
-            if (row == null)
-                return;
-
-            string location = row.Cells[1].Value?.ToString();
-            if (string.IsNullOrWhiteSpace(location))
-                return;
-
-            MessageBox.Show(location);
-
-            var parts = location.Split(':');
-            if (parts.Length != 2)
-                return;
-
-            if (!int.TryParse(parts[0].Trim(), out int line))
-                return;
-
-            string colPart = parts[1].Split('-')[0].Trim();
-
-            if (!int.TryParse(colPart, out int pos))
-                return;
-
-            NavigateToPosition(line, pos);
-        }
-
-        private void NavigateToPosition(int line, int pos)
-        {
-            var editor = GetCurrentEditor();
-            if (editor == null || editor.LinesCount == 0)
-                return;
-
-            int lineIndex = Math.Max(0, line - 1);
-            if (lineIndex >= editor.LinesCount)
-                return;
-
-            int columnIndex = Math.Max(0, pos - 1);
-
-            int lineLength = editor.Lines[lineIndex].Length;
-            columnIndex = Math.Min(columnIndex, lineLength);
-
-            var place = new Place(columnIndex, lineIndex);
-
-            editor.Selection.Start = place;
-            editor.Selection.End = place;
-
-            editor.DoSelectionVisible();
-            editor.Focus();
-        }
-
         private void antlerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
@@ -549,12 +478,10 @@ namespace Сompiler
                 r.DefaultCellStyle.ForeColor = Color.DarkGreen;
             }
         }
-
         private void пускToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
-
         private void постановкаЗадачиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             help.Show_Task();
@@ -588,6 +515,46 @@ namespace Сompiler
         private void исходныйКодПргограммыToolStripMenuItem_Click(object sender, EventArgs e)
         {
             help.Show_SourceCode();
+        }
+        private void dataGridParser_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridParser.CurrentRow == null)
+                return;
+
+            var editor = GetCurrentEditor();
+            if (editor == null)
+                return;
+
+            string fragment = dataGridParser.CurrentRow.Cells[0].Value?.ToString() ?? "";
+            string pos = dataGridParser.CurrentRow.Cells[1].Value?.ToString() ?? "";
+
+            if (string.IsNullOrWhiteSpace(pos))
+                return;
+
+            var parts = pos.Split(':');
+            if (parts.Length != 2)
+                return;
+
+            int line = Math.Max(int.Parse(parts[0]) - 1, 0);
+            int col = Math.Max(int.Parse(parts[1]) - 1, 0);
+
+            if (line >= editor.LinesCount)
+                return;
+
+            string textLine = editor.Lines[line];
+            int lineLength = textLine.Length;
+
+            int length = Math.Max(fragment.Length, 1);
+
+            col = Math.Min(col, lineLength);
+            int endCol = Math.Min(col + length, lineLength);
+
+            var start = new Place(col, line);
+            var end = new Place(endCol, line);
+
+            editor.Selection = new FastColoredTextBoxNS.Range(editor, start, end);
+            editor.DoSelectionVisible();
+            editor.Focus();
         }
     }
 }

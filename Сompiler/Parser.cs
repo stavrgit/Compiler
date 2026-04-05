@@ -8,20 +8,13 @@ namespace Сompiler
     {
         private readonly List<Token> _tokens;
         private int _pos = 0;
-
+        private bool _inStmtExpr = false;
         public List<ParseError> Errors { get; } = new();
-
-        private Token Current =>
-        _pos < _tokens.Count
-        ? _tokens[_pos]
-        : new Token(0, "EOF", "", 0, 0, 0);
-
+        private Token Current => _pos < _tokens.Count ? _tokens[_pos] : new Token(0, "EOF", "", 0, 0, 0);
         private enum ParseResult { Ok, Error }
-
         private readonly Stack<string> _context = new();
-
-        private static readonly string[] SyncTokens = { ";", ")", ":", "while" };
         private bool _errorInCurrentNode = false;
+        private bool _inWhileCondition = false;
 
 
         public Parser(List<Token> tokens)
@@ -194,43 +187,59 @@ namespace Сompiler
                    "<" or ">" or "<=" or ">=" or "==" or "!=" or
                    "and" or "&&" or "or" or "||";
         }
-
         private ParseResult ParseRelExpr()
         {
             _context.Push("RelExpr");
             var r = ParseAddExpr();
 
-            // Если мы встретили токен, который завершает условие или строку
-            if (Current.Lexeme == ":" || Current.Lexeme == ";" || Current.Lexeme == ")")
+            string lex = Current.Lexeme;
+
+            // 1. Стоп-символы, которые считаем ошибкой
+            // ':' — ошибка ТОЛЬКО если мы НЕ в условии while
+            // ';' — ошибка ТОЛЬКО если мы НЕ в выражении Stmt
+            if ((lex == ":" && !_inWhileCondition) ||
+                (lex == ";" && !_inStmtExpr) ||
+                lex == ")")
             {
                 if (!_errorInCurrentNode)
-                {
-                    // Мы ждали оператор, а выражение резко оборвалось
                     Error(Current, "Ожидался оператор");
-                }
+
                 _context.Pop();
-                return ParseResult.Ok; // Выходим "мягко", давая ParseWhile увидеть ':'
+                return ParseResult.Ok;
             }
 
-            // Если это не оператор и не символ остановки — вот это реальный мусор
+            // 2. Нормальный стоп: ':' в while или ';' в Stmt
+            if ((lex == ":" && _inWhileCondition) ||
+                (lex == ";" && _inStmtExpr))
+            {
+                _context.Pop();
+                return ParseResult.Ok;
+            }
+
+            // 3. Пустая строка — НЕ мусор, просто конец выражения
+            if (lex == "")
+            {
+                _context.Pop();
+                return ParseResult.Ok;
+            }
+
+            // 4. Мусор: не оператор, не стоп-символ
             if (!IsAnyOperator(Current))
             {
                 if (!_errorInCurrentNode)
-                {
-                    IronError("оператор"); // IronError сам удалит мусор и вставит заглушку
-                }
+                    IronError("оператор");
+
                 _errorInCurrentNode = true;
                 _context.Pop();
                 return ParseResult.Ok;
             }
 
-            _pos++; // Пропускаем реальный оператор
+            // 5. Реальный оператор
+            _pos++;
             r = ParseAddExpr();
             _context.Pop();
             return r;
         }
-
-
         private ParseResult ParseAndExpr()
         {
             _context.Push("AndExpr");
@@ -285,21 +294,18 @@ namespace Сompiler
 
         private ParseResult ParseLogicExpr()
         {
-
             _context.Push("LogicExpr");
             var r = ParseOrExpr();
             _context.Pop();
-
             return r;
         }
-
         private ParseResult ParseStmt()
         {
-
             _context.Push("Stmt");
 
             int start = _pos;
 
+            // Присваивание
             if (Current.Code == 2)
             {
                 _pos++;
@@ -308,14 +314,16 @@ namespace Сompiler
                 {
                     _pos++;
 
+                    // ВАЖНО: включаем режим выражения Stmt
+                    _inStmtExpr = true;
                     var r = ParseLogicExpr();
+                    _inStmtExpr = false;
 
                     _context.Push("Semicolon");
                     if (Current.Lexeme == ";")
                         _pos++;
                     else
                         IronError("';'");
-
                     _context.Pop();
 
                     _context.Pop();
@@ -325,7 +333,10 @@ namespace Сompiler
                 _pos = start;
             }
 
+            // Просто выражение
+            _inStmtExpr = true;
             var r2 = ParseLogicExpr();
+            _inStmtExpr = false;
 
             if (r2 == ParseResult.Ok)
             {
@@ -334,7 +345,6 @@ namespace Сompiler
                     _pos++;
                 else
                     IronError("';'");
-
                 _context.Pop();
 
                 _context.Pop();
@@ -350,7 +360,6 @@ namespace Сompiler
             _context.Pop();
             return ParseResult.Error;
         }
-
         private ParseResult ParseWhile()
         {
 
@@ -394,8 +403,6 @@ namespace Сompiler
 
             return ParseResult.Ok;
         }
-
-
         public void ParseProgram()
         {
             _pos = 0;
@@ -450,30 +457,6 @@ namespace Сompiler
             var t = _tokens[startPos];
 
             AddErrorOnce(new ParseError(fragment, t.Line, t.Start, msg));
-        }
-
-        private Token ExpectLexeme(string lex)
-        {
-            var t = Current;
-
-            if (t.Lexeme == lex)
-            {
-                _pos++;
-                return t;
-            }
-
-            Error(t, $"Ожидалось '{lex}'");
-
-           
-
-            return new Token(
-                2,
-                "fake",
-                lex,
-                t.Line,
-                t.Start,
-                t.Start
-            );
         }
         private void AddErrorOnce(ParseError err)
         {
