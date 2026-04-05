@@ -1,4 +1,4 @@
-<img width="811" height="96" alt="image" src="https://github.com/user-attachments/assets/c7b090c1-bc93-474f-969e-5a33b675a835" />#                                     Лабораторная работа 4. Реализация алгоритма поиска подстрок с помощью регулярных выражений
+<img width="1357" height="334" alt="image" src="https://github.com/user-attachments/assets/bdb3eba6-1f4d-41ea-8ef5-ce849ee292e4" /><img width="811" height="96" alt="image" src="https://github.com/user-attachments/assets/c7b090c1-bc93-474f-969e-5a33b675a835" />#                                     Лабораторная работа 4. Реализация алгоритма поиска подстрок с помощью регулярных выражений
 
 ## Цель работы
 Изучить теоретические основы регулярных выражений и их применение для поиска и извлечения подстрок из текста. Освоить практические навыки использования библиотечных средств работы с регулярными выражениями, а также интеграцию алгоритмов поиска в графический интерфейс приложения.
@@ -29,12 +29,15 @@
 
 <img width="1339" height="342" alt="image" src="https://github.com/user-attachments/assets/7a2ea5ad-2dd9-47f7-bb51-2c03267ca0de" />
 
+
 ## dawdadwadda подходит   
+
 
 <img width="1183" height="294" alt="image" src="https://github.com/user-attachments/assets/b5d3cc4a-d546-440e-bf1f-75de05573abd" />
 
 
 ## dee не подходит
+
 <img width="811" height="96" alt="image" src="https://github.com/user-attachments/assets/54efe662-3a84-4d38-9577-948ebdd45841" />
 
 ### ^[A-HJ-NPR-Z0-9]{17}$  [A-HJ-NPR-Z0-9] разрешённые символы  (A - Z но пропущеныв I Q O так как похожи на цифры)   {17} длина 
@@ -48,4 +51,20 @@
 
 
 ## 1HGCM82633A0O4352 не подходит
+
+
+
+
+
+## Автомат 2 задания на никнейм
+<img width="1585" height="455" alt="image" src="https://github.com/user-attachments/assets/58b9223e-419c-471a-86a7-4a1f45a97c5a" />
+
+ <img width="1357" height="334" alt="image" src="https://github.com/user-attachments/assets/f88a8fab-7219-4231-beaa-0b768ae76c20" />
  
+ ##  dawdadwadda подходит
+
+
+ <img width="1357" height="324" alt="image" src="https://github.com/user-attachments/assets/3e5649e9-98cd-459c-ab04-6e7e8bc39b82" />
+ 
+## dee  не подходит
+
