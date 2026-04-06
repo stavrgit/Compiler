@@ -15,6 +15,7 @@ namespace Сompiler
         private readonly Stack<string> _context = new();
         private bool _errorInCurrentNode = false;
         private bool _inWhileCondition = false;
+        private bool _inParens = false;
 
 
         public Parser(List<Token> tokens)
@@ -94,8 +95,10 @@ namespace Сompiler
             {
                 int start = _pos;
                 _pos++;
+                _inParens = true;
 
                 var r = ParseLogicExpr();
+                _inParens = false;
                 if (r == ParseResult.Error)
                 {
                     SyncTo(")");
@@ -186,13 +189,31 @@ namespace Сompiler
         private ParseResult ParseRelExpr()
         {
             _context.Push("RelExpr");
+
             var r = ParseAddExpr();
+            if (r == ParseResult.Error)
+            {
+                _context.Pop();
+                return ParseResult.Error;
+            }
+            if (_inParens && Current.Lexeme == ")")
+            {
+                _context.Pop();
+                return ParseResult.Ok;
+            }
 
             string lex = Current.Lexeme;
 
+            if (IsAnyOperator(Current))
+            {
+                _pos++;
+                r = ParseAddExpr();
+                _context.Pop();
+                return r;
+            }
+
             if ((lex == ":" && !_inWhileCondition) ||
-                (lex == ";" && !_inStmtExpr) ||
-                lex == ")")
+                (lex == ";" && !_inStmtExpr))
             {
                 if (!_errorInCurrentNode)
                     Error(Current, "Ожидался оператор");
@@ -224,10 +245,8 @@ namespace Сompiler
                 return ParseResult.Ok;
             }
 
-            _pos++;
-            r = ParseAddExpr();
             _context.Pop();
-            return r;
+            return ParseResult.Ok;
         }
         private ParseResult ParseAndExpr()
         {
@@ -353,13 +372,19 @@ namespace Сompiler
             else _pos++;
 
             _context.Pop();
-            _errorInCurrentNode = false; 
+            _errorInCurrentNode = false;
 
+
+            _inWhileCondition = true;
+            Console.WriteLine($"[ParseWhile] BEFORE ParseLogicExpr, _inWhileCondition = {_inWhileCondition}");
             ParseLogicExpr();
+            Console.WriteLine($"[ParseWhile] AFTER ParseLogicExpr, Current = '{Current.Lexeme}'");
+            _inWhileCondition = false;
+
 
             if (Current.Lexeme == ":")
             {
-                _errorInCurrentNode = false; 
+                _errorInCurrentNode = false;
                 _pos++;
             }
             else
