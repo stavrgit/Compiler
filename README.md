@@ -10,25 +10,23 @@
 <img width="823" height="171" alt="image" src="https://github.com/user-attachments/assets/cef52be4-0f92-4816-99ff-ba640d9d6871" />
 
 ### Обозначение
+
 ### ^[a-zA-Z$_][0-9]*$  ^ начало строки   [a-zA-Z$_] первый символ    [0-9]* 0 или боле раз    $ конец строки   
-
-
-
-
 
 ### Пример корректной строки
 
 
 <img width="1304" height="341" alt="image" src="https://github.com/user-attachments/assets/1a1b4770-0f3d-408d-8e0c-c7bd634c32af" />
 
-## x123 подходит
+### x123 подходит
 
 
 ### Пример некорректной строки
 
 <img width="1186" height="342" alt="image" src="https://github.com/user-attachments/assets/7a3725f7-473c-4ad2-8ec9-1bc0b4876738" />
 
-## 111 не подходит
+### 111 не подходит
+
 
 
 
@@ -36,6 +34,7 @@
 <img width="828" height="123" alt="image" src="https://github.com/user-attachments/assets/72e04641-311b-4704-9106-7ddfe9a6ad9c" />
 
 ### Обозначение
+
 ### ^[a-z0-9_-]{8,16}$.    [a-z0-9_-] разрешенные символы.   {8,16} длина.   
 
 ### Пример корректной строки
@@ -43,18 +42,20 @@
 <img width="1339" height="342" alt="image" src="https://github.com/user-attachments/assets/7a2ea5ad-2dd9-47f7-bb51-2c03267ca0de" />
 
 
-## dawdadwadda подходит   
+### dawdadwadda подходит   
 
 ### Пример некорректной строки
 
 <img width="1183" height="294" alt="image" src="https://github.com/user-attachments/assets/b5d3cc4a-d546-440e-bf1f-75de05573abd" />
 
 
-## dee не подходит
+### dee не подходит
 
 <img width="811" height="96" alt="image" src="https://github.com/user-attachments/assets/54efe662-3a84-4d38-9577-948ebdd45841" />
 
+
 ### Обозначение
+
 ### ^[A-HJ-NPR-Z0-9]{17}$  [A-HJ-NPR-Z0-9] разрешённые символы  (A - Z но пропущеныв I Q O так как похожи на цифры)   {17} длина 
 
 ### Пример корректной строки
@@ -71,9 +72,7 @@
 
 ## 1HGCM82633A0O4352 не подходит
 
-
-
-
+## Для задачи 2 необходимо реализовать алгоритм поиска подстрок в тексте, перейдя к графу автомата. 
 
 ## Автомат 2 задания на никнейм
 <img width="1585" height="455" alt="image" src="https://github.com/user-attachments/assets/58b9223e-419c-471a-86a7-4a1f45a97c5a" />
