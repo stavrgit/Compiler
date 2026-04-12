@@ -100,7 +100,7 @@ S = <Программа>
 
 ## Метод анализа
 ## Рекурсвиный спуск
-<img width="910" height="385" alt="image" src="https://github.com/user-attachments/assets/e7494c75-22ec-48ac-aa08-dcfe426ef1fc" />
+<img width="1126" height="460" alt="image" src="https://github.com/user-attachments/assets/e6ba5d03-bb1d-4363-be48-1b47a9ed4017" />
 
 ## Диагностика и нейтрализация синтаксических ошибок.
 
