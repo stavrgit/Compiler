@@ -1,5 +1,4 @@
-﻿using Antlr4.Runtime.Atn;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Сompiler
@@ -8,26 +7,35 @@ namespace Сompiler
     {
         private readonly List<Token> _tokens;
         private int _pos = 0;
-        private bool _inStmtExpr = false;
-        public List<ParseError> Errors { get; } = new();
-        private Token Current => _pos < _tokens.Count ? _tokens[_pos] : new Token(0, "EOF", "", 0, 0, 0);
-        private enum ParseResult { Ok, Error }
-        private readonly Stack<string> _context = new();
-        private bool _errorInCurrentNode = false;
-        private bool _inWhileCondition = false;
-        private bool _inParens = false;
+        private bool _exprError = false;
+        private const int MAX_ERRORS = 4;
 
+        public List<ParseError> Errors { get; } = new();
+
+        private Token Current =>
+            _pos < _tokens.Count
+            ? _tokens[_pos]
+            : new Token(0, "EOF", "EOF", 0, 0, 0);
 
         public Parser(List<Token> tokens)
         {
             _tokens = tokens;
         }
 
-        private void InsertQ(string lexeme)
+        private void Error(string msg)
+        {
+            if (Errors.Count >= MAX_ERRORS)
+                return;
+
+            var t = Current;
+            Errors.Add(new ParseError(t.Lexeme, t.Line, t.Start, msg));
+            _exprError = true;
+        }
+        private void InsertFake(string lexeme)
         {
             var fake = new Token(
-                2,
-                "исправление",
+                999,
+                "FAKE",
                 lexeme,
                 Current.Line,
                 Current.Start,
@@ -36,438 +44,356 @@ namespace Сompiler
 
             _tokens.Insert(_pos, fake);
         }
-
-        private string BuildQ(string broken)
+        private void IronError(string expected, string fake)
         {
-            return broken switch
-            {
-                "Factor" => "i",
-                "MulExpr" => "0",
-                "AddExpr" => "0",
-                "RelExpr" => "0",
-                "AndExpr" => "0",
-                "OrExpr" => "0",
-                "LogicExpr" => "0",
-                "Stmt" => ";",        
-                "While" => "while",    
-                "Colon" => ":",       
-                "Semicolon" => ";",       
-                _ => "0"
-            };
-        }
+            Error($"Ожидался {expected}");
 
+            InsertFake(fake);
+            _pos++; 
+        }
 
         private void SyncTo(params string[] lexemes)
         {
             while (_pos < _tokens.Count &&
                    Array.IndexOf(lexemes, Current.Lexeme) == -1)
-                _pos++;
-        }
-
-        private ParseResult IronError(string expected)
-        {
-            int startPos = _pos;
-            if (_pos < _tokens.Count) _pos++;
-
-            string broken = _context.Count > 0 ? _context.Peek() : "Factor";
-            string q = BuildQ(broken);
-            InsertQ(q);
-
-            _pos++;
-
-            ErrorRange(startPos, startPos, $"Ожидался {expected}");
-            return ParseResult.Ok;
-        }
-        private ParseResult ParseFactor()
-        {
-            _context.Push("Factor");
-            var t = Current;
-
-            if (t.Lexeme == "not" || t.Lexeme == "!" || t.Code == 32)
             {
                 _pos++;
-                var r = ParseFactor();
-                _context.Pop();
-                return r;
             }
-
-            if (t.Lexeme == "(")
-            {
-                int start = _pos;
-                _pos++;
-                _inParens = true;
-
-                var r = ParseLogicExpr();
-                _inParens = false;
-                if (r == ParseResult.Error)
-                {
-                    SyncTo(")");
-                    if (Current.Lexeme == ")") _pos++;
-                    _context.Pop();
-                    return ParseResult.Ok;
-                }
-
-                if (Current.Lexeme == ")")
-                {
-                    _pos++;
-                    _context.Pop();
-                    return ParseResult.Ok;
-                }
-
-                ErrorRange(start, _pos - 1, "Ожидалась ')'");
-                _context.Pop();
-                return ParseResult.Ok;
-            }
-
-            if (t.Code == 2 || t.Code == 10)
+        }
+        private void ParseValue()
+        {
+            if (Current.Code == 2 || Current.Code == 10)
             {
                 _pos++;
-                _context.Pop();
-                return ParseResult.Ok;
+                return;
             }
 
-            var res = IronError("идентификатор или число");
-            _context.Pop();
-            return res;
+            IronError("идентификатор или число", "0");
         }
-        private ParseResult ParseMulExpr()
+        private void ParseCompare()
         {
-            _context.Push("MulExpr");
+            ParseValue();
 
-            var r = ParseFactor();
-            if (r == ParseResult.Error)
+            if (Current.Lexeme is ">" or "<" or ">=" or "<=" or "==" or "!=")
             {
-                _context.Pop();
-                return ParseResult.Error;
-            }
-
-            while (Current.Lexeme is "*" or "/")
-            {
-                _pos++;
-                r = ParseFactor();
-                if (r == ParseResult.Error)
-                {
-                    _context.Pop();
-                    return ParseResult.Error;
-                }
-            }
-
-            _context.Pop();
-            return ParseResult.Ok;
-        }
-        private ParseResult ParseAddExpr()
-        {
-            _context.Push("AddExpr");
-
-            var r = ParseMulExpr();
-            if (r == ParseResult.Error)
-            {
-                _context.Pop();
-                return ParseResult.Error;
-            }
-
-            while (Current.Lexeme is "+" or "-")
-            {
-                _pos++;
-                r = ParseMulExpr();
-                if (r == ParseResult.Error)
-                {
-                    _context.Pop();
-                    return ParseResult.Error;
-                }
-            }
-
-            _context.Pop();
-            return ParseResult.Ok;
-        }
-        private bool IsAnyOperator(Token t)
-        {
-            return t.Lexeme is "+" or "-" or "*" or "/" or
-                   "<" or ">" or "<=" or ">=" or "==" or "!=" or
-                   "and" or "&&" or "or" or "||";
-        }
-        private ParseResult ParseRelExpr()
-        {
-            _context.Push("RelExpr");
-
-            var r = ParseAddExpr();
-            if (r == ParseResult.Error)
-            {
-                _context.Pop();
-                return ParseResult.Error;
-            }
-            if (_inParens && Current.Lexeme == ")")
-            {
-                _context.Pop();
-                return ParseResult.Ok;
-            }
-
-            string lex = Current.Lexeme;
-
-            if (IsAnyOperator(Current))
-            {
-                _pos++;
-                r = ParseAddExpr();
-                _context.Pop();
-                return r;
-            }
-
-            if ((lex == ":" && !_inWhileCondition) ||
-                (lex == ";" && !_inStmtExpr))
-            {
-                if (!_errorInCurrentNode)
-                    Error(Current, "Ожидался оператор");
-
-                _context.Pop();
-                return ParseResult.Ok;
-            }
-
-            if ((lex == ":" && _inWhileCondition) ||
-                (lex == ";" && _inStmtExpr))
-            {
-                _context.Pop();
-                return ParseResult.Ok;
-            }
-
-            if (lex == "")
-            {
-                _context.Pop();
-                return ParseResult.Ok;
-            }
-
-            if (!IsAnyOperator(Current))
-            {
-                if (!_errorInCurrentNode)
-                    IronError("оператор");
-
-                _errorInCurrentNode = true;
-                _context.Pop();
-                return ParseResult.Ok;
-            }
-
-            _context.Pop();
-            return ParseResult.Ok;
-        }
-        private ParseResult ParseAndExpr()
-        {
-            _context.Push("AndExpr");
-
-            var r = ParseRelExpr();
-            if (r == ParseResult.Error)
-            {
-                _context.Pop();
-                return ParseResult.Error;
-            }
-
-            while (Current.Lexeme is "and" or "&&")
-            {
-                _pos++;
-                r = ParseRelExpr();
-                if (r == ParseResult.Error)
-                {
-                    _context.Pop();
-                    return ParseResult.Error;
-                }
-            }
-
-            _context.Pop();
-            return ParseResult.Ok;
-        }
-        private ParseResult ParseOrExpr()
-        {
-            _context.Push("OrExpr");
-
-            var r = ParseAndExpr();
-            if (r == ParseResult.Error)
-            {
-                _context.Pop();
-                return ParseResult.Error;
-            }
-
-            while (Current.Lexeme is "or" or "||")
-            {
-                _pos++;
-                r = ParseAndExpr();
-                if (r == ParseResult.Error)
-                {
-                    _context.Pop();
-                    return ParseResult.Error;
-                }
-            }
-
-            _context.Pop();
-            return ParseResult.Ok;
-        }
-
-        private ParseResult ParseLogicExpr()
-        {
-            _context.Push("LogicExpr");
-            var r = ParseOrExpr();
-            _context.Pop();
-            return r;
-        }
-        private ParseResult ParseStmt()
-        {
-            _context.Push("Stmt");
-
-            int start = _pos;
-
-            if (Current.Code == 2)
-            {
-                _pos++;
-
-                if (Current.Lexeme is "=" or "+=" or "-=" or "*=" or "/=")
-                {
-                    _pos++;
-
-                    _inStmtExpr = true;
-                    var r = ParseLogicExpr();
-                    _inStmtExpr = false;
-
-                    _context.Push("Semicolon");
-                    if (Current.Lexeme == ";")
-                        _pos++;
-                    else
-                        IronError("';'");
-                    _context.Pop();
-
-                    _context.Pop();
-                    return ParseResult.Ok;
-                }
-
-                _pos = start;
-            }
-
-            _inStmtExpr = true;
-            var r2 = ParseLogicExpr();
-            _inStmtExpr = false;
-
-            if (r2 == ParseResult.Ok)
-            {
-                _context.Push("Semicolon");
-                if (Current.Lexeme == ";")
-                    _pos++;
-                else
-                    IronError("';'");
-                _context.Pop();
-
-                _context.Pop();
-                return ParseResult.Ok;
-            }
-
-            ErrorRange(start, start, "Ожидалось присваивание или выражение");
-            SyncTo(";");
-
-            if (Current.Lexeme == ";")
-                _pos++;
-
-            _context.Pop();
-            return ParseResult.Error;
-        }
-        private ParseResult ParseWhile()
-        {
-
-            _context.Push("While");
-            if (Current.Lexeme != "while") IronError("while");
-            else _pos++;
-
-            _context.Pop();
-            _errorInCurrentNode = false;
-
-
-            _inWhileCondition = true;
-            Console.WriteLine($"[ParseWhile] BEFORE ParseLogicExpr, _inWhileCondition = {_inWhileCondition}");
-            ParseLogicExpr();
-            Console.WriteLine($"[ParseWhile] AFTER ParseLogicExpr, Current = '{Current.Lexeme}'");
-            _inWhileCondition = false;
-
-
-            if (Current.Lexeme == ":")
-            {
-                _errorInCurrentNode = false;
                 _pos++;
             }
             else
             {
-                _context.Push("Colon");
-                IronError(":");
-                _context.Pop();
+                IronError("оператор сравнения", "==");
+            }
+
+            ParseValue();
+        }
+        private void ParsePrimary()
+        {
+            if (Current.Lexeme == "(")
+            {
+                _pos++;
+
+                ParseCond();
+
+                if (Current.Lexeme == ")")
+                {
+                    _pos++;
+                }
+                else
+                {
+                    IronError("')'", ")");
+                }
+
+                return;
+            }
+
+            if (Current.Lexeme == ")")
+            {
+                Error("Лишняя ')'");
+                _pos++; 
+            }
+
+            ParseCompare();
+        }
+        private void ParseFactor()
+        {
+            if (Current.Lexeme == "not")
+            {
+                _pos++;
+                ParseFactor();
+                return;
+            }
+
+            ParsePrimary();
+        }
+        private void ParseTerm()
+        {
+            ParseFactor();
+
+            while (Current.Lexeme == "and")
+            {
+                _pos++;
+                ParseFactor();
+            }
+        }
+        private bool ParseCond()
+        {
+            if (Current.Lexeme == ":" || Current.Lexeme == "\n" || Current.Lexeme == "EOF")
+                return false;
+
+            bool old = _exprError;
+            _exprError = false;
+
+            ParseTerm();
+
+            while (Current.Lexeme == "or")
+            {
+                _pos++;
+                ParseTerm();
+                if (Current.Lexeme == ":" || Current.Lexeme == "\n" || Current.Lexeme == "EOF")
+                    break;
+            }
+
+            bool result = !_exprError;
+            _exprError = old || _exprError;
+
+            return result;
+        }
+        private void ParseAssign()
+        {
+            if (Current.Code != 2)
+            {
+                IronError("идентификатор", "x");
+                return;
+            }
+
+            _pos++;
+
+            if (Current.Lexeme is "=" or "+=" or "-=" or "*=" or "/=")
+            {
+                _pos++;
+            }
+            else
+            {
+                IronError("оператор присваивания", "=");
+            }
+
+            ParseValue();
+        }
+        private void ParseStmt()
+        {
+            int beforeErrors = Errors.Count;
+
+            if (Current.Lexeme == ")")
+            {
+                Error("Лишняя ')'");
+                _pos++;
+                return;
+            }
+
+            ParseAssign();
+
+            if (Errors.Count > beforeErrors)
+            {
+                SyncTo(";", "\n", "EOF");
+            }
+
+            if (Current.Lexeme == ";")
+            {
+                _pos++;
+            }
+            else
+            {
+                Error("Ожидался ';'");
+            }
+        }
+        // ================= WHILE =================
+
+        private void ParseWhile()
+        {
+            _pos++; 
+            bool hasOpenParen = false;
+            bool hasCloseParen = false;
+
+            if (Current.Lexeme == "(")
+            {
+                hasOpenParen = true;
+                _pos++; 
+            }
+
+            int beforeCondPos = _pos;
+            bool oldError = _exprError;
+            _exprError = false;
+
+            if (Current.Code == 2)
+                _pos++;
+            else
+                IronError("идентификатор", "x");
+
+            if (Current.Lexeme is ">" or "<" or ">=" or "<=" or "==" or "!=")
+                _pos++;
+            else
+                IronError("оператор сравнения", "==");
+
+            if (Current.Code == 2 || Current.Code == 10)
+                _pos++;
+            else
+                IronError("идентификатор или число", "0");
+
+            bool condOk = !_exprError;
+            _exprError = oldError || _exprError;
+
+            if (hasOpenParen)
+            {
+                if (Current.Lexeme == ")")
+                {
+                    hasCloseParen = true;
+                    _pos++; 
+                }
+                else
+                {
+                    Error("Ожидалась ')'");
+                }
+            }
+            else
+            {
+                if (Current.Lexeme == ")")
+                {
+                    Error("Лишняя ')'");
+                    _pos++; 
+                }
+            }
+
+            if (Current.Lexeme == ":")
+                _pos++;
+            else
+                Error("Ожидался ':'");
+
+            while (Current.Lexeme == ")")
+            {
+                Error("Лишняя ')'");
+                _pos++;
             }
 
             while (_pos < _tokens.Count &&
-                    Current.Lexeme != "while" &&
-                    Current.Lexeme != "")
+                   Current.Lexeme != "while" &&
+                   Current.Lexeme != "EOF")
             {
                 int before = _pos;
-
                 ParseStmt();
-
                 if (_pos == before)
-                    _pos++; 
+                    _pos++;
             }
-
-
-            return ParseResult.Ok;
         }
         public void ParseProgram()
         {
             _pos = 0;
             Errors.Clear();
 
-            while (_pos < _tokens.Count && Current.Lexeme != "EOF" && Current.Lexeme != "")
+            while (_pos < _tokens.Count && Current.Lexeme != "EOF")
             {
-                _errorInCurrentNode = false;
-                int before = _pos;
+                if (Errors.Count >= MAX_ERRORS)
+                    break;
 
-                if (Current.Lexeme == "while" || (Current.Code == 2 && !IsAssignmentNext()))
+                int beforeTop = _pos;
+
+                if (Current.Lexeme == "while")
                 {
                     ParseWhile();
+                    break;  
                 }
                 else
                 {
-                    ParseStmt();
+                    Error("Ожидалось 'while'");
+
+                    if (Current.Code == 2 && Current.Lexeme.StartsWith("w"))
+                    {
+                        ParseBrokenWhileHeader();
+                        ParseBrokenWhileBody();
+                        break;
+                    }
+
+                    break;
                 }
 
-                if (_pos == before) _pos++;
+                if (_pos == beforeTop)
+                    _pos++;
             }
         }
-        private bool IsAssignmentNext()
+
+        private void ParseBrokenWhileHeader()
         {
-            if (_pos + 1 >= _tokens.Count) return false;
-            string next = _tokens[_pos + 1].Lexeme;
-            return next is "=" or "+=" or "-=" or "*=" or "/=";
+            _pos++;
+            bool hasOpenParen = false;
+
+            if (Current.Lexeme == "(")
+            {
+                hasOpenParen = true;
+                _pos++;
+            }
+
+            if (Current.Code == 2)
+            {
+                _pos++;
+            }
+            else
+            {
+                IronError("идентификатор", "x");
+            }
+
+            if (Current.Lexeme is ">" or "<" or ">=" or "<=" or "==" or "!=")
+            {
+                _pos++;
+            }
+            else
+            {
+                IronError("оператор сравнения", "==");
+            }
+
+            if (Current.Code == 2 || Current.Code == 10)
+            {
+                _pos++;
+            }
+            else
+            {
+                IronError("идентификатор или число", "0");
+            }
+
+            if (hasOpenParen)
+            {
+                if (Current.Lexeme == ")")
+                {
+                    _pos++; 
+                }
+                else
+                {
+                    Error("Ожидалась ')'");
+                }
+            }
+            else if (Current.Lexeme == ")")
+            {
+                Error("Лишняя ')'");
+                _pos++;
+            }
+
+            if (Current.Lexeme == ":")
+            {
+                _pos++;
+            }
+            else
+            {
+                Error("Ожидался ':'");
+            }
         }
-        private void Error(Token t, string msg)
+        private void ParseBrokenWhileBody()
         {
-            AddErrorOnce(new ParseError(t.Lexeme, t.Line, t.Start, msg));
-        }
-        private void ErrorRange(int startPos, int endPos, string msg)
-        {
-            if (startPos < 0 || startPos >= _tokens.Count)
-                return;
-
-            if (startPos > endPos)
-                endPos = startPos;
-
-            endPos = Math.Min(endPos, _tokens.Count - 1);
-
-            string fragment = "";
-            for (int i = startPos; i <= endPos; i++)
-                fragment += _tokens[i].Lexeme + " ";
-
-            fragment = fragment.Trim();
-
-            var t = _tokens[startPos];
-
-            AddErrorOnce(new ParseError(fragment, t.Line, t.Start, msg));
-        }
-        private void AddErrorOnce(ParseError err)
-        {
-            if (_errorInCurrentNode)
-                return;
-
-            Errors.Add(err);
-            _errorInCurrentNode = true;
+            while (_pos < _tokens.Count &&
+                   Current.Lexeme != "while" &&
+                   Current.Lexeme != "EOF")
+            {
+                int before = _pos;
+                ParseStmt();
+                if (_pos == before)
+                    _pos++;
+            }
         }
     }
 }

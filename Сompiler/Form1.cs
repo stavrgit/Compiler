@@ -439,45 +439,6 @@ namespace Сompiler
 
             tabControlOutput.SelectedIndex = 0;
         }
-        private void antlerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var editor = GetCurrentEditor();
-            if (editor == null)
-                return;
-
-            dataGridParser.Rows.Clear();
-            string code = editor.Text;
-
-            var inputStream = new Antlr4.Runtime.AntlrInputStream(code);
-            var antlrLexer = new antlerLexer(inputStream);
-            var antlrTokens = new Antlr4.Runtime.CommonTokenStream(antlrLexer);
-            var antlrParser = new antlerParser(antlrTokens);
-
-            var antlrErrors = new List<string>();
-
-            antlrParser.RemoveErrorListeners();
-            antlrParser.AddErrorListener(new AntlrErrorCollector(antlrErrors));
-
-            antlrParser.program();
-
-            if (antlrErrors.Count > 0)
-            {
-                foreach (var err in antlrErrors)
-                {
-                    int row = dataGridParser.Rows.Add("ANTLR", "—", err);
-                    var r = dataGridParser.Rows[row];
-                    r.DefaultCellStyle.BackColor = Color.FromArgb(255, 230, 200);
-                    r.DefaultCellStyle.ForeColor = Color.DarkRed;
-                }
-            }
-            else
-            {
-                int row = dataGridParser.Rows.Add("ANTLR", "—", "Ошибок нет");
-                var r = dataGridParser.Rows[row];
-                r.DefaultCellStyle.BackColor = Color.FromArgb(220, 255, 220);
-                r.DefaultCellStyle.ForeColor = Color.DarkGreen;
-            }
-        }
         private void пускToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
