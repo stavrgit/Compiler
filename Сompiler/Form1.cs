@@ -25,6 +25,8 @@ namespace Сompiler
         public Form1()
         {
             InitializeComponent();
+            this.Font = new Font(this.Font.FontFamily, 8.25f); 
+            this.AutoScaleMode = AutoScaleMode.None;
             tabControlEditor.DrawMode = TabDrawMode.OwnerDrawFixed;
             tabControlEditor.Padding = new Point(20, 4);
             tabControlEditor.DrawItem += TabControlEditor_DrawItem;

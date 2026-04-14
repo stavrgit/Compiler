@@ -147,14 +147,29 @@
   <data name="dataGridParser.Size" type="System.Drawing.Size, System.Drawing">
     <value>1500, 156</value>
   </data>
+  <data name="Неверный.HeaderText" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Неверный.MinimumWidth" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="Местоположение.HeaderText" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="Местоположение.MinimumWidth" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="Описание.HeaderText" xml:space="preserve">
+    <value>description</value>
+  </data>
+  <data name="Описание.MinimumWidth" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
   <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
     <value>1506, 162</value>
   </data>
   <data name="tabPage2.Text" xml:space="preserve">
     <value>Scanner</value>
-  </data>
-  <data name="gridScanner.Size" type="System.Drawing.Size, System.Drawing">
-    <value>240, 150</value>
   </data>
   <data name="Code.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
@@ -204,17 +219,8 @@
   <data name="выделитьВсеToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>169, 26</value>
   </data>
-  <data name="парсерToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>83, 26</value>
-  </data>
-  <data name="antlerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>83, 26</value>
-  </data>
-  <data name="вызовСправкиToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>133, 26</value>
-  </data>
-  <data name="оПрограммеToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>133, 26</value>
+  <data name="парсерToolStripMenuItem.Text" xml:space="preserve">
+    <value>Parser</value>
   </data>
   <data name="russianToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>146, 26</value>
@@ -470,23 +476,5 @@
   </data>
   <data name="statusLang.Size" type="System.Drawing.Size, System.Drawing">
     <value>0, 16</value>
-  </data>
-  <data name="Неверный.HeaderText" xml:space="preserve">
-    <value>Error</value>
-  </data>
-  <data name="Неверный.MinimumWidth" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="Местоположение.HeaderText" xml:space="preserve">
-    <value>Position</value>
-  </data>
-  <data name="Местоположение.MinimumWidth" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="Описание.HeaderText" xml:space="preserve">
-    <value>description</value>
-  </data>
-  <data name="Описание.MinimumWidth" type="System.Int32, mscorlib">
-    <value>6</value>
   </data>
 </root>

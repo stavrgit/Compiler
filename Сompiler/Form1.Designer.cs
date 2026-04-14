@@ -596,19 +596,19 @@
         internal ToolStripStatusLabel statusSize;
         internal ToolStripStatusLabel statusLang;
         private SplitContainer splitContainer1;
+        internal ToolStripStatusLabel statusLines;
+        private ToolStripMenuItem парсерToolStripMenuItem;
         private TabControl tabControlOutput;
         private TabPage tabPage1;
-        private TabPage tabPage2;
-        private DataGridView gridScanner;
-        internal ToolStripStatusLabel statusLines;
-        private DataGridViewTextBoxColumn Code;
-        private DataGridViewTextBoxColumn Type;
-        private DataGridViewTextBoxColumn Lexeme;
-        private DataGridViewTextBoxColumn Position;
-        private ToolStripMenuItem парсерToolStripMenuItem;
         private DataGridView dataGridParser;
         private DataGridViewTextBoxColumn Неверный;
         private DataGridViewTextBoxColumn Местоположение;
         private DataGridViewTextBoxColumn Описание;
+        private TabPage tabPage2;
+        private DataGridView gridScanner;
+        private DataGridViewTextBoxColumn Code;
+        private DataGridViewTextBoxColumn Type;
+        private DataGridViewTextBoxColumn Lexeme;
+        private DataGridViewTextBoxColumn Position;
     }
 }
