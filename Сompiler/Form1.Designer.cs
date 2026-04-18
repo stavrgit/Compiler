@@ -68,6 +68,7 @@
             исходныйКодПргограммыToolStripMenuItem = new ToolStripMenuItem();
             пускToolStripMenuItem = new ToolStripMenuItem();
             парсерToolStripMenuItem = new ToolStripMenuItem();
+            antlerToolStripMenuItem = new ToolStripMenuItem();
             справкаToolStripMenuItem = new ToolStripMenuItem();
             вызовСправкиToolStripMenuItem = new ToolStripMenuItem();
             оПрограммеToolStripMenuItem = new ToolStripMenuItem();
@@ -353,13 +354,19 @@
             // пускToolStripMenuItem
             // 
             resources.ApplyResources(пускToolStripMenuItem, "пускToolStripMenuItem");
-            пускToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { парсерToolStripMenuItem });
+            пускToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { парсерToolStripMenuItem, antlerToolStripMenuItem });
             пускToolStripMenuItem.Name = "пускToolStripMenuItem";
             // 
             // парсерToolStripMenuItem
             // 
             resources.ApplyResources(парсерToolStripMenuItem, "парсерToolStripMenuItem");
             парсерToolStripMenuItem.Name = "парсерToolStripMenuItem";
+            // 
+            // antlerToolStripMenuItem
+            // 
+            resources.ApplyResources(antlerToolStripMenuItem, "antlerToolStripMenuItem");
+            antlerToolStripMenuItem.Name = "antlerToolStripMenuItem";
+            antlerToolStripMenuItem.Click += antlerToolStripMenuItem_Click;
             // 
             // справкаToolStripMenuItem
             // 
@@ -610,5 +617,6 @@
         private DataGridViewTextBoxColumn Type;
         private DataGridViewTextBoxColumn Lexeme;
         private DataGridViewTextBoxColumn Position;
+        private ToolStripMenuItem antlerToolStripMenuItem;
     }
 }

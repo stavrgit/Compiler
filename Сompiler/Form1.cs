@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using Antlr4.Runtime;
 using FastColoredTextBoxNS;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -25,7 +26,7 @@ namespace Сompiler
         public Form1()
         {
             InitializeComponent();
-            this.Font = new Font(this.Font.FontFamily, 8.25f); 
+            this.Font = new Font(this.Font.FontFamily, 8.25f);
             this.AutoScaleMode = AutoScaleMode.None;
             tabControlEditor.DrawMode = TabDrawMode.OwnerDrawFixed;
             tabControlEditor.Padding = new Point(20, 4);
@@ -168,11 +169,15 @@ namespace Сompiler
         internal void Open_Click(object sender, EventArgs e)
         {
             using var dialog = new OpenFileDialog();
+
+            dialog.InitialDirectory = Application.StartupPath;
+
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 New_Tab(Path.GetFileName(dialog.FileName), "");
                 var editor = GetCurrentEditor();
                 file_service.Load_File(editor, dialog.FileName);
+
                 if (tabControlEditor.SelectedTab.Tag is File_Info info)
                 {
                     info.Path = dialog.FileName;
@@ -519,5 +524,54 @@ namespace Сompiler
             editor.DoSelectionVisible();
             editor.Focus();
         }
+
+        private void antlerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var editor = GetCurrentEditor();
+            if (editor == null)
+                return;
+
+            string code = editor.Text;
+
+            // очищаем таблицу
+            dataGridParser.Rows.Clear();
+
+            // запускаем сканер
+            var scanner = new Scanner(code);
+            var tokens = scanner.Analyze();
+
+            // запускаем парсер
+            var parser = new Parser(tokens);
+            parser.ParseProgram();
+
+            // вывод ошибок
+            if (parser.Errors.Count > 0)
+            {
+                foreach (var err in parser.Errors)
+                {
+                    int row = dataGridParser.Rows.Add(
+                        err.Fragment,
+                        $"{err.Line}:{err.Col}",
+                        err.Message
+                    );
+
+                    var r = dataGridParser.Rows[row];
+                    r.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
+                    r.DefaultCellStyle.ForeColor = Color.DarkRed;
+                    MessageBox.Show("Обнаружены ошибки в коде.", "Antler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                int row = dataGridParser.Rows.Add("—", "—", "Ошибок не обнаружено");
+
+                var r = dataGridParser.Rows[row];
+                r.DefaultCellStyle.BackColor = Color.FromArgb(200, 255, 200);
+                r.DefaultCellStyle.ForeColor = Color.DarkGreen;
+            }
+
+            tabControlOutput.SelectedIndex = 0;
+        }
+
     }
 }
