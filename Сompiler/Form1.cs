@@ -598,11 +598,11 @@ namespace Сompiler
 
                     // Modifiers
                     sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Modifiers\n");
-                    sb.Append(BuildAstPretty(new TerminalNode("while"), indent + (isLast ? "   " : "│  ") + "│  ", true));
+                    sb.Append(BuildAstPretty(new TerminalNode("while"), indent + (isLast ? "   " : "│  ") + "│  ", false));
 
                     // Condition
                     sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Condition\n");
-                    sb.Append(BuildAstPretty(w.Condition, indent + (isLast ? "   " : "│  ") + "│  ", true));
+                    sb.Append(BuildAstPretty(w.Condition, indent + (isLast ? "   " : "│  ") + "│  ", false));
 
                     // Body
                     sb.Append(indent + (isLast ? "   " : "│  ") + "└─ Body\n");
@@ -613,10 +613,7 @@ namespace Сompiler
                 case CompareNode c:
                     sb.AppendLine("Compare");
                     sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Identifier name\n");
-                    sb.Append(BuildAstPretty(c.Left, indent + (isLast ? "   " : "│  ") + "│  ", true));
-
-                    sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Compare\n");
-                    sb.Append(BuildAstPretty(new TerminalNode(c.Op), indent + (isLast ? "   " : "│  ") + "│  ", true));
+                    sb.Append(BuildAstPretty(c.Left, indent + (isLast ? "   " : "│  ") + "   ", false));
 
                     sb.Append(indent + (isLast ? "   " : "│  ") + "└─ IntLiteral value\n");
                     sb.Append(BuildAstPretty(c.Right, indent + (isLast ? "   " : "│  ") + "   ", true));
@@ -624,18 +621,11 @@ namespace Сompiler
 
                 case AssignNode a:
                     sb.AppendLine("Assign");
-
                     sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Identifier name\n");
-                    sb.Append(BuildAstPretty(new IdentifierNode(a.Name, -1, -1), indent + (isLast ? "   " : "│  ") + "│  ", true));
+                    sb.Append(BuildAstPretty(new IdentifierNode(a.Name, -1, -1), indent + (isLast ? "   " : "│  ") + "   ", false));
 
-                    sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Assign\n");
-                    sb.Append(BuildAstPretty(new TerminalNode(a.Op), indent + (isLast ? "   " : "│  ") + "│  ", true));
-
-                    sb.Append(indent + (isLast ? "   " : "│  ") + "├─ IntLiteral value\n");
-                    sb.Append(BuildAstPretty(a.Value, indent + (isLast ? "   " : "│  ") + "│  ", true));
-
-                    sb.Append(indent + (isLast ? "   " : "│  ") + "└─ Semicolon\n");
-                    sb.Append(BuildAstPretty(new TerminalNode(";"), indent + (isLast ? "   " : "│  ") + "   ", true));
+                    sb.Append(indent + (isLast ? "   " : "│  ") + "└─ IntLiteral value\n");
+                    sb.Append(BuildAstPretty(a.Value, indent + (isLast ? "   " : "│  ") + "   ", true));
                     break;
 
                 case IdentifierNode id:
@@ -647,12 +637,17 @@ namespace Сompiler
                     break;
 
                 case TerminalNode t:
-                    sb.AppendLine(t.Symbol);
+                    if (t.Symbol != ";" && t.Symbol != ":")
+                        sb.AppendLine(t.Symbol);
                     break;
             }
 
             return sb.ToString();
         }
+
+
+
+
 
         private void aSTToolStripMenuItem_Click(object sender, EventArgs e)
         {
