@@ -6,8 +6,10 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using Antlr4.Runtime;
+using Сompiler;
 using FastColoredTextBoxNS;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
 
 namespace Сompiler
 {
@@ -593,22 +595,47 @@ namespace Сompiler
             {
                 case WhileNode w:
                     sb.AppendLine("While");
-                    var childrenW = new List<AstNode>();
-                    childrenW.Add(w.Condition);
-                    childrenW.AddRange(w.Body);
-                    for (int i = 0; i < childrenW.Count; i++)
-                        sb.Append(BuildAstPretty(childrenW[i], indent + (isLast ? "   " : "│  "), i == childrenW.Count - 1));
-                    break;
 
-                case AssignNode a:
-                    sb.AppendLine($"Assign {a.Name} {a.Op}");
-                    sb.Append(BuildAstPretty(a.Value, indent + (isLast ? "   " : "│  "), true));
+                    // Modifiers
+                    sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Modifiers\n");
+                    sb.Append(BuildAstPretty(new TerminalNode("while"), indent + (isLast ? "   " : "│  ") + "│  ", true));
+
+                    // Condition
+                    sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Condition\n");
+                    sb.Append(BuildAstPretty(w.Condition, indent + (isLast ? "   " : "│  ") + "│  ", true));
+
+                    // Body
+                    sb.Append(indent + (isLast ? "   " : "│  ") + "└─ Body\n");
+                    for (int i = 0; i < w.Body.Count; i++)
+                        sb.Append(BuildAstPretty(w.Body[i], indent + (isLast ? "   " : "│  ") + "   ", i == w.Body.Count - 1));
                     break;
 
                 case CompareNode c:
-                    sb.AppendLine($"Compare {c.Op}");
-                    sb.Append(BuildAstPretty(c.Left, indent + (isLast ? "   " : "│  "), false));
-                    sb.Append(BuildAstPretty(c.Right, indent + (isLast ? "   " : "│  "), true));
+                    sb.AppendLine("Compare");
+                    sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Identifier name\n");
+                    sb.Append(BuildAstPretty(c.Left, indent + (isLast ? "   " : "│  ") + "│  ", true));
+
+                    sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Compare\n");
+                    sb.Append(BuildAstPretty(new TerminalNode(c.Op), indent + (isLast ? "   " : "│  ") + "│  ", true));
+
+                    sb.Append(indent + (isLast ? "   " : "│  ") + "└─ IntLiteral value\n");
+                    sb.Append(BuildAstPretty(c.Right, indent + (isLast ? "   " : "│  ") + "   ", true));
+                    break;
+
+                case AssignNode a:
+                    sb.AppendLine("Assign");
+
+                    sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Identifier name\n");
+                    sb.Append(BuildAstPretty(new IdentifierNode(a.Name, -1, -1), indent + (isLast ? "   " : "│  ") + "│  ", true));
+
+                    sb.Append(indent + (isLast ? "   " : "│  ") + "├─ Assign\n");
+                    sb.Append(BuildAstPretty(new TerminalNode(a.Op), indent + (isLast ? "   " : "│  ") + "│  ", true));
+
+                    sb.Append(indent + (isLast ? "   " : "│  ") + "├─ IntLiteral value\n");
+                    sb.Append(BuildAstPretty(a.Value, indent + (isLast ? "   " : "│  ") + "│  ", true));
+
+                    sb.Append(indent + (isLast ? "   " : "│  ") + "└─ Semicolon\n");
+                    sb.Append(BuildAstPretty(new TerminalNode(";"), indent + (isLast ? "   " : "│  ") + "   ", true));
                     break;
 
                 case IdentifierNode id:
@@ -618,12 +645,14 @@ namespace Сompiler
                 case IntLiteralNode lit:
                     sb.AppendLine($"IntLiteral {lit.RawValue}");
                     break;
+
+                case TerminalNode t:
+                    sb.AppendLine(t.Symbol);
+                    break;
             }
 
             return sb.ToString();
         }
-
-
 
         private void aSTToolStripMenuItem_Click(object sender, EventArgs e)
         {

@@ -10,6 +10,10 @@ namespace Сompiler
     {
         private readonly AstNode _root;
         private readonly Font _font = new Font("Consolas", 10);
+        private const int NODE_WIDTH = 120;
+        private const int NODE_HEIGHT = 30;
+        private const int H_SPACING = 40;   // расстояние между узлами
+        private const int V_SPACING = 90;   // расстояние по вертикали
 
         public FormAstViewer(AstNode root)
         {
@@ -28,89 +32,130 @@ namespace Сompiler
 
             // рисуем дерево
             DrawNode(g, _root, this.ClientSize.Width / 2, 20);
+
         }
 
         private void DrawNode(Graphics g, AstNode node, int x, int y)
         {
             if (node is TerminalNode t)
             {
-                int childY = y + 40; // терминал ближе к родителю
+                int childY = y + 80; // 🔥 одинаковый отступ для всех терминалов
+
                 var size = g.MeasureString(t.Symbol, _font);
                 int w = (int)size.Width + 20;
+
                 var rect = new Rectangle(x - w / 2, childY, w, 30);
 
                 g.FillRectangle(Brushes.White, rect);
                 g.DrawRectangle(Pens.Black, rect);
-                g.DrawString($"\"{t.Symbol}\"", _font, Brushes.Black, rect,
-                    new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
 
-                g.DrawLine(Pens.Black, x, y + 30, x, childY);
+                g.DrawString(t.Symbol, _font, Brushes.Black, rect,
+                    new StringFormat
+                    {
+                        Alignment = StringAlignment.Center,
+                        LineAlignment = StringAlignment.Center
+                    });
+
+                // 🔥 линия строго в центр терминала
+                g.DrawLine(
+                    Pens.Black,
+                    x,
+                    y + 30,
+                    x,
+                    childY
+                );
+
                 return;
             }
 
-
-            // ===== НЕ-ТЕРМИНАЛ =====
             if (node is NonTerminalNode nt)
             {
                 DrawBox(g, nt.Name, x, y);
 
                 if (nt.Child is AstNode childNode)
                 {
-                    g.DrawLine(Pens.Black, x, y + 30, x, y + 120);
-                    DrawNode(g, childNode, x, y + 120);
+                    g.DrawLine(Pens.Black, x, y + NODE_HEIGHT, x, y + V_SPACING);
+
+                    DrawNode(g, childNode, x, y + V_SPACING);
                 }
-                else if (nt.Child is List<StmtNode> list)
+
+                return;
+            }
+            if (node is StmtListNode list)
+            {
+                DrawBox(g, "Body", x, y);
+
+                int stmtTotalWidth = list.Statements.Sum(s => MeasureWidth(g, s)) + (list.Statements.Count - 1) * H_SPACING;
+                int stmtStartX = x - stmtTotalWidth / 2 - 50;
+
+                foreach (var stmt in list.Statements)
                 {
-                    DrawStmtList(g, list, x, y);
+                    int w = MeasureWidth(g, stmt);
+                    int childX = stmtStartX + w / 2;
+                    int childY = y + V_SPACING;
+
+                    g.DrawLine(Pens.Black, x, y + NODE_HEIGHT, childX, childY);
+                    DrawNode(g, stmt, childX, childY);
+
+                    stmtStartX += w + H_SPACING;
+                }
+                return;
+            }
+            if (node is ConditionNode cond)
+            {
+                DrawBox(g, "Condition", x, y);
+
+                int condtotalWidth = cond.Parts.Sum(p => MeasureWidth(g, p)) + (cond.Parts.Count - 1) * H_SPACING;
+                int condstartX = x - condtotalWidth / 2;
+
+                foreach (var part in cond.Parts)
+                {
+                    int w = MeasureWidth(g, part);
+                    int childX = condstartX + w / 2;
+                    int childY = y + V_SPACING;
+
+                    g.DrawLine(Pens.Black, x, y + NODE_HEIGHT, childX, childY);
+                    DrawNode(g, part, childX, childY);
+
+                    condstartX += w + H_SPACING;
                 }
                 return;
             }
 
-            // ===== ОБЫЧНЫЙ УЗЕЛ =====
+
+
+            // обычный узел
             string label = GetLabel(node);
             DrawBox(g, label, x, y);
 
             var children = GetChildren(node).ToList();
             if (children.Count == 0) return;
 
-            int totalWidth = children.Sum(c => MeasureWidth(c));
+            int totalWidth = children.Sum(c => MeasureWidth(g, c)) + (children.Count - 1) * H_SPACING;
             int startX = x - totalWidth / 2;
 
             foreach (var child in children)
             {
-                int w = MeasureWidth(child);
+                int w = MeasureWidth(g, child);
                 int childX = startX + w / 2;
-                int childY = y + 120;
+                int childY = y + V_SPACING;
 
-                // линия от центра родителя к центру верхней границы ребёнка
-                g.DrawLine(Pens.Black, x, y + 30, childX, childY);
+                // линия аккуратно вниз
+                g.DrawLine(Pens.Black, x, y + NODE_HEIGHT, childX, childY);
 
-                // теперь рисуем ребёнка
                 DrawNode(g, child, childX, childY);
 
-                startX += w;
-            }
-
-        }
-
-
-        // ===== ВСПОМОГАТЕЛЬНЫЙ МЕТОД ДЛЯ СПИСКА =====
-        private void DrawStmtList(Graphics g, List<StmtNode> list, int x, int y)
-        {
-            int startX = x - (list.Count * 140) / 2;
-
-            foreach (var stmt in list)
-            {
-                g.DrawLine(Pens.Black, x, y + 30, startX, y + 120);
-                DrawNode(g, stmt, startX, y + 120);
-                startX += 140;
+                startX += w + H_SPACING;
             }
         }
+
+
+       
 
         // ================= BOX =================
         private void DrawBox(Graphics g, string text, int x, int y)
         {
-            var rect = new Rectangle(x - 60, y, 120, 30);
+            var rect = new Rectangle(x - NODE_WIDTH / 2, y, NODE_WIDTH, NODE_HEIGHT);
 
             g.FillRectangle(Brushes.White, rect);
             g.DrawRectangle(Pens.Black, rect);
@@ -124,47 +169,30 @@ namespace Сompiler
         }
 
         // ================= WIDTH =================
-        private int MeasureWidth(AstNode node)
+        private int MeasureWidth(Graphics g, AstNode node)
         {
-            // Для терминала считаем ширину текста
-            if (node is TerminalNode t)
+            string label = GetLabel(node);
+            var size = g.MeasureString(label, _font);
+
+            int baseWidth = Math.Max((int)size.Width + 40, NODE_WIDTH);
+
+            if (node is ConditionNode cond)
             {
-                using (var g = this.CreateGraphics())
-                {
-                    var size = g.MeasureString($"\"{t.Symbol}\"", _font);
-                    return (int)size.Width + 40; // запас
-                }
+                int childrenWidth = cond.Parts.Sum(p => MeasureWidth(g, p)) + (cond.Parts.Count - 1) * H_SPACING;
+                return Math.Max(NODE_WIDTH, childrenWidth);
+            }
+            if (node is StmtListNode list)
+            {
+                int childrenWidth = list.Statements.Sum(s => MeasureWidth(g, s)) + (list.Statements.Count - 1) * H_SPACING;
+                return Math.Max(NODE_WIDTH, childrenWidth);
             }
 
-            // Для идентификатора и литерала тоже считаем текст
-            if (node is IdentifierNode id)
-            {
-                using (var g = this.CreateGraphics())
-                {
-                    var size = g.MeasureString(id.Name, _font);
-                    return (int)size.Width + 40;
-                }
-            }
-            if (node is IntLiteralNode lit)
-            {
-                using (var g = this.CreateGraphics())
-                {
-                    var size = g.MeasureString(lit.RawValue.ToString(), _font);
-                    return (int)size.Width + 40;
-                }
-            }
-
-            // Для нетерминала — минимум 120
             var children = GetChildren(node).ToList();
-            if (children.Count == 0)
-                return 120;
+            if (children.Count == 0) return baseWidth;
 
-            // Сумма ширин детей + динамические промежутки
-            int w = children.Sum(c => MeasureWidth(c)) + children.Count * 20;
-            return Math.Max(w, 120);
+            int totalWidth = children.Sum(c => MeasureWidth(g, c)) + (children.Count - 1) * H_SPACING;
+            return Math.Max(baseWidth, totalWidth);
         }
-
-
 
 
         // ================= LABEL =================
@@ -175,8 +203,8 @@ namespace Сompiler
                 case WhileNode: return "While";
                 case AssignNode: return "Assign";
                 case CompareNode cmp: return $"Compare ({cmp.Op})";
-                case IdentifierNode id: return $"Id: {id.Name}";
-                case IntLiteralNode lit: return $"Int: {lit.RawValue}";
+                case IdentifierNode id: return $"{id.Name}";
+                case IntLiteralNode lit: return $"{lit.RawValue}";
                 default: return node.GetType().Name;
             }
         }
@@ -187,66 +215,29 @@ namespace Сompiler
             switch (node)
             {
                 case WhileNode w:
-                    yield return new TerminalNode("while");
-                    yield return new NonTerminalNode("Condition", w.Condition);
-                    yield return new TerminalNode(":");
-                    yield return new NonTerminalNode("Body", w.Body);
-                    break;
-
-                case AssignNode a:
-                    yield return new IdentifierNode(a.Name);
-                    yield return new TerminalNode(a.Op);
-                    yield return a.Value;
-                    yield return new TerminalNode(";");
+                    yield return new NonTerminalNode("Modifiers", new TerminalNode("while"));
+                    yield return new ConditionNode(new List<AstNode> {
+                                    w.Condition,
+                                    new TerminalNode(":")
+                                                        });
+                    yield return new StmtListNode(w.Body);
                     break;
 
                 case CompareNode c:
-                    yield return c.Left;
-                    yield return new TerminalNode(c.Op);
-                    yield return c.Right;
+                    yield return new NonTerminalNode("Identifier name", c.Left);
+                    yield return new NonTerminalNode("Compare", new TerminalNode(c.Op));
+                    yield return new NonTerminalNode("IntLiteral value", c.Right);
                     break;
-            }
-        }
 
-        // ================= SUPPORT NODES =================
-        public class TerminalNode : AstNode
-        {
-            public string Symbol { get; }
+                case AssignNode a:
+                    yield return new NonTerminalNode("Identifier name", new TerminalNode(a.Name));
+                    yield return new NonTerminalNode("Assign", new TerminalNode(a.Op));
+                    yield return new NonTerminalNode("IntLiteral value", a.Value);
+                    yield return new NonTerminalNode("Semicolon", new TerminalNode(";"));
+                    break;
 
-            public TerminalNode(string symbol)
-                : base(-1, -1)
-            {
-                Symbol = symbol;
-            }
-        }
 
-        public class NonTerminalNode : AstNode
-        {
-            public string Name { get; }
-            public object Child { get; }
 
-            public NonTerminalNode(string name, object child)
-                : base(-1, -1)
-            {
-                Name = name;
-                Child = child;
-            }
-        }
-
-        public sealed class IdentifierNode : ExprNode
-        {
-            public string Name { get; }
-
-            public IdentifierNode(string name)
-                : base(-1, -1)
-            {
-                Name = name;
-            }
-
-            public IdentifierNode(string name, int line, int col)
-                : base(line, col)
-            {
-                Name = name;
             }
         }
     }

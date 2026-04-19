@@ -35,7 +35,12 @@ namespace Сompiler
                 CheckExpr(node.Condition);
 
                 foreach (var stmt in node.Body)
-                    CheckStmt(stmt);
+                {
+                    if (stmt is StmtNode s)
+                        CheckStmt(s);
+                    else
+                        throw new InvalidOperationException("В Body оказался не StmtNode");
+                }
             }
 
             private void CheckStmt(StmtNode stmt)

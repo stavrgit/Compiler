@@ -21,15 +21,27 @@ namespace Сompiler
     public sealed class WhileNode : AstNode
     {
         public ExprNode Condition { get; }
-        public List<StmtNode> Body { get; }
+        public List<AstNode> Body { get; }
 
-        public WhileNode(ExprNode condition, List<StmtNode> body, int line, int column)
-            : base(line, column)
+        public WhileNode(ExprNode cond, List<AstNode> body, int line = -1, int col = -1)
+            : base(line, col)
         {
-            Condition = condition;
+            Condition = cond;
             Body = body;
         }
     }
+
+
+    public class ConditionNode : AstNode
+    {
+        public List<AstNode> Parts { get; }
+
+        public ConditionNode(List<AstNode> parts) : base(-1, -1)
+        {
+            Parts = parts;
+        }
+    }
+
 
     public abstract class StmtNode : AstNode
     {
@@ -90,6 +102,33 @@ namespace Сompiler
             : base(line, column)
         {
             RawValue = raw;
+        }
+    }
+    public class TerminalNode : AstNode
+    {
+        public string Symbol { get; }
+        public TerminalNode(string symbol) : base(-1, -1) => Symbol = symbol;
+    }
+
+    public class NonTerminalNode : AstNode
+    {
+        public string Name { get; }
+        public AstNode Child { get; }
+
+        public NonTerminalNode(string name, AstNode child) : base(-1, -1)
+        {
+            Name = name;
+            Child = child;
+        }
+    }
+
+    public class StmtListNode : AstNode
+    {
+        public List<AstNode> Statements { get; }
+
+        public StmtListNode(List<AstNode> stmts) : base(-1, -1)
+        {
+            Statements = stmts;
         }
     }
 

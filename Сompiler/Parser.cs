@@ -440,7 +440,7 @@ namespace Сompiler
             EatGarbage();
 
             ExprNode cond = ParseConditionNode(); // условие
-            var body = new List<StmtNode>();
+            var body = new List<AstNode>();
 
             while (_pos < _tokens.Count &&
                    Current.Lexeme != "while" &&
