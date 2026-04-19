@@ -69,6 +69,7 @@
             пускToolStripMenuItem = new ToolStripMenuItem();
             парсерToolStripMenuItem = new ToolStripMenuItem();
             antlerToolStripMenuItem = new ToolStripMenuItem();
+            aSTToolStripMenuItem = new ToolStripMenuItem();
             справкаToolStripMenuItem = new ToolStripMenuItem();
             вызовСправкиToolStripMenuItem = new ToolStripMenuItem();
             оПрограммеToolStripMenuItem = new ToolStripMenuItem();
@@ -96,6 +97,8 @@
             statusLines = new ToolStripStatusLabel();
             statusSize = new ToolStripStatusLabel();
             statusLang = new ToolStripStatusLabel();
+            tabPage3 = new TabPage();
+            richTextBoxAst = new RichTextBox();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -108,6 +111,7 @@
             menuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             statusStrip.SuspendLayout();
+            tabPage3.SuspendLayout();
             SuspendLayout();
             // 
             // splitContainer1
@@ -137,6 +141,7 @@
             resources.ApplyResources(tabControlOutput, "tabControlOutput");
             tabControlOutput.Controls.Add(tabPage1);
             tabControlOutput.Controls.Add(tabPage2);
+            tabControlOutput.Controls.Add(tabPage3);
             tabControlOutput.Name = "tabControlOutput";
             tabControlOutput.SelectedIndex = 0;
             // 
@@ -354,7 +359,7 @@
             // пускToolStripMenuItem
             // 
             resources.ApplyResources(пускToolStripMenuItem, "пускToolStripMenuItem");
-            пускToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { парсерToolStripMenuItem, antlerToolStripMenuItem });
+            пускToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { парсерToolStripMenuItem, antlerToolStripMenuItem, aSTToolStripMenuItem });
             пускToolStripMenuItem.Name = "пускToolStripMenuItem";
             // 
             // парсерToolStripMenuItem
@@ -367,6 +372,12 @@
             resources.ApplyResources(antlerToolStripMenuItem, "antlerToolStripMenuItem");
             antlerToolStripMenuItem.Name = "antlerToolStripMenuItem";
             antlerToolStripMenuItem.Click += antlerToolStripMenuItem_Click;
+            // 
+            // aSTToolStripMenuItem
+            // 
+            resources.ApplyResources(aSTToolStripMenuItem, "aSTToolStripMenuItem");
+            aSTToolStripMenuItem.Name = "aSTToolStripMenuItem";
+            aSTToolStripMenuItem.Click += aSTToolStripMenuItem_Click;
             // 
             // справкаToolStripMenuItem
             // 
@@ -520,6 +531,18 @@
             resources.ApplyResources(statusLang, "statusLang");
             statusLang.Name = "statusLang";
             // 
+            // tabPage3
+            // 
+            resources.ApplyResources(tabPage3, "tabPage3");
+            tabPage3.Controls.Add(richTextBoxAst);
+            tabPage3.Name = "tabPage3";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxAst
+            // 
+            resources.ApplyResources(richTextBoxAst, "richTextBoxAst");
+            richTextBoxAst.Name = "richTextBoxAst";
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
@@ -545,6 +568,7 @@
             toolStrip1.PerformLayout();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
+            tabPage3.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -618,5 +642,8 @@
         private DataGridViewTextBoxColumn Lexeme;
         private DataGridViewTextBoxColumn Position;
         private ToolStripMenuItem antlerToolStripMenuItem;
+        private ToolStripMenuItem aSTToolStripMenuItem;
+        private TabPage tabPage3;
+        private RichTextBox richTextBoxAst;
     }
 }

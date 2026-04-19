@@ -11,6 +11,8 @@ namespace Сompiler
         private bool _exprError = false;
 
         private const int MAX_ERRORS = 3;
+        public AstNode Root { get; private set; }
+
 
         public List<ParseError> Errors { get; } = new();
 
@@ -77,23 +79,69 @@ namespace Сompiler
 
         // ================= VALUE =================
 
-        private void ParseValue()
+        private ExprNode ParseValue()
         {
             if (Current.Code == 11)
             {
                 Error("Недопустимый символ");
                 _pos++;
-                return;
+                return null;
             }
 
-            if (Current.Code == 2 || Current.Code == 10)
+            // отрицательное число
+            if (Current.Lexeme == "-" && _pos + 1 < _tokens.Count && _tokens[_pos + 1].Code == 10)
             {
+                int line = Current.Line;
+                int col = Current.Start;
+                string numText = _tokens[_pos + 1].Lexeme;
+
+                if (long.TryParse(numText, out long val))
+                {
+                    _pos += 2; // съели "-" и число
+                    return new IntLiteralNode(numText, line, col);
+                }
+                else
+                {
+                    Error($"Число {numText} слишком велико");
+                    _pos += 2;
+                    return null;
+                }
+            }
+
+            // обычное число
+            if (Current.Code == 10)
+            {
+                int line = Current.Line;
+                int col = Current.Start;
+                string numText = Current.Lexeme;
+
+                if (long.TryParse(numText, out long val))
+                {
+                    _pos++;
+                    return new IntLiteralNode(numText, line, col);
+                }
+                else
+                {
+                    Error($"Число {numText} слишком велико");
+                    _pos++;
+                    return null;
+                }
+            }
+
+            // идентификатор
+            if (Current.Code == 2)
+            {
+                string name = Current.Lexeme;
+                int line = Current.Line;
+                int col = Current.Start;
                 _pos++;
-                return;
+                return new IdentifierNode(name, line, col);
             }
 
             IronError("идентификатор или число", "0");
+            return null;
         }
+
 
         // ================= COMPARE =================
 
@@ -284,7 +332,7 @@ namespace Сompiler
                 if (Current.Lexeme == ";")
                     _pos++;
 
-                return; // 🔥 КЛЮЧЕВОЕ
+               
             }
 
             // 🔥 4. нормальная проверка ;
@@ -321,108 +369,6 @@ namespace Сompiler
                 _pos++; // съели мусор
             }
         }
-
-        private void ParseWhile()
-        {
-            _pos++; // съели while
-
-            // ===== УНИВЕРСАЛЬНАЯ ОБРАБОТКА МУСОРА =====
-            EatGarbage();
-
-            // ===== ( =====
-            bool hasOpenParen = false;
-            if (Current.Lexeme == "(")
-            {
-                hasOpenParen = true;
-                _pos++;
-                EatGarbage();
-            }
-
-            // ===== ИДЕНТИФИКАТОР =====
-            if (Current.Code == 2)
-            {
-                _pos++;
-            }
-            else
-            {
-                Error("Ожидался идентификатор");
-                _pos++;          // съели мусор
-            }
-            EatGarbage();
-
-            // ===== ОПЕРАТОР СРАВНЕНИЯ =====
-            if (Current.Lexeme is ">" or "<" or ">=" or "<=" or "==" or "!=")
-            {
-                _pos++;
-            }
-            else
-            {
-                Error("Ожидался оператор сравнения");
-                _pos++;          // съели мусор
-            }
-            EatGarbage();
-
-            // ===== ЗНАЧЕНИЕ =====
-            if (Current.Code == 2 || Current.Code == 10)
-            {
-                _pos++;
-            }
-            else
-            {
-                Error("Ожидался идентификатор или число");
-                _pos++;          // съели мусор
-            }
-            EatGarbage();
-
-            // ===== ) =====
-            if (hasOpenParen)
-            {
-                if (Current.Lexeme == ")")
-                {
-                    _pos++;
-                }
-                else
-                {
-                    Error("Ожидалась ')'");
-                }
-            }
-            else
-            {
-                if (Current.Lexeme == ")")
-                {
-                    Error("Лишняя ')'");
-                    _pos++;
-                }
-            }
-            EatGarbage();
-
-            // ===== : =====
-            if (Current.Lexeme == ":")
-            {
-                _pos++;
-            }
-            else
-            {
-                Error("Ожидался ':'");
-            }
-            EatGarbage();
-
-            _exprError = false;
-            // ===== ТЕЛО =====
-            while (_pos < _tokens.Count &&
-                   Current.Lexeme != "while" &&
-                   Current.Lexeme != "EOF")
-            {
-                int before = _pos;
-                ParseStmt();
-
-                if (_pos == before)
-                {
-                    Error("Неожиданный токен в теле");
-                    _pos++;
-                }
-            }
-        }
         public void ParseProgram()
         {
             _pos = 0;
@@ -437,7 +383,7 @@ namespace Сompiler
 
                 if (Current.Lexeme == "while")
                 {
-                    ParseWhile();
+                    Root = ParseWhileNode();
                     break;   // ← ВОТ ЭТО ИСПРАВЛЯЕТ ЛИШНЮЮ ОШИБКУ
                 }
                 else
@@ -446,123 +392,101 @@ namespace Сompiler
 
                     if (Current.Code == 2 && Current.Lexeme.StartsWith("w"))
                     {
-                        ParseBrokenWhileHeader();
-                        ParseBrokenWhileBody();
                         break;
                     }
 
                     break;
                 }
 
-                if (_pos == beforeTop)
-                    _pos++;
             }
         }
-
-
-
-
-        private void ParseBrokenWhileHeader()
+        
+        private ExprNode ParseConditionNode()
         {
-            _pos++; // пропускаем сломанный ключ (например "whil")
+            // левый операнд
+            var left = ParseValue();
 
-            EatGarbage();
-
-            bool hasOpenParen = false;
-
-            // ===== ( =====
-            if (Current.Lexeme == "(")
-            {
-                hasOpenParen = true;
-                _pos++;
-                EatGarbage();
-            }
-
-            // ===== ИДЕНТИФИКАТОР =====
-            if (Current.Code == 2)
-            {
-                _pos++;
-            }
-            else
-            {
-                Error("Ожидался идентификатор");
-                _pos++;
-            }
-            EatGarbage();
-
-            // ===== ОПЕРАТОР СРАВНЕНИЯ =====
+            // оператор
             if (Current.Lexeme is ">" or "<" or ">=" or "<=" or "==" or "!=")
             {
+                string op = Current.Lexeme;
                 _pos++;
+
+                var right = ParseValue();
+
+                return new CompareNode(left, op, right, Current.Line, Current.Start);
             }
             else
             {
                 Error("Ожидался оператор сравнения");
-                _pos++;
+                return left;
             }
-            EatGarbage();
-
-            // ===== ЗНАЧЕНИЕ =====
-            if (Current.Code == 2 || Current.Code == 10)
-            {
-                _pos++;
-            }
-            else
-            {
-                Error("Ожидался идентификатор или число");
-                _pos++;
-            }
-            EatGarbage();
-
-            // ===== ) =====
-            if (hasOpenParen)
-            {
-                if (Current.Lexeme == ")")
-                {
-                    _pos++;
-                }
-                else
-                {
-                    Error("Ожидалась ')'");
-                }
-            }
-            else
-            {
-                if (Current.Lexeme == ")")
-                {
-                    Error("Лишняя ')'");
-                    _pos++;
-                }
-            }
-            EatGarbage();
-
-            if (Current.Lexeme == ":")
-            {
-                _pos++;
-            }
-            else
-            {
-                Error("Ожидался ':'");
-            }
-            EatGarbage();
         }
 
-        private void ParseBrokenWhileBody()
+
+
+        private StmtNode ParseStmtNode()
         {
+            return ParseAssignNode();
+        }
+
+
+        private WhileNode ParseWhileNode()
+        {
+            int line = Current.Line;
+            int col = Current.Start;
+
+            _pos++; // съели while
+            EatGarbage();
+
+            ExprNode cond = ParseConditionNode(); // условие
+            var body = new List<StmtNode>();
+
             while (_pos < _tokens.Count &&
                    Current.Lexeme != "while" &&
                    Current.Lexeme != "EOF")
             {
                 int before = _pos;
+                var stmt = ParseStmtNode();
+                if (stmt != null)
+                    body.Add(stmt);
 
-                ParseStmt();
-
-                if (_pos == before)
-                {
-                    Error("Неожиданный токен в теле");
+                if (_pos == before) // защита от зависания
                     _pos++;
-                }
+            }
+
+            return new WhileNode(cond, body, line, col);
+        }
+
+        private AssignNode ParseAssignNode()
+        {
+            if (Current.Code != 2)
+            {
+                Error("Ожидался идентификатор");
+                return null;
+            }
+
+            string name = Current.Lexeme;
+            int line = Current.Line;
+            _pos++;
+
+            if (Current.Lexeme is "=" or "+=" or "-=" or "*=" or "/=")
+            {
+                string op = Current.Lexeme;
+                _pos++;
+
+                // ВАЖНО: использовать результат ParseValue()
+                ExprNode value = ParseValue();
+
+                return new AssignNode(name, op, value, line, Current.Start);
+            }
+            else
+            {
+                Error("Ожидался оператор присваивания");
+                return null;
             }
         }
+
+
     }
 }

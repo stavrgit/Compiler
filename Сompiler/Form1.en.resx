@@ -121,10 +121,35 @@
   <data name="tabControlEditor.Size" type="System.Drawing.Size, System.Drawing">
     <value>1514, 237</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tabControlOutput.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tabControlOutput.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1514, 195</value>
+  </data>
+  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1514, 436</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
+    <value>237</value>
+  </data>
+  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1506, 162</value>
+  </data>
+  <data name="tabPage1.Text" xml:space="preserve">
+    <value>Parser</value>
+  </data>
+  <data name="dataGridParser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="dataGridParser.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1500, 156</value>
+  </data>
   <data name="Неверный.HeaderText" xml:space="preserve">
     <value>Error</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Неверный.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
@@ -140,18 +165,11 @@
   <data name="Описание.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="dataGridParser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="dataGridParser.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1500, 156</value>
-  </data>
-  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
     <value>1506, 162</value>
   </data>
-  <data name="tabPage1.Text" xml:space="preserve">
-    <value>Parser</value>
+  <data name="tabPage2.Text" xml:space="preserve">
+    <value>Scanner</value>
   </data>
   <data name="Code.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
@@ -164,24 +182,6 @@
   </data>
   <data name="Position.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
-  </data>
-  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1506, 162</value>
-  </data>
-  <data name="tabPage2.Text" xml:space="preserve">
-    <value>Scanner</value>
-  </data>
-  <data name="tabControlOutput.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="tabControlOutput.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1514, 195</value>
-  </data>
-  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1514, 436</value>
-  </data>
-  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
-    <value>237</value>
   </data>
   <data name="создатьToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>147, 26</value>
@@ -219,8 +219,14 @@
   <data name="выделитьВсеToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>169, 26</value>
   </data>
+  <data name="парсерToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>132, 26</value>
+  </data>
   <data name="парсерToolStripMenuItem.Text" xml:space="preserve">
     <value>Parser</value>
+  </data>
+  <data name="antlerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>132, 26</value>
   </data>
   <data name="antlerToolStripMenuItem.Text" xml:space="preserve">
     <value>Antler</value>
@@ -465,6 +471,12 @@
   <data name="toolStripButton11.Text" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="statusStrip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 537</value>
+  </data>
+  <data name="statusStrip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1514, 22</value>
+  </data>
   <data name="statusFileName.Size" type="System.Drawing.Size, System.Drawing">
     <value>0, 16</value>
   </data>
@@ -479,11 +491,5 @@
   </data>
   <data name="statusLang.Size" type="System.Drawing.Size, System.Drawing">
     <value>0, 16</value>
-  </data>
-  <data name="statusStrip.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 537</value>
-  </data>
-  <data name="statusStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1514, 22</value>
   </data>
 </root>

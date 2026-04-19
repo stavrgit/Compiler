@@ -23,6 +23,7 @@ namespace Сompiler
         public Syntax_Service syntax;
         private Tab_Input tab_Input;
         private Dictionary<TabPage, Rectangle> closeButtons = new();
+        private Parser parser;
         public Form1()
         {
             InitializeComponent();
@@ -396,7 +397,7 @@ namespace Сompiler
             syntax.Highlight(editor, e);
         }
 
-        private void buttonRun_Click(object sender, EventArgs e)
+        internal void buttonRun_Click(object sender, EventArgs e)
         {
             var editor = GetCurrentEditor();
             if (editor == null)
@@ -404,9 +405,10 @@ namespace Сompiler
 
             string code = editor.Text;
 
-            _output.ClearParserErrors();
             _output.ClearScannerTokens();
+            dataGridParser.Rows.Clear();
 
+            // сканер
             var scanner = new Scanner(code);
             var tokens = scanner.Analyze();
 
@@ -416,36 +418,45 @@ namespace Сompiler
                 _output.AddScannerToken(t.Code, t.Type, t.Lexeme, pos);
             }
 
-            var parser = new Parser(tokens);
+            // парсер → AST
+            parser = new Parser(tokens);
             parser.ParseProgram();
 
-            bool hasErrors = parser.Errors.Count > 0;
+            // допустим, парсер возвращает корень дерева
+            AstNode ast = parser.Root;
 
-            if (hasErrors)
+            // семантика
+            var sem = new Semantica.SemanticAnalyzer();
+            if (ast is WhileNode w)
+                sem.Analyze(w);
+
+            // вывод ошибок в таблицу
+            if (sem.Errors.Count > 0)
             {
-                foreach (var err in parser.Errors)
+                foreach (var err in sem.Errors)
                 {
-                    int row = dataGridParser.Rows.Add(err.Fragment, $"{err.Line}:{err.Col}", err.Message);
-
+                    int row = dataGridParser.Rows.Add(err, "—");
                     var r = dataGridParser.Rows[row];
                     r.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
                     r.DefaultCellStyle.ForeColor = Color.DarkRed;
                 }
-                MessageBox.Show("Обнаружены ошибки в коде.", "Парсер", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
-                int row = dataGridParser.Rows.Add("—", "—", "Ошибок не обнаружено");
-
+                int row = dataGridParser.Rows.Add("Ошибок не обнаружено", "—");
                 var r = dataGridParser.Rows[row];
                 r.DefaultCellStyle.BackColor = Color.FromArgb(200, 255, 200);
                 r.DefaultCellStyle.ForeColor = Color.DarkGreen;
-
-                MessageBox.Show("Ошибок не обнаружено.", "Парсер", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
-            tabControlOutput.SelectedIndex = 0;
+            // вывод дерева в MessageBox
+            string astText = BuildAstPretty(ast);
+            richTextBoxAst.Text = astText;
+            tabControlOutput.SelectedTab = tabPage3; // переключаемся на вкладку AST
+
         }
+
+
         private void пускToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -572,6 +583,60 @@ namespace Сompiler
 
             tabControlOutput.SelectedIndex = 0;
         }
+        private string BuildAstPretty(AstNode node, string indent = "", bool isLast = true)
+        {
+            var sb = new StringBuilder();
+            string marker = isLast ? "└─ " : "├─ ";
+            sb.Append(indent).Append(marker);
+
+            switch (node)
+            {
+                case WhileNode w:
+                    sb.AppendLine("While");
+                    var childrenW = new List<AstNode>();
+                    childrenW.Add(w.Condition);
+                    childrenW.AddRange(w.Body);
+                    for (int i = 0; i < childrenW.Count; i++)
+                        sb.Append(BuildAstPretty(childrenW[i], indent + (isLast ? "   " : "│  "), i == childrenW.Count - 1));
+                    break;
+
+                case AssignNode a:
+                    sb.AppendLine($"Assign {a.Name} {a.Op}");
+                    sb.Append(BuildAstPretty(a.Value, indent + (isLast ? "   " : "│  "), true));
+                    break;
+
+                case CompareNode c:
+                    sb.AppendLine($"Compare {c.Op}");
+                    sb.Append(BuildAstPretty(c.Left, indent + (isLast ? "   " : "│  "), false));
+                    sb.Append(BuildAstPretty(c.Right, indent + (isLast ? "   " : "│  "), true));
+                    break;
+
+                case IdentifierNode id:
+                    sb.AppendLine($"Identifier \"{id.Name}\"");
+                    break;
+
+                case IntLiteralNode lit:
+                    sb.AppendLine($"IntLiteral {lit.RawValue}");
+                    break;
+            }
+
+            return sb.ToString();
+        }
+
+
+
+        private void aSTToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (parser == null || parser.Root == null)
+            {
+                MessageBox.Show("AST не построено.");
+                return;
+            }
+
+            var form = new FormAstViewer(parser.Root);
+            form.Show();
+        }
+
 
     }
 }
