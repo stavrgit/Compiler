@@ -1,5 +1,3 @@
-<img width="1877" height="601" alt="image" src="https://github.com/user-attachments/assets/a04670bb-6dc8-4485-8ac5-888e48520bb1" /># Оглавление
-
 #                                                 Лабораторная работа 5.Построение AST и проверка контекстно-зависимых условий
 
                                                                                       
