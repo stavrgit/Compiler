@@ -84,7 +84,7 @@ SemicolonNode — точка с запятой ;
 
 
 ## c) Формат вывода AST в программе:
-<img width="376" height="705" alt="image" src="https://github.com/user-attachments/assets/14ee82de-fe5a-4f6a-8a63-9d50fcb282a8" />
+<img width="342" height="679" alt="image" src="https://github.com/user-attachments/assets/f344afe4-3e9e-4629-8d5b-2cb06cc761aa" />
 
 ## Инструкция по запуску:
 Путь к исполняемому файлу: "..\bin\Debug\net9.0-windows\compiiler.exe"
