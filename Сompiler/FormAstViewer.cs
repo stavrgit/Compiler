@@ -12,8 +12,8 @@ namespace Сompiler
         private readonly Font _font = new Font("Consolas", 10);
         private const int NODE_WIDTH = 120;
         private const int NODE_HEIGHT = 30;
-        private const int H_SPACING = 40;   // расстояние между узлами
-        private const int V_SPACING = 90;   // расстояние по вертикали
+        private const int H_SPACING = 40;  
+        private const int V_SPACING = 90;   
 
         public FormAstViewer(AstNode root)
         {
@@ -30,7 +30,6 @@ namespace Сompiler
             var g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            // рисуем дерево
             DrawNode(g, _root, this.ClientSize.Width / 2, 20);
 
         }
@@ -39,7 +38,7 @@ namespace Сompiler
         {
             if (node is TerminalNode t)
             {
-                int childY = y + 80; // 🔥 одинаковый отступ для всех терминалов
+                int childY = y + 80; 
 
                 var size = g.MeasureString(t.Symbol, _font);
                 int w = (int)size.Width + 20;
@@ -56,7 +55,6 @@ namespace Сompiler
                         LineAlignment = StringAlignment.Center
                     });
 
-                // 🔥 линия строго в центр терминала
                 g.DrawLine(
                     Pens.Black,
                     x,
@@ -122,9 +120,6 @@ namespace Сompiler
                 return;
             }
 
-
-
-            // обычный узел
             string label = GetLabel(node);
             DrawBox(g, label, x, y);
 
@@ -140,7 +135,6 @@ namespace Сompiler
                 int childX = startX + w / 2;
                 int childY = y + V_SPACING;
 
-                // линия аккуратно вниз
                 g.DrawLine(Pens.Black, x, y + NODE_HEIGHT, childX, childY);
 
                 DrawNode(g, child, childX, childY);
@@ -149,10 +143,6 @@ namespace Сompiler
             }
         }
 
-
-       
-
-        // ================= BOX =================
         private void DrawBox(Graphics g, string text, int x, int y)
         {
             var rect = new Rectangle(x - NODE_WIDTH / 2, y, NODE_WIDTH, NODE_HEIGHT);
@@ -168,7 +158,6 @@ namespace Сompiler
                 });
         }
 
-        // ================= WIDTH =================
         private int MeasureWidth(Graphics g, AstNode node)
         {
             string label = GetLabel(node);
@@ -195,7 +184,6 @@ namespace Сompiler
         }
 
 
-        // ================= LABEL =================
         private string GetLabel(AstNode node)
         {
             switch (node)
@@ -209,7 +197,6 @@ namespace Сompiler
             }
         }
 
-        // ================= CHILDREN =================
         private IEnumerable<AstNode> GetChildren(AstNode node)
         {
             switch (node)
