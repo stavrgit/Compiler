@@ -47,7 +47,6 @@ namespace Сompiler
             {
                 if (stmt is AssignNode a)
                 {
-                    // убрали работу с таблицей символов
                     CheckExpr(a.Value);
                 }
 
