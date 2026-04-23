@@ -158,19 +158,37 @@
                 }
 
 
-                if (c == '+')
-                {
-                    Advance();
-                    return new Token(5, "арифметический оператор", "+", _line, start, _col - 1);
-                }
+            if (c == '+')
+            {
+                Advance();
+                return new Token(11, "ошибка", "+", _line, start, _col - 1);
+            }
 
-                if (c == '-')
-                {
-                    Advance();
-                    return new Token(5, "арифметический оператор", "-", _line, start, _col - 1);
-                }
+            if (c == '-')
+            {
+                Advance();
+                return new Token(11, "ошибка", "-", _line, start, _col - 1);
+            }
 
-                if (c == ';')
+            if (c == '*')
+            {
+                Advance();
+                return new Token(11, "ошибка", "*", _line, start, _col - 1);
+            }
+
+            if (c == '/')
+            {
+                Advance();
+                return new Token(11, "ошибка", "/", _line, start, _col - 1);
+            }
+
+            if (c == '(' || c == ')')
+            {
+                Advance();
+                return new Token(11, "ошибка", c.ToString(), _line, start, _col - 1);
+            }
+
+            if (c == ';')
                 {
                     Advance();
                     return new Token(9, "конец конструкции", ";", _line, start, _col - 1);
@@ -182,11 +200,7 @@
                     return new Token(8, "начало блока", ":", _line, start, _col - 1);
                 }
 
-                if (c == '(' || c == ')')
-                {
-                    Advance();
-                    return new Token(13, "скобка", c.ToString(), _line, start, _col - 1);
-                }
+                
 
                 if (c == '.')
                 {

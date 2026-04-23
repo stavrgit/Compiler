@@ -223,18 +223,16 @@ namespace Сompiler
             {
                 Error("Недопустимый символ");
                 _pos++;
-                return;
             }
 
             if (Current.Code != 2)
             {
                 IronError("идентификатор", "x");
-                return;
             }
-
-            _pos++; // идентификатор
-
-            // 🔥 БЕЗ if (_exprError) return;
+            else
+            {
+                _pos++; // идентификатор
+            }
 
             if (Current.Lexeme is "=" or "+=" or "-=" or "*=" or "/=")
             {
@@ -243,13 +241,11 @@ namespace Сompiler
             else
             {
                 IronError("оператор присваивания", "=");
-                return;
             }
-
-            // 🔥 БЕЗ if (_exprError) return;
 
             ParseValue();
         }
+
 
 
         // ================= STMT =================
@@ -259,35 +255,37 @@ namespace Сompiler
             int beforeErrors = Errors.Count;
             int beforePos = _pos;
 
-            // 🔥 1. если сразу мусор (например @)
             if (Current.Code == 11)
             {
                 Error("Недопустимый символ");
                 _pos++;
-
-                // синхронизация до конца оператора
                 SyncTo(";", "\n", "EOF");
-                if (Current.Lexeme == ";")
-                    _pos++;
-
+                if (Current.Lexeme == ";") _pos++;
                 return;
             }
 
-            // 🔥 2. разбор присваивания
             ParseAssign();
 
-            // 🔥 3. если в процессе была ошибка — НЕ продолжаем
             if (Errors.Count > beforeErrors)
             {
+                // были ошибки внутри присваивания → синхронизация
                 SyncTo(";", "\n", "EOF");
 
                 if (Current.Lexeme == ";")
+                {
                     _pos++;
+                }
+                else
+                {
+                    // 🔥 добавляем ошибку, если ';' реально нет
+                    Error("Ожидался ';'");
+                    if (Current.Lexeme == ";") _pos++;
+                }
 
-                return; // 🔥 КЛЮЧЕВОЕ
+                return; // выходим, чтобы не добавлять лишнего
             }
 
-            // 🔥 4. нормальная проверка ;
+            // если ошибок не было — обычная проверка ;
             if (Current.Lexeme == ";")
             {
                 _pos++;
@@ -295,14 +293,10 @@ namespace Сompiler
             else
             {
                 Error("Ожидался ';'");
-
                 SyncTo(";", "\n", "EOF");
-
-                if (Current.Lexeme == ";")
-                    _pos++;
+                if (Current.Lexeme == ";") _pos++;
             }
 
-            // 🔥 5. защита от зависания
             if (_pos == beforePos)
             {
                 Error("Неожиданный токен");
@@ -310,9 +304,7 @@ namespace Сompiler
             }
         }
 
-        // ================= WHILE =================
 
-        // ================= WHILE =================
         private void EatGarbage()
         {
             while (Current.Code == 11) // недопустимый символ
@@ -325,12 +317,11 @@ namespace Сompiler
         private void ParseWhile()
         {
             _pos++; // съели while
-
-            // ===== УНИВЕРСАЛЬНАЯ ОБРАБОТКА МУСОРА =====
             EatGarbage();
 
-            // ===== ( =====
             bool hasOpenParen = false;
+
+            // ===== ( =====
             if (Current.Lexeme == "(")
             {
                 hasOpenParen = true;
@@ -343,10 +334,14 @@ namespace Сompiler
             {
                 _pos++;
             }
+            else if (Current.Lexeme == "+" || Current.Lexeme == "-")
+            {
+                // 🔥 вместо простой ошибки используем IronError
+                IronError("идентификатор", "x");
+            }
             else
             {
-                Error("Ожидался идентификатор");
-                _pos++;          // съели мусор
+                IronError("идентификатор", "x");
             }
             EatGarbage();
 
@@ -355,10 +350,16 @@ namespace Сompiler
             {
                 _pos++;
             }
+            else if (Current.Lexeme == "-" && _pos + 1 < _tokens.Count && _tokens[_pos + 1].Lexeme == "<")
+            {
+                // 🔥 спец. случай "-<"
+                Error("Недопустимый символ");
+                _pos += 2; // съели "-" и "<"
+                SyncTo(":", "\n", "EOF"); // перескакиваем к концу заголовка
+            }
             else
             {
-                Error("Ожидался оператор сравнения");
-                _pos++;          // съели мусор
+                IronError("оператор сравнения", "==");
             }
             EatGarbage();
 
@@ -367,10 +368,15 @@ namespace Сompiler
             {
                 _pos++;
             }
+            else if (Current.Lexeme == "-" && _pos + 1 < _tokens.Count && _tokens[_pos + 1].Code == 10)
+            {
+                // 🔥 отрицательное число
+                Error("Отрицательные числа недопустимы");
+                _pos += 2; // съели "-" и число
+            }
             else
             {
-                Error("Ожидался идентификатор или число");
-                _pos++;          // съели мусор
+                IronError("идентификатор или число", "0");
             }
             EatGarbage();
 
@@ -383,7 +389,7 @@ namespace Сompiler
                 }
                 else
                 {
-                    Error("Ожидалась ')'");
+                    IronError("')'", ")");
                 }
             }
             else
@@ -403,11 +409,12 @@ namespace Сompiler
             }
             else
             {
-                Error("Ожидался ':'");
+                IronError("':'", ":");
             }
             EatGarbage();
 
             _exprError = false;
+
             // ===== ТЕЛО =====
             while (_pos < _tokens.Count &&
                    Current.Lexeme != "while" &&
@@ -453,19 +460,12 @@ namespace Сompiler
 
                     break;
                 }
-
-                if (_pos == beforeTop)
-                    _pos++;
             }
         }
-
-
-
 
         private void ParseBrokenWhileHeader()
         {
             _pos++; // пропускаем сломанный ключ (например "whil")
-
             EatGarbage();
 
             bool hasOpenParen = false;
@@ -485,8 +485,7 @@ namespace Сompiler
             }
             else
             {
-                Error("Ожидался идентификатор");
-                _pos++;
+                IronError("идентификатор", "x");
             }
             EatGarbage();
 
@@ -497,8 +496,7 @@ namespace Сompiler
             }
             else
             {
-                Error("Ожидался оператор сравнения");
-                _pos++;
+                IronError("оператор сравнения", "==");
             }
             EatGarbage();
 
@@ -507,12 +505,18 @@ namespace Сompiler
             {
                 _pos++;
             }
+            else if (Current.Lexeme == "-" && _pos + 1 < _tokens.Count && _tokens[_pos + 1].Code == 10)
+            {
+                // 🔥 это именно отрицательное число
+                Error("Отрицательные числа недопустимы");
+                _pos += 2; // съели "-" и число
+            }
             else
             {
-                Error("Ожидался идентификатор или число");
-                _pos++;
+                IronError("идентификатор или число", "0");
             }
             EatGarbage();
+
 
             // ===== ) =====
             if (hasOpenParen)
@@ -523,7 +527,7 @@ namespace Сompiler
                 }
                 else
                 {
-                    Error("Ожидалась ')'");
+                    IronError("')'", ")");
                 }
             }
             else
@@ -536,16 +540,18 @@ namespace Сompiler
             }
             EatGarbage();
 
+            // ===== : =====
             if (Current.Lexeme == ":")
             {
                 _pos++;
             }
             else
             {
-                Error("Ожидался ':'");
+                IronError("':'", ":");
             }
             EatGarbage();
         }
+
 
         private void ParseBrokenWhileBody()
         {
