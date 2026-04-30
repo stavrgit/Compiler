@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Сompiler
 {
@@ -10,9 +11,11 @@ namespace Сompiler
 
         private bool _exprError = false;
 
-        private const int MAX_ERRORS = 3;
+        private const int MAX_ERRORS = 6;
 
         public List<ParseError> Errors { get; } = new();
+
+        private int _consecutiveSkips = 0;
 
         private Token Current =>
             _pos < _tokens.Count
@@ -23,8 +26,13 @@ namespace Сompiler
         {
             _tokens = tokens;
         }
-
-        // ================= ERROR =================
+        private Token Peek(int offset = 1)
+        {
+            int idx = _pos + offset;
+            return idx < _tokens.Count
+                ? _tokens[idx]
+                : new Token(0, "EOF", "EOF", 0, 0, 0);
+        }
 
         private void Error(string msg)
         {
@@ -35,7 +43,15 @@ namespace Сompiler
             Errors.Add(new ParseError(t.Lexeme, t.Line, t.Start, msg));
             _exprError = true;
         }
+        private void HandleExtraToken(string msg, int consume = 1, bool sync = false, params string[] syncTo)
+        {
+            Error(msg);
+            for (int i = 0; i < consume && _pos < _tokens.Count; i++)
+                Accept();
 
+            if (sync && syncTo != null && syncTo.Length > 0)
+                SyncTo(syncTo);
+        }
         private void InsertFake(string lexeme)
         {
             var fake = new Token(
@@ -54,90 +70,102 @@ namespace Сompiler
         {
             if (Current.Code == 11)
             {
-                Error("Недопустимый символ");
-                _pos++;
+                EatGarbage();
                 return;
             }
 
             Error($"Ожидался {expected}");
             InsertFake(fake);
-            _pos++;
+            Accept();
         }
 
-
-
-        private void SyncTo(params string[] lexemes)
+        private void Accept()
         {
-            while (_pos < _tokens.Count &&
-                   Array.IndexOf(lexemes, Current.Lexeme) == -1)
+            if (_pos < _tokens.Count) _pos++;
+            _consecutiveSkips = 0;
+        }
+
+        private void AdvanceSkip()
+        {
+            if (_pos < _tokens.Count)
             {
                 _pos++;
+                _consecutiveSkips++;
             }
         }
+        private void InsertAndAcceptFake(string lexeme)
+        {
+            InsertFake(lexeme);
+            Accept(); 
+        }
+        private void SyncTo(params string[] lexemes)
+        {
+            int skipped = 0;
+            while (_pos < _tokens.Count &&
+                   Array.IndexOf(lexemes, Current.Lexeme) == -1 &&
+                   Current.Lexeme != "EOF")
+            {
+                if (skipped >= 3)
+                {
+                    InsertAndAcceptFake(lexemes.Length > 0 ? lexemes[0] : "EOF");
+                    return;
+                }
 
-        // ================= VALUE =================
-
+                AdvanceSkip();
+                skipped++;
+            }
+            _consecutiveSkips = 0;
+        }
         private void ParseValue()
         {
             if (Current.Code == 11)
             {
-                Error("Недопустимый символ");
-                _pos++;
+                EatGarbage();
+                return;
+            }
+
+            if (Current.Lexeme is ">" or "<" or ">=" or "<=" or "==" or "!=")
+            {
+                Error("Ожидался идентификатор или число, найден оператор сравнения");
+                Accept();
                 return;
             }
 
             if (Current.Code == 2 || Current.Code == 10)
             {
-                _pos++;
+                Accept();
                 return;
             }
 
             IronError("идентификатор или число", "0");
         }
-
-        // ================= COMPARE =================
-
         private void ParseCompare()
         {
-            // если сразу мусор → выходим
-            if (Current.Code == 11)
-            {
-                Error("Недопустимый символ");
-                _pos++;
-                return;
-            }
-
             ParseValue();
-
-            // 🔥 ВАЖНО: если уже была ошибка — НЕ продолжаем
-            if (_exprError) return;
 
             if (Current.Lexeme is ">" or "<" or ">=" or "<=" or "==" or "!=")
             {
-                _pos++;
+                Accept();
             }
             else
             {
                 IronError("оператор сравнения", "==");
-                return; // 🔥 СТОП
+                return;
             }
 
             ParseValue();
         }
-
-        // ================= PRIMARY =================
-
         private void ParsePrimary()
         {
             if (Current.Lexeme == "(")
             {
-                _pos++;
+                Accept();
 
                 ParseCond();
 
                 if (Current.Lexeme == ")")
                 {
-                    _pos++;
+                    Accept();
                 }
                 else
                 {
@@ -147,46 +175,36 @@ namespace Сompiler
                 return;
             }
 
-            // 🔥 ВОТ ЭТО ГЛАВНОЕ
             if (Current.Lexeme == ")")
             {
                 Error("Лишняя ')'");
-                _pos++; // 🔥 съели и забыли
+                Accept();
                 return;
             }
 
             ParseCompare();
         }
-
-        // ================= FACTOR =================
-
         private void ParseFactor()
         {
             if (Current.Lexeme == "not")
             {
-                _pos++;
+                Accept();
                 ParseFactor();
                 return;
             }
 
             ParsePrimary();
         }
-
-        // ================= TERM =================
-
         private void ParseTerm()
         {
             ParseFactor();
 
             while (Current.Lexeme == "and")
             {
-                _pos++;
+                Accept();
                 ParseFactor();
             }
         }
-
-        // ================= COND =================
-
         private bool ParseCond()
         {
             bool old = _exprError;
@@ -197,12 +215,12 @@ namespace Сompiler
             if (_exprError)
             {
                 _exprError = old || _exprError;
-                return false; // ✅ просто return
+                return false;
             }
 
             while (Current.Lexeme == "or")
             {
-                _pos++;
+                Accept();
                 ParseTerm();
 
                 if (_exprError) break;
@@ -213,346 +231,296 @@ namespace Сompiler
 
             return result;
         }
-
-
-        // ================= ASSIGN =================
-
-        private void ParseAssign()
+        private bool ParseAssign()
         {
-            if (Current.Code == 11)
-            {
-                Error("Недопустимый символ");
-                _pos++;
-            }
+            bool ok = true;
 
             if (Current.Code != 2)
             {
                 IronError("идентификатор", "x");
+                ok = false; 
             }
             else
             {
-                _pos++; // идентификатор
+                Accept(); 
             }
 
             if (Current.Lexeme is "=" or "+=" or "-=" or "*=" or "/=")
             {
-                _pos++;
+                Accept();
             }
             else
             {
                 IronError("оператор присваивания", "=");
+                ok = false;
             }
 
-            ParseValue();
+            ParseValue(); 
+
+            return ok;
         }
-
-
-
-        // ================= STMT =================
-
         private void ParseStmt()
         {
+            int before = _pos;
             int beforeErrors = Errors.Count;
-            int beforePos = _pos;
 
-            if (Current.Code == 11)
+            bool assignOk = ParseAssign();
+
+            if (!assignOk || Errors.Count > beforeErrors)
             {
-                Error("Недопустимый символ");
-                _pos++;
                 SyncTo(";", "\n", "EOF");
-                if (Current.Lexeme == ";") _pos++;
+                if (Current.Lexeme == ";") Accept();
                 return;
             }
 
-            ParseAssign();
-
-            if (Errors.Count > beforeErrors)
+            if (_pos == before)
             {
-                // были ошибки внутри присваивания → синхронизация
-                SyncTo(";", "\n", "EOF");
-
-                if (Current.Lexeme == ";")
-                {
-                    _pos++;
-                }
-                else
-                {
-                    // 🔥 добавляем ошибку, если ';' реально нет
-                    Error("Ожидался ';'");
-                    if (Current.Lexeme == ";") _pos++;
-                }
-
-                return; // выходим, чтобы не добавлять лишнего
+                IronError("токен", "x");
+                return;
             }
 
-            // если ошибок не было — обычная проверка ;
             if (Current.Lexeme == ";")
             {
-                _pos++;
+                ConsumeDuplicates(";", "Лишний токен ';'");
             }
             else
             {
                 Error("Ожидался ';'");
-                SyncTo(";", "\n", "EOF");
-                if (Current.Lexeme == ";") _pos++;
-            }
-
-            if (_pos == beforePos)
-            {
-                Error("Неожиданный токен");
-                _pos++;
             }
         }
+        private void ConsumeDuplicates(string lexeme, string errorMsg)
+        {
+            if (Current.Lexeme != lexeme)
+                return;
 
+            Accept(); 
 
+            if (Current.Lexeme == lexeme)
+            {
+                Error(errorMsg);
+
+                while (Current.Lexeme == lexeme)
+                    Accept();
+            }
+        }
         private void EatGarbage()
         {
-            while (Current.Code == 11) // недопустимый символ
+            while (Current.Code == 11)
             {
                 Error("Недопустимый символ");
-                _pos++; // съели мусор
+                Accept();
             }
         }
-
         private void ParseWhile()
         {
-            _pos++; // съели while
-            EatGarbage();
+            Accept();
+            EatGarbage(); 
 
-            bool hasOpenParen = false;
-
-            // ===== ( =====
-            if (Current.Lexeme == "(")
+            if (Current.Lexeme == "EOF")
             {
-                hasOpenParen = true;
-                _pos++;
+                IronError("идентификатор", "x");
+                return;
+            }
+
+            bool looksLikeStmtStart = Current.Code == 2 &&
+                                      _pos + 1 < _tokens.Count &&
+                                      (_tokens[_pos + 1].Lexeme is "=" or "+=" or "-=" or "*=" or "/=");
+
+            if (looksLikeStmtStart)
+            {
+                Error("Ожидался заголовок while (идентификатор <op> значение)");
+                goto PARSE_BODY;
+            }
+
+            if (Current.Code == 2)
+            {
+                Accept();
+                EatGarbage(); 
+            }
+            else if (Current.Code == 11)
+            {
+                EatGarbage();
+                SyncTo(":", "EOF");
+                if (Current.Lexeme == ":") Accept();
+                return;
+            }
+            else
+            {
+                IronError("идентификатор", "x");
                 EatGarbage();
             }
 
-            // ===== ИДЕНТИФИКАТОР =====
-            if (Current.Code == 2)
-            {
-                _pos++;
-            }
-            else if (Current.Lexeme == "+" || Current.Lexeme == "-")
-            {
-                // 🔥 вместо простой ошибки используем IronError
-                IronError("идентификатор", "x");
-            }
-            else
-            {
-                IronError("идентификатор", "x");
-            }
-            EatGarbage();
-
-            // ===== ОПЕРАТОР СРАВНЕНИЯ =====
             if (Current.Lexeme is ">" or "<" or ">=" or "<=" or "==" or "!=")
             {
-                _pos++;
+                if (Current.Lexeme == ">")
+                    ConsumeDuplicates(">", "Лишний оператор '>'");
+                else if (Current.Lexeme == "<")
+                    ConsumeDuplicates("<", "Лишний оператор '<'");
+                else
+                    Accept(); 
             }
-            else if (Current.Lexeme == "-" && _pos + 1 < _tokens.Count && _tokens[_pos + 1].Lexeme == "<")
+            else if (Current.Code == 11)
             {
-                // 🔥 спец. случай "-<"
                 Error("Недопустимый символ");
-                _pos += 2; // съели "-" и "<"
-                SyncTo(":", "\n", "EOF"); // перескакиваем к концу заголовка
+                Accept();
             }
             else
             {
-                IronError("оператор сравнения", "==");
+                HandleExtraToken("Ожидался оператор сравнения");
             }
-            EatGarbage();
 
-            // ===== ЗНАЧЕНИЕ =====
             if (Current.Code == 2 || Current.Code == 10)
             {
-                _pos++;
+                Accept();
+                EatGarbage(); 
             }
-            else if (Current.Lexeme == "-" && _pos + 1 < _tokens.Count && _tokens[_pos + 1].Code == 10)
+            else if (Current.Code == 11)
             {
-                // 🔥 отрицательное число
-                Error("Отрицательные числа недопустимы");
-                _pos += 2; // съели "-" и число
+                EatGarbage();
+                SyncTo(":", "EOF");
+                if (Current.Lexeme == ":") Accept();
+                return;
             }
             else
             {
                 IronError("идентификатор или число", "0");
+                EatGarbage();
             }
-            EatGarbage();
 
-            // ===== ) =====
-            if (hasOpenParen)
-            {
-                if (Current.Lexeme == ")")
-                {
-                    _pos++;
-                }
-                else
-                {
-                    IronError("')'", ")");
-                }
-            }
-            else
-            {
-                if (Current.Lexeme == ")")
-                {
-                    Error("Лишняя ')'");
-                    _pos++;
-                }
-            }
-            EatGarbage();
-
-            // ===== : =====
             if (Current.Lexeme == ":")
             {
-                _pos++;
+                ConsumeDuplicates(":", "Лишний токен ':'");
+                EatGarbage();
             }
             else
             {
                 IronError("':'", ":");
             }
-            EatGarbage();
-
-            _exprError = false;
-
-            // ===== ТЕЛО =====
-            while (_pos < _tokens.Count &&
-                   Current.Lexeme != "while" &&
-                   Current.Lexeme != "EOF")
+        PARSE_BODY:
+            while (_pos < _tokens.Count && Current.Lexeme != "EOF")
             {
                 int before = _pos;
                 ParseStmt();
 
                 if (_pos == before)
                 {
-                    Error("Неожиданный токен в теле");
-                    _pos++;
+                    IronError("токен", "x");
+                    Accept();
                 }
             }
         }
+
         public void ParseProgram()
         {
             _pos = 0;
             Errors.Clear();
+            _exprError = false;
+            _consecutiveSkips = 0;
 
-            while (_pos < _tokens.Count && Current.Lexeme != "EOF")
+            if (Current.Lexeme == "EOF")
+                return;
+
+            if (Current.Lexeme == "while")
             {
-                if (Errors.Count >= MAX_ERRORS)
-                    break;
-
-                int beforeTop = _pos;
-
-                if (Current.Lexeme == "while")
-                {
-                    ParseWhile();
-                    break;   // ← ВОТ ЭТО ИСПРАВЛЯЕТ ЛИШНЮЮ ОШИБКУ
-                }
-                else
-                {
-                    Error("Ожидалось 'while'");
-
-                    if (Current.Code == 2 && Current.Lexeme.StartsWith("w"))
-                    {
-                        ParseBrokenWhileHeader();
-                        ParseBrokenWhileBody();
-                        break;
-                    }
-
-                    break;
-                }
+                ParseWhile();
+                return;
             }
+
+            if (Current.Code == 2 && Current.Lexeme.StartsWith("w"))
+            {
+                Error("Ожидалось 'while'"); 
+                ParseBrokenWhileHeader();
+                if (Current.Lexeme != "EOF")
+                    ParseBrokenWhileBody();
+                return;
+            }
+
+            Error("Ожидалось 'while'"); 
+            return;
         }
 
         private void ParseBrokenWhileHeader()
         {
-            _pos++; // пропускаем сломанный ключ (например "whil")
+            Accept(); 
             EatGarbage();
 
-            bool hasOpenParen = false;
+            bool looksLikeStmtStart =
+                Current.Code == 2 &&
+                _pos + 1 < _tokens.Count &&
+                (_tokens[_pos + 1].Lexeme is "=" or "+=" or "-=" or "*=" or "/=");
 
-            // ===== ( =====
-            if (Current.Lexeme == "(")
+            if (looksLikeStmtStart)
             {
-                hasOpenParen = true;
-                _pos++;
-                EatGarbage();
+                Error("Ожидался заголовок while (идентификатор <op> значение)");
+                goto EXPECT_COLON;
             }
 
-            // ===== ИДЕНТИФИКАТОР =====
             if (Current.Code == 2)
             {
-                _pos++;
+                Accept();
+                EatGarbage();
+            }
+            else if (Current.Code == 11)
+            {
+                EatGarbage();
+                goto EXPECT_COLON; 
             }
             else
             {
                 IronError("идентификатор", "x");
+                EatGarbage();
             }
-            EatGarbage();
 
-            // ===== ОПЕРАТОР СРАВНЕНИЯ =====
             if (Current.Lexeme is ">" or "<" or ">=" or "<=" or "==" or "!=")
             {
-                _pos++;
+                if (Current.Lexeme == ">")
+                    ConsumeDuplicates(">", "Лишний оператор '>'");
+                else if (Current.Lexeme == "<")
+                    ConsumeDuplicates("<", "Лишний оператор '<'");
+                else
+                    Accept();
+
+                EatGarbage();
+            }
+            else if (Current.Code == 11)
+            {
+                EatGarbage();
+                goto EXPECT_COLON;
             }
             else
             {
-                IronError("оператор сравнения", "==");
+                HandleExtraToken("Ожидался оператор сравнения");
+                EatGarbage();
             }
-            EatGarbage();
 
-            // ===== ЗНАЧЕНИЕ =====
             if (Current.Code == 2 || Current.Code == 10)
             {
-                _pos++;
+                Accept();
+                EatGarbage();
             }
-            else if (Current.Lexeme == "-" && _pos + 1 < _tokens.Count && _tokens[_pos + 1].Code == 10)
+            else if (Current.Code == 11)
             {
-                // 🔥 это именно отрицательное число
-                Error("Отрицательные числа недопустимы");
-                _pos += 2; // съели "-" и число
+                EatGarbage();
+                goto EXPECT_COLON;
             }
             else
             {
                 IronError("идентификатор или число", "0");
+                EatGarbage();
             }
-            EatGarbage();
 
+        EXPECT_COLON:
 
-            // ===== ) =====
-            if (hasOpenParen)
-            {
-                if (Current.Lexeme == ")")
-                {
-                    _pos++;
-                }
-                else
-                {
-                    IronError("')'", ")");
-                }
-            }
-            else
-            {
-                if (Current.Lexeme == ")")
-                {
-                    Error("Лишняя ')'");
-                    _pos++;
-                }
-            }
-            EatGarbage();
-
-            // ===== : =====
             if (Current.Lexeme == ":")
             {
-                _pos++;
+                ConsumeDuplicates(":", "Лишний токен ':'");
+                EatGarbage();
             }
             else
             {
                 IronError("':'", ":");
             }
-            EatGarbage();
         }
-
-
         private void ParseBrokenWhileBody()
         {
             while (_pos < _tokens.Count &&
@@ -566,7 +534,7 @@ namespace Сompiler
                 if (_pos == before)
                 {
                     Error("Неожиданный токен в теле");
-                    _pos++;
+                    Accept();
                 }
             }
         }
