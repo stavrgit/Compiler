@@ -121,35 +121,7 @@
   <data name="tabControlEditor.Size" type="System.Drawing.Size, System.Drawing">
     <value>1514, 211</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="tabControlOutput.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="tabControlOutput.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1514, 217</value>
-  </data>
-  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1514, 432</value>
-  </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
-    <value>211</value>
-  </data>
-  <data name="splitContainer1.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1506, 184</value>
-  </data>
-  <data name="tabPage1.Text" xml:space="preserve">
-    <value>Парсер</value>
-  </data>
-  <data name="dataGridParser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="dataGridParser.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1500, 178</value>
-  </data>
   <data name="Неверный.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
@@ -159,17 +131,18 @@
   <data name="Описание.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1506, 184</value>
-  </data>
-  <data name="tabPage2.Text" xml:space="preserve">
-    <value>Сканер</value>
-  </data>
-  <data name="gridScanner.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="dataGridParser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="gridScanner.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="dataGridParser.Size" type="System.Drawing.Size, System.Drawing">
     <value>1500, 178</value>
+  </data>
+  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1506, 184</value>
+  </data>
+  <data name="tabPage1.Text" xml:space="preserve">
+    <value>Парсер</value>
   </data>
   <data name="Code.HeaderText" xml:space="preserve">
     <value>Код</value>
@@ -195,11 +168,102 @@
   <data name="Position.MinimumWidth" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="файлToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 42</value>
+  <data name="gridScanner.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
-  <data name="файлToolStripMenuItem.Text" xml:space="preserve">
-    <value>Файл</value>
+  <data name="gridScanner.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1500, 178</value>
+  </data>
+  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1506, 184</value>
+  </data>
+  <data name="tabPage2.Text" xml:space="preserve">
+    <value>Сканер</value>
+  </data>
+  <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="Result.MinimumWidth" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="Op.MinimumWidth" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="Arg1.MinimumWidth" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="Arg2.MinimumWidth" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="dataGridQuads.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="dataGridQuads.Size" type="System.Drawing.Size, System.Drawing">
+    <value>748, 169</value>
+  </data>
+  <data name="textBoxPoliz.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="textBoxPoliz.Location" type="System.Drawing.Point, System.Drawing">
+    <value>757, 3</value>
+  </data>
+  <data name="textBoxPoliz.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="textBoxPoliz.Size" type="System.Drawing.Size, System.Drawing">
+    <value>740, 81</value>
+  </data>
+  <data name="textBoxPoliz.Text" xml:space="preserve">
+    <value>Полиз:</value>
+  </data>
+  <data name="textBoxResult.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="textBoxResult.Location" type="System.Drawing.Point, System.Drawing">
+    <value>757, 90</value>
+  </data>
+  <data name="textBoxResult.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="textBoxResult.Size" type="System.Drawing.Size, System.Drawing">
+    <value>740, 82</value>
+  </data>
+  <data name="textBoxResult.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="textBoxResult.Text" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1500, 175</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tabPage3.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="tabPage3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1506, 184</value>
+  </data>
+  <data name="tabPage3.Text" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="tabControlOutput.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tabControlOutput.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1514, 217</value>
+  </data>
+  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1514, 432</value>
+  </data>
+  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
+    <value>211</value>
+  </data>
+  <data name="splitContainer1.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
   </data>
   <data name="создатьToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>192, 26</value>
@@ -231,11 +295,11 @@
   <data name="выходToolStripMenuItem.Text" xml:space="preserve">
     <value>Выход</value>
   </data>
-  <data name="правкаToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>74, 42</value>
+  <data name="файлToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>59, 42</value>
   </data>
-  <data name="правкаToolStripMenuItem.Text" xml:space="preserve">
-    <value>Правка</value>
+  <data name="файлToolStripMenuItem.Text" xml:space="preserve">
+    <value>Файл</value>
   </data>
   <data name="отменитьToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>186, 26</value>
@@ -279,11 +343,11 @@
   <data name="выделитьВсеToolStripMenuItem.Text" xml:space="preserve">
     <value>Выделить все</value>
   </data>
-  <data name="текстToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 42</value>
+  <data name="правкаToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>74, 42</value>
   </data>
-  <data name="текстToolStripMenuItem.Text" xml:space="preserve">
-    <value>Текст</value>
+  <data name="правкаToolStripMenuItem.Text" xml:space="preserve">
+    <value>Правка</value>
   </data>
   <data name="постановкаЗадачиToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>288, 26</value>
@@ -327,23 +391,29 @@
   <data name="исходныйКодПргограммыToolStripMenuItem.Text" xml:space="preserve">
     <value>Исходный код программы</value>
   </data>
+  <data name="текстToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>59, 42</value>
+  </data>
+  <data name="текстToolStripMenuItem.Text" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="парсерToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 26</value>
+  </data>
+  <data name="парсерToolStripMenuItem.Text" xml:space="preserve">
+    <value>Парсер</value>
+  </data>
+  <data name="antlerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 26</value>
+  </data>
+  <data name="antlerToolStripMenuItem.Text" xml:space="preserve">
+    <value>Antler</value>
+  </data>
   <data name="пускToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>55, 42</value>
   </data>
   <data name="пускToolStripMenuItem.Text" xml:space="preserve">
     <value>Пуск</value>
-  </data>
-  <data name="парсерToolStripMenuItem.Text" xml:space="preserve">
-    <value>Парсер</value>
-  </data>
-  <data name="antlerToolStripMenuItem.Text" xml:space="preserve">
-    <value>Antler</value>
-  </data>
-  <data name="справкаToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>128, 42</value>
-  </data>
-  <data name="справкаToolStripMenuItem.Text" xml:space="preserve">
-    <value>Вызов справки</value>
   </data>
   <data name="вызовСправкиToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>187, 26</value>
@@ -357,11 +427,11 @@
   <data name="оПрограммеToolStripMenuItem.Text" xml:space="preserve">
     <value>О программе</value>
   </data>
-  <data name="локализацияToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>115, 42</value>
+  <data name="справкаToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>128, 42</value>
   </data>
-  <data name="локализацияToolStripMenuItem.Text" xml:space="preserve">
-    <value>Локализация</value>
+  <data name="справкаToolStripMenuItem.Text" xml:space="preserve">
+    <value>Вызов справки</value>
   </data>
   <data name="russianToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>146, 26</value>
@@ -369,14 +439,20 @@
   <data name="englishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>146, 26</value>
   </data>
+  <data name="локализацияToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>115, 42</value>
+  </data>
+  <data name="локализацияToolStripMenuItem.Text" xml:space="preserve">
+    <value>Локализация</value>
+  </data>
+  <data name="размерШрифтаToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>201, 26</value>
+  </data>
   <data name="видToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>49, 42</value>
   </data>
   <data name="видToolStripMenuItem.Text" xml:space="preserve">
     <value>Вид</value>
-  </data>
-  <data name="размерШрифтаToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>201, 26</value>
   </data>
   <data name="toolStripButton1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -567,15 +643,6 @@
         uhYAAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="statusStrip.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 533</value>
-  </data>
-  <data name="statusStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1514, 26</value>
-  </data>
-  <data name="statusStrip.Text" xml:space="preserve">
-    <value>statusStrip1</value>
-  </data>
   <data name="statusFileName.Size" type="System.Drawing.Size, System.Drawing">
     <value>96, 20</value>
   </data>
@@ -605,6 +672,18 @@
   </data>
   <data name="statusLang.Text" xml:space="preserve">
     <value>Язык;</value>
+  </data>
+  <data name="statusStrip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 533</value>
+  </data>
+  <data name="statusStrip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1514, 26</value>
+  </data>
+  <data name="statusStrip.Text" xml:space="preserve">
+    <value>statusStrip1</value>
+  </data>
+  <data name="contextMenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 4</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Компилятор</value>

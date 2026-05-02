@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             splitContainer1 = new SplitContainer();
             tabControlEditor = new TabControl();
@@ -43,6 +44,15 @@
             Type = new DataGridViewTextBoxColumn();
             Lexeme = new DataGridViewTextBoxColumn();
             Position = new DataGridViewTextBoxColumn();
+            tabPage3 = new TabPage();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            dataGridQuads = new DataGridView();
+            Result = new DataGridViewTextBoxColumn();
+            Op = new DataGridViewTextBoxColumn();
+            Arg1 = new DataGridViewTextBoxColumn();
+            Arg2 = new DataGridViewTextBoxColumn();
+            textBoxPoliz = new TextBox();
+            textBoxResult = new TextBox();
             menuStrip1 = new MenuStrip();
             файлToolStripMenuItem = new ToolStripMenuItem();
             создатьToolStripMenuItem = new ToolStripMenuItem();
@@ -96,6 +106,7 @@
             statusLines = new ToolStripStatusLabel();
             statusSize = new ToolStripStatusLabel();
             statusLang = new ToolStripStatusLabel();
+            contextMenuStrip1 = new ContextMenuStrip(components);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -105,6 +116,9 @@
             ((System.ComponentModel.ISupportInitialize)dataGridParser).BeginInit();
             tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gridScanner).BeginInit();
+            tabPage3.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridQuads).BeginInit();
             menuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             statusStrip.SuspendLayout();
@@ -131,12 +145,14 @@
             tabControlEditor.AllowDrop = true;
             tabControlEditor.Name = "tabControlEditor";
             tabControlEditor.SelectedIndex = 0;
+            tabControlEditor.SelectedIndexChanged += tabControlEditor_SelectedIndexChanged;
             // 
             // tabControlOutput
             // 
             resources.ApplyResources(tabControlOutput, "tabControlOutput");
             tabControlOutput.Controls.Add(tabPage1);
             tabControlOutput.Controls.Add(tabPage2);
+            tabControlOutput.Controls.Add(tabPage3);
             tabControlOutput.Name = "tabControlOutput";
             tabControlOutput.SelectedIndex = 0;
             // 
@@ -219,6 +235,67 @@
             resources.ApplyResources(Position, "Position");
             Position.Name = "Position";
             Position.ReadOnly = true;
+            // 
+            // tabPage3
+            // 
+            resources.ApplyResources(tabPage3, "tabPage3");
+            tabPage3.Controls.Add(tableLayoutPanel1);
+            tabPage3.Name = "tabPage3";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(tableLayoutPanel1, "tableLayoutPanel1");
+            tableLayoutPanel1.Controls.Add(dataGridQuads, 0, 0);
+            tableLayoutPanel1.Controls.Add(textBoxPoliz, 1, 0);
+            tableLayoutPanel1.Controls.Add(textBoxResult, 1, 1);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // dataGridQuads
+            // 
+            resources.ApplyResources(dataGridQuads, "dataGridQuads");
+            dataGridQuads.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridQuads.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridQuads.Columns.AddRange(new DataGridViewColumn[] { Result, Op, Arg1, Arg2 });
+            dataGridQuads.Name = "dataGridQuads";
+            dataGridQuads.ReadOnly = true;
+            tableLayoutPanel1.SetRowSpan(dataGridQuads, 2);
+            // 
+            // Result
+            // 
+            resources.ApplyResources(Result, "Result");
+            Result.Name = "Result";
+            Result.ReadOnly = true;
+            // 
+            // Op
+            // 
+            resources.ApplyResources(Op, "Op");
+            Op.Name = "Op";
+            Op.ReadOnly = true;
+            // 
+            // Arg1
+            // 
+            resources.ApplyResources(Arg1, "Arg1");
+            Arg1.Name = "Arg1";
+            Arg1.ReadOnly = true;
+            // 
+            // Arg2
+            // 
+            resources.ApplyResources(Arg2, "Arg2");
+            Arg2.Name = "Arg2";
+            Arg2.ReadOnly = true;
+            // 
+            // textBoxPoliz
+            // 
+            resources.ApplyResources(textBoxPoliz, "textBoxPoliz");
+            textBoxPoliz.Name = "textBoxPoliz";
+            textBoxPoliz.ReadOnly = true;
+            // 
+            // textBoxResult
+            // 
+            resources.ApplyResources(textBoxResult, "textBoxResult");
+            textBoxResult.Name = "textBoxResult";
+            textBoxResult.ReadOnly = true;
             // 
             // menuStrip1
             // 
@@ -366,7 +443,6 @@
             // 
             resources.ApplyResources(antlerToolStripMenuItem, "antlerToolStripMenuItem");
             antlerToolStripMenuItem.Name = "antlerToolStripMenuItem";
-            antlerToolStripMenuItem.Click += antlerToolStripMenuItem_Click;
             // 
             // справкаToolStripMenuItem
             // 
@@ -520,6 +596,12 @@
             resources.ApplyResources(statusLang, "statusLang");
             statusLang.Name = "statusLang";
             // 
+            // contextMenuStrip1
+            // 
+            resources.ApplyResources(contextMenuStrip1, "contextMenuStrip1");
+            contextMenuStrip1.ImageScalingSize = new Size(20, 20);
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
@@ -539,6 +621,10 @@
             ((System.ComponentModel.ISupportInitialize)dataGridParser).EndInit();
             tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)gridScanner).EndInit();
+            tabPage3.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridQuads).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             toolStrip1.ResumeLayout(false);
@@ -605,6 +691,8 @@
         private SplitContainer splitContainer1;
         internal ToolStripStatusLabel statusLines;
         private ToolStripMenuItem парсерToolStripMenuItem;
+        private ToolStripMenuItem antlerToolStripMenuItem;
+        private ContextMenuStrip contextMenuStrip1;
         private TabControl tabControlOutput;
         private TabPage tabPage1;
         private DataGridView dataGridParser;
@@ -617,6 +705,14 @@
         private DataGridViewTextBoxColumn Type;
         private DataGridViewTextBoxColumn Lexeme;
         private DataGridViewTextBoxColumn Position;
-        private ToolStripMenuItem antlerToolStripMenuItem;
+        private TabPage tabPage3;
+        private TableLayoutPanel tableLayoutPanel1;
+        private DataGridView dataGridQuads;
+        private TextBox textBoxPoliz;
+        private TextBox textBoxResult;
+        private DataGridViewTextBoxColumn Result;
+        private DataGridViewTextBoxColumn Op;
+        private DataGridViewTextBoxColumn Arg1;
+        private DataGridViewTextBoxColumn Arg2;
     }
 }

@@ -407,31 +407,61 @@ namespace Сompiler
             _output.ClearParserErrors();
             _output.ClearScannerTokens();
 
+            textBoxPoliz.Clear();
+            dataGridQuads.Rows.Clear();
+            textBoxResult.Clear();
+            dataGridParser.Rows.Clear();
+
             var scanner = new Scanner(code);
-            var tokens = scanner.Analyze();
+            var tokens = scanner.Tokenize();
 
             foreach (var t in tokens)
             {
-                string pos = $"{t.Line}:{t.Start}-{t.End}";
+                string pos = $"{t.Line}:{t.Start}"; 
                 _output.AddScannerToken(t.Code, t.Type, t.Lexeme, pos);
             }
 
-            var parser = new Parser(tokens);
-            parser.ParseProgram();
-
-            bool hasErrors = parser.Errors.Count > 0;
-
-            if (hasErrors)
+            var errorTokens = tokens.Where(x => x.Type == "ошибка").ToList();
+            if (errorTokens.Count > 0)
             {
-                foreach (var err in parser.Errors)
+                foreach (var t in errorTokens)
                 {
-                    int row = dataGridParser.Rows.Add(err.Fragment, $"{err.Line}:{err.Col}", err.Message);
+                    int row = dataGridParser.Rows.Add(
+                        t.Lexeme,
+                        $"{t.Line}:{t.Start}",   
+                        "Недопустимый символ"
+                    );
 
                     var r = dataGridParser.Rows[row];
                     r.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
                     r.DefaultCellStyle.ForeColor = Color.DarkRed;
                 }
-                MessageBox.Show("Обнаружены ошибки в коде.", "Парсер", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                MessageBox.Show("Обнаружены лексические ошибки!", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var parser = new Parser(tokens);
+            parser.Parse();
+
+            if (parser.Errors.Count > 0)
+            {
+                foreach (var err in parser.Errors)
+                {
+                    int row = dataGridParser.Rows.Add(
+                        err.Fragment,
+                        $"{err.Line}:{err.Col}", 
+                        err.Message
+                    );
+
+                    var r = dataGridParser.Rows[row];
+                    r.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
+                    r.DefaultCellStyle.ForeColor = Color.DarkRed;
+                }
+
+                MessageBox.Show("Обнаружены ошибки в коде.", "Парсер",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -441,11 +471,32 @@ namespace Сompiler
                 r.DefaultCellStyle.BackColor = Color.FromArgb(200, 255, 200);
                 r.DefaultCellStyle.ForeColor = Color.DarkGreen;
 
-                MessageBox.Show("Ошибок не обнаружено.", "Парсер", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                var poliz = parser.GetPoliz();
+                textBoxPoliz.Text = "Полиз: " + string.Join(" ", poliz);
+
+                var quads = parser.GetQuads();
+                foreach (var q in quads)
+                {
+                    dataGridQuads.Rows.Add(q.Result, q.Op, q.Arg1, q.Arg2);
+                }
+
+                try
+                {
+                    int result = parser.EvaluatePoliz();
+                    textBoxResult.Text = "Результат: " + result;
+                }
+                catch
+                {
+                    textBoxResult.Text = "Нельзя вычислить (есть id)";
+                }
+
+                MessageBox.Show("Ошибок не обнаружено.", "Парсер",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             tabControlOutput.SelectedIndex = 0;
         }
+
         private void пускToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -525,53 +576,14 @@ namespace Сompiler
             editor.Focus();
         }
 
-        private void antlerToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tabPage3_Click(object sender, EventArgs e)
         {
-            var editor = GetCurrentEditor();
-            if (editor == null)
-                return;
 
-            string code = editor.Text;
-
-            // очищаем таблицу
-            dataGridParser.Rows.Clear();
-
-            // запускаем сканер
-            var scanner = new Scanner(code);
-            var tokens = scanner.Analyze();
-
-            // запускаем парсер
-            var parser = new Parser(tokens);
-            parser.ParseProgram();
-
-            // вывод ошибок
-            if (parser.Errors.Count > 0)
-            {
-                foreach (var err in parser.Errors)
-                {
-                    int row = dataGridParser.Rows.Add(
-                        err.Fragment,
-                        $"{err.Line}:{err.Col}",
-                        err.Message
-                    );
-
-                    var r = dataGridParser.Rows[row];
-                    r.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
-                    r.DefaultCellStyle.ForeColor = Color.DarkRed;
-                    MessageBox.Show("Обнаружены ошибки в коде.", "Antler", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
-            {
-                int row = dataGridParser.Rows.Add("—", "—", "Ошибок не обнаружено");
-
-                var r = dataGridParser.Rows[row];
-                r.DefaultCellStyle.BackColor = Color.FromArgb(200, 255, 200);
-                r.DefaultCellStyle.ForeColor = Color.DarkGreen;
-            }
-
-            tabControlOutput.SelectedIndex = 0;
         }
 
+        private void tabControlEditor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
