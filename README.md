@@ -9,7 +9,7 @@
 <img width="514" height="277" alt="image" src="https://github.com/user-attachments/assets/ca8209f0-7d4a-4845-9db4-47b195ea1266" />
 
 ## Диаграмма лексера 
-<img width="408" height="701" alt="image" src="https://github.com/user-attachments/assets/936ea044-d5c8-4ce5-83bc-cc555595564c" />
+<img width="487" height="819" alt="image" src="https://github.com/user-attachments/assets/aca26517-9827-48be-a3e2-77a0c2c935d1" />
 <img width="1487" height="434" alt="image" src="https://github.com/user-attachments/assets/31af9c2f-dbaf-434b-ab0c-98b1586786bd" />
 
 
