@@ -115,32 +115,19 @@ IR унифицирован для всех языков, имеет явный 
 ## Доп задание
 
 ## Сгенерировать промежуточное представление (IR) для данной конструкции в виде трехадресного кода (TAC)
-t1 = i < 10
-if t1 goto L1
-goto L2
-L1: t2 = i + 1
-i = t2
-goto L0
-L2:
-t3 = 2 + 3
+t1 = i < 10 <br> if t1 goto L1 <br> goto L2 <br> L1: t2 = i + 1 <br> i = t2 <br> goto L0 <br> L2: <br> t3 = 2 + 3 
 
 
 ### Оптимизация сверстки констант 
 вычисляет константные выражения на этапе компиляции.t3 = 2 + 3 заменяется на t3 = 5. Это уменьшает количество операций во время выполнения 
-t1 = i < 10
-if t1 goto L1
-goto L2
-L1: i = i + 1
-goto L0
-L2:
-t3 = 5
+
+<img width="552" height="665" alt="image" src="https://github.com/user-attachments/assets/6852de1d-1dc3-46b1-a1df-1d72af602818" />
+
+t1 = i < 10 <br> if t1 goto L1 <br> goto L2 <br> L1: i = i + 1 <br> goto L0 <br> L2: <br> t3 = 2 + 3 
 
 ### Оптимизация устранения лишних копий переменных
 устраняет лишние временные переменные, которые используются только для копирования значения. Вместо t2 = i + 1; i = t2 будет i = i + 1. Упрощает код и делает его более читаемым.
-t1 = i < 10
-if t1 goto L1
-goto L2
-L1: i = i + 1
-goto L0
-L2:
-t3 = 2 + 3
+<img width="648" height="701" alt="image" src="https://github.com/user-attachments/assets/0736866b-d53f-4401-a8c1-db50057cc040" />
+
+
+t1 = i < 10 <br> if t1 goto L1 <br> goto L2 <br> L1: i = i + 1 <br> goto L0 <br> L2: <br> t3 = 5
