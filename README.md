@@ -1,7 +1,8 @@
 # Оглавление
 ## Лабораторная 4 https://github.com/stavrgit/Compiler/tree/compller%2B
 ## Лабораторная 5 https://github.com/stavrgit/Compiler/blob/lab_5/README.md
-## Лабораторная 6 https://github.com/stavrgit/Compiler/edit/lab_6/README.md
+## Лабораторная 6 [https://github.com/stavrgit/Compiler/edit/lab_6/README.md](https://github.com/stavrgit/Compiler/blob/lab_6/README.md)
+## Лабораторная 7 
 
 #                                                 Лабораторная работа 3. Разработка синтаксического анализатора (парсера)
 
