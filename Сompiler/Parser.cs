@@ -135,7 +135,7 @@ namespace Сompiler
             Error("Ожидалось число, id или (");
             if (pos < tokens.Count) Next();
             return "";
-        }
+        } 
 
         public void Parse()
         {
