@@ -64,6 +64,7 @@
 <img width="862" height="666" alt="image" src="https://github.com/user-attachments/assets/5e1ea4ae-74ff-4f73-ad58-5cd9222f23a3" />
 
 ### Построение CFG
+<img width="798" height="739" alt="image" src="https://github.com/user-attachments/assets/dc79f6f6-ad91-4571-b14e-f095d89e1bf2" />
 
 
 ### Результаты
