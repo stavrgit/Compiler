@@ -136,7 +136,7 @@ namespace Сompiler
             if (pos < tokens.Count) Next();
             return "";
         }
-
+         
         public void Parse()
         {
             foreach (var t in tokens.Where(x => x.Type == "ошибка"))
