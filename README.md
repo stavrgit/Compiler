@@ -1,229 +1,28 @@
-# Оглавление
-## Лабораторая 4 https://github.com/stavrgit/Compiler/tree/compller%2B
-## Лабораторная 5 https://github.com/stavrgit/Compiler/blob/lab_5/README.md
-
-#                                                 Лабораторная работа 3. Разработка синтаксического анализатора (парсера)
+#                                                 Лабораторная работа 6. Создание внутренней формы представления программы
 
                                                                                       
-##                                                                                 Цель работы.
-Изучить назначение и принципы работы синтаксического анализатора в структуре компилятора. Спроектировать грамматику, построить соответствующую схему метода анализа грамматики и выполнить программную реализацию парсера с нейтрализацией синтаксических ошибок методом Айронса. Интегрировать разработанный модуль в ранее созданный графический интерфейс языкового процессора.
-
 ## Маст Денис АВТ - 313
-## Постановка задачи.
-Разработать синтаксический анализатор (парсер) в соответствии с индивидуальным вариантом курсовой (расчетно-графической) работы, интегрировать его в приложение из лабораторной работы №1 и обеспечить наглядный вывод результатов анализа.
 
 ## Вариант задания:
-<img width="494" height="83" alt="image" src="https://github.com/user-attachments/assets/3b508c78-70c5-4e05-a225-e1d0c4288cbb" />
+### Python
+### Пример верной строки:  1 + 2 * 3 + 4 * 5
+<img width="514" height="277" alt="image" src="https://github.com/user-attachments/assets/ca8209f0-7d4a-4845-9db4-47b195ea1266" />
 
-while x < 10: y = y + 1;
+## Диаграмма лексера 
+<img width="470" height="789" alt="image" src="https://github.com/user-attachments/assets/c721b598-c907-4ac1-88bf-007d5a2556b9" />
+<img width="1487" height="434" alt="image" src="https://github.com/user-attachments/assets/31af9c2f-dbaf-434b-ab0c-98b1586786bd" />
 
-while counter < 100:
-value = 10;
-result = value;
 
-## Перечень доступных лексем:
-ключевое слово while and or not
+## Схема рекурсивного спуска 
+<img width="875" height="552" alt="image" src="https://github.com/user-attachments/assets/13f38050-00b1-402d-a373-e9d2c3cfc2e7" />
+<img width="1251" height="347" alt="image" src="https://github.com/user-attachments/assets/7d36bc5f-ac6f-4f86-9895-b1fd21359398" />
 
-идентификаторы (i, counter, value)
 
-целое без знака (10, 1)
+## Внутренняя форма представления программы (тетрады):
+<img width="757" height="224" alt="image" src="https://github.com/user-attachments/assets/284a6f15-efdb-41c9-8843-85103f82ac46" />
 
-операторы сравнения <, >, <=, >=, 
-операторы равенства: ==, !=
-
-оператор присваивания =, +. +=, -=, /=, *=
-
-арифметические операторы +, -, /, *
-логическиие операторы &&, ||, !
-
-разделители ()
-
-начало блока :
-
-конец конструкции ;
-
-## моя грамматика 
-Vt = { 'a'..'z', 'A'..'Z', '0'..'9', '+', '-', '*', '/', '<', '>', '=', '!', '(', ')', ';', ':', ' ', '_' }
-
-Vn = { <Программа>, <ОператорWhile>,
-<ЛогическоеВыражение>, <OrExpr>, <OrTail>,
-<AndExpr>, <AndTail>,
-<Factor>, <Primary>, <Compare>, <Value>,
-<СписокОператоров>, <Оператор>,
-<ОператорПрисваивания>, <AssignOp>,
-<Идентификатор>, <Число>, <Буква>, <Цифра>
-}
-
-S = <Программа>
-
-<Программа> → <ОператорWhile>
-
-<ОператорWhile> → 'while' <ЛогическоеВыражение> ':' <СписокОператоров>
-
-<ЛогическоеВыражение> → <OrExpr>
-
-<OrExpr> → <AndExpr> <OrTail>
-<OrTail> → 'or' <AndExpr> <OrTail> | ε
-
-<AndExpr> → <Factor> <AndTail>
-<AndTail> → 'and' <Factor> <AndTail> | ε
-
-<Factor> → 'not' <Factor> | <Primary>
-
-<Primary> → <Compare> | '(' <ЛогическоеВыражение> ')'
-
-<Compare> → <Value> <ОператорСравнения> <Value>
-
-<ОператорСравнения> → '<' | '>' | '<=' | '>=' | '==' | '!='
-
-<Value> → <Идентификатор> | <Число>
-
-<СписокОператоров> → <Оператор> <СписокОператоров> | ε
-
-<Оператор> → <ОператорПрисваивания>
-
-<ОператорПрисваивания> → <Идентификатор> <AssignOp> <Value> ';'
-
-<AssignOp> → '=' | '+=' | '-=' | '*=' | '/='
-
-<Идентификатор> → <Буква> <ИдХвост> | '_' <ИдХвост>
-<ИдХвост> → <Буква> <ИдХвост> | <Цифра> <ИдХвост> | '_' <ИдХвост> | ε
-
-<Число> → <Цифра> <ЧислоХвост>
-<ЧислоХвост> → <Цифра> <ЧислоХвост> | ε
-
-<Буква> → 'a' | ... | 'z' | 'A' | ... | 'Z'
-<Цифра> → '0' | ... | '9'
-## Классификация 
-Тип по Хомскому
-Грамматика относится к контекстно‑свободным (тип 2) т.к. слева всегда один нетерминал, справа — произвольная последовательность терминалов и нетерминалов,
-правила не зависят от контекста.
-
-## Метод анализа
-## Рекурсвиный спуск
-<img width="1126" height="460" alt="image" src="https://github.com/user-attachments/assets/e6ba5d03-bb1d-4363-be48-1b47a9ed4017" />
-
-## Диагностика и нейтрализация синтаксических ошибок.
-
-Разрабатываемый синтаксический анализатор основан на контекстно‑свободной грамматике (тип‑2 по классификации Хомского) и реализован методом рекурсивного спуска.
-Это определяет специфику поведения алгоритма Айронса при обработке ошибок.
-В КС‑грамматике, построенной для конструкции:
-while <логическое выражение> : <список операторов>
-каждый нетерминал соответствует отдельной рекурсивной функции.
-Поэтому в процессе разбора в каждый момент времени активно только одно правило грамматики, которое и формирует текущую ветвь дерева разбора.
+## ПОЛИЗ:
+<img width="285" height="184" alt="image" src="https://github.com/user-attachments/assets/e0e50e0b-d7d4-4729-9404-30969824af24" />
 
 
 
-## грамматика ANTLR
-grammar antler;
-
-options { language = CSharp; }
-
-ID      : LETTER (LETTER | DIGIT | '_')* ;
-INT     : DIGIT+ ;
-
-fragment LETTER : [a-zA-Z] ;
-fragment DIGIT  : [0-9] ;
-
-WS      : [ \t\r\n]+ -> skip ;
-
-AND : 'and' | '&&';
-OR  : 'or'  | '||';
-
-program
-    : operatorWhile EOF
-    ;
-
-operatorWhile
-    : 'while' logicalExpr ':' stmtList?
-    ;
-
-stmtList
-    : statement stmtList
-    |
-    ;
-
-statement
-    : assignStmt
-    | logicalExpr ';'
-    ;
-
-assignStmt
-    : ID assignOp logicalExpr ';'
-    ;
-
-assignOp
-    : '=' | '+=' | '-=' | '*=' | '/='
-    ;
-
-logicalExpr
-    : orExpr
-    ;
-
-orExpr
-    : andExpr orTail
-    ;
-
-orTail
-    : OR andExpr orTail
-    |
-    ;
-
-andExpr
-    : relExpr andTail
-    ;
-
-andTail
-    : AND relExpr andTail
-    |
-    ;
-
-relExpr
-    : addExpr relTail
-    ;
-
-relTail
-    : relOp addExpr
-    |
-    ;
-
-relOp
-    : '<' | '>' | '<=' | '>=' | '==' | '!='
-    ;
-
-addExpr
-    : mulExpr addTail
-    ;
-
-addTail
-    : '+' mulExpr addTail
-    | '-' mulExpr addTail
-    |
-    ;
-
-mulExpr
-    : factor mulTail
-    ;
-
-mulTail
-    : '*' factor mulTail
-    | '/' factor mulTail
-    |
-    ;
-
-factor
-    : ID
-    | INT
-    | '(' logicalExpr ')'
-    | 'not' factor
-    | '!' factor
-    ;
-
-
-## Тестовые примеры:
-1) правильный
- <img width="1397" height="508" alt="image" src="https://github.com/user-attachments/assets/0ba9466e-f657-4fd4-bdff-5851314e75cb" />
-2) неправильный
-<img width="1321" height="381" alt="image" src="https://github.com/user-attachments/assets/c163c0a0-41b1-43e4-a172-5c63de80eaba" />
-3) многострочный
-<img width="1309" height="390" alt="image" src="https://github.com/user-attachments/assets/b1e3c7cd-88a8-4660-91fc-283ca22455c6" />
