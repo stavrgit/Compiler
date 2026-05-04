@@ -1,4 +1,4 @@
-<img width="530" height="775" alt="image" src="https://github.com/user-attachments/assets/7b9c9ecf-1b92-4ba2-b48d-100d005f0b6e" />#                                                 Лабораторная работа 7. Анализ и преобразование кода с использованием Clang и LLVM
+#                                                 Лабораторная работа 7. Анализ и преобразование кода с использованием Clang и LLVM
 
                                                                                       
 ## Маст Денис АВТ - 313
@@ -143,7 +143,7 @@ t1 = i < 10 <br> if t1 goto L1 <br> goto L2 <br> L1: i = i + 1 <br> goto L0 <br>
 ### Примеры:
 <img width="517" height="730" alt="image" src="https://github.com/user-attachments/assets/733f0021-d2ad-4cbd-b895-54d3f91834f2" />
 <img width="530" height="775" alt="image" src="https://github.com/user-attachments/assets/3299f8cc-c2a2-4be9-a4eb-dfe234c92871" />
-
+<img width="530" height="775" alt="image" src="https://github.com/user-attachments/assets/7b9c9ecf-1b92-4ba2-b48d-100d005f0b6e" />
 
 
 
