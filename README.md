@@ -1,4 +1,4 @@
-#                                                 Лабораторная работа 7. Анализ и преобразование кода с использованием Clang и LLVM
+<img width="530" height="775" alt="image" src="https://github.com/user-attachments/assets/7b9c9ecf-1b92-4ba2-b48d-100d005f0b6e" />#                                                 Лабораторная работа 7. Анализ и преобразование кода с использованием Clang и LLVM
 
                                                                                       
 ## Маст Денис АВТ - 313
@@ -122,12 +122,29 @@ t1 = i < 10 <br> if t1 goto L1 <br> goto L2 <br> L1: t2 = i + 1 <br> i = t2 <br>
 вычисляет константные выражения на этапе компиляции.t3 = 2 + 3 заменяется на t3 = 5. Это уменьшает количество операций во время выполнения 
 
 <img width="552" height="665" alt="image" src="https://github.com/user-attachments/assets/6852de1d-1dc3-46b1-a1df-1d72af602818" />
+<img width="547" height="770" alt="image" src="https://github.com/user-attachments/assets/8e157dca-a1fa-4d7d-a9d7-d5fb7612f9fb" />
+
+
+
 
 t1 = i < 10 <br> if t1 goto L1 <br> goto L2 <br> L1: i = i + 1 <br> goto L0 <br> L2: <br> t3 = 2 + 3 
 
 ### Оптимизация устранения лишних копий переменных
 устраняет лишние временные переменные, которые используются только для копирования значения. Вместо t2 = i + 1; i = t2 будет i = i + 1. Упрощает код и делает его более читаемым.
 <img width="648" height="701" alt="image" src="https://github.com/user-attachments/assets/0736866b-d53f-4401-a8c1-db50057cc040" />
+<img width="547" height="770" alt="image" src="https://github.com/user-attachments/assets/ef2989ed-cc3f-43b4-9b09-a9ce4ac1ad39" />
+
+
 
 
 t1 = i < 10 <br> if t1 goto L1 <br> goto L2 <br> L1: i = i + 1 <br> goto L0 <br> L2: <br> t3 = 5
+
+
+### Примеры:
+<img width="517" height="730" alt="image" src="https://github.com/user-attachments/assets/733f0021-d2ad-4cbd-b895-54d3f91834f2" />
+<img width="530" height="775" alt="image" src="https://github.com/user-attachments/assets/3299f8cc-c2a2-4be9-a4eb-dfe234c92871" />
+
+
+
+
+
