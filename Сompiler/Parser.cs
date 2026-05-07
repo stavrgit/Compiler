@@ -159,10 +159,6 @@ namespace Сompiler
 
         public void Parse()
         {
-            parenBalance = 0;
-
-            
-
             ParseE();
 
             if (pos < tokens.Count)
@@ -170,11 +166,12 @@ namespace Сompiler
                 Error("Лишние символы");
             }
 
-            if (parenBalance != 0)
+            if (hasIdentifier)
             {
-                Error("Несбалансированные скобки");
+                poliz.Clear();
             }
         }
+
 
         public List<string> GetPoliz() => poliz;
         public List<Quad> GetQuads() => quads;
