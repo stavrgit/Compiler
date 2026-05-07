@@ -16,6 +16,7 @@ namespace Сompiler
 
         private const int MAX_ERRORS = 6;
         private int tempCounter = 0;
+        private bool hasIdentifier = false;
 
         public Parser(List<Token> tokens)
         {
@@ -32,7 +33,6 @@ namespace Сompiler
 
             var t = Current;
             Errors.Add(new ParseError(t.Lexeme, t.Line, t.Start, msg));
-            _exprError = true;
         }
         private string NewTemp() => $"t{tempCounter++}";
 
@@ -100,8 +100,16 @@ namespace Сompiler
 
             return inherited;
         }
+        private int parenBalance = 0;
+
         private string ParseF()
         {
+            if (Current.Type == "ошибка")
+            {
+                Error("Недопустимый символ");
+                Next();
+                return "";
+            }
             if (Current.Type == "num")
             {
                 poliz.Add(Current.Lexeme);
@@ -112,7 +120,7 @@ namespace Сompiler
 
             if (Current.Type == "id")
             {
-                poliz.Add(Current.Lexeme);
+                hasIdentifier = true;
                 string val = Current.Lexeme;
                 Next();
                 return val;
@@ -120,14 +128,26 @@ namespace Сompiler
 
             if (Current.Lexeme == "(")
             {
+                parenBalance++;
                 Next();
+
+                if (Current.Lexeme == ")")
+                {
+                    Error("Пустое выражение в скобках");
+                    parenBalance--;
+                    Next();
+                    return "";
+                }
+
                 string e = ParseE();
 
                 if (Current.Lexeme != ")")
                 {
                     Error("Ожидалась )");
-                    return ""; 
+                    return "";
                 }
+
+                parenBalance--;
                 Next();
                 return e;
             }
@@ -136,28 +156,38 @@ namespace Сompiler
             if (pos < tokens.Count) Next();
             return "";
         }
-         
+
         public void Parse()
         {
-            foreach (var t in tokens.Where(x => x.Type == "ошибка"))
-            {
-                Errors.Add(new ParseError(t.Lexeme, t.Line, t.Start, "Недопустимый символ"));
-            }
+            parenBalance = 0;
 
-            if (Errors.Count > 0)
-                return; 
+            
 
             ParseE();
 
             if (pos < tokens.Count)
             {
                 Error("Лишние символы");
-                return;
+            }
+
+            if (parenBalance != 0)
+            {
+                Error("Несбалансированные скобки");
             }
         }
 
         public List<string> GetPoliz() => poliz;
         public List<Quad> GetQuads() => quads;
+        public int? EvaluatePolizSafe()
+        {
+            if (Errors.Count > 0)
+                return null;
+
+            if (poliz.Count == 0 || poliz.All(t => !int.TryParse(t, out _)))
+                return null;
+
+            return EvaluatePoliz();
+        }
 
         public int EvaluatePoliz()
         {

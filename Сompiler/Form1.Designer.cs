@@ -32,27 +32,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             splitContainer1 = new SplitContainer();
             tabControlEditor = new TabControl();
-            tabControlOutput = new TabControl();
-            tabPage1 = new TabPage();
-            dataGridParser = new DataGridView();
-            Неверный = new DataGridViewTextBoxColumn();
-            Местоположение = new DataGridViewTextBoxColumn();
-            Описание = new DataGridViewTextBoxColumn();
-            tabPage2 = new TabPage();
-            gridScanner = new DataGridView();
-            Code = new DataGridViewTextBoxColumn();
-            Type = new DataGridViewTextBoxColumn();
-            Lexeme = new DataGridViewTextBoxColumn();
-            Position = new DataGridViewTextBoxColumn();
-            tabPage3 = new TabPage();
-            tableLayoutPanel1 = new TableLayoutPanel();
-            dataGridQuads = new DataGridView();
-            Result = new DataGridViewTextBoxColumn();
-            Op = new DataGridViewTextBoxColumn();
-            Arg1 = new DataGridViewTextBoxColumn();
-            Arg2 = new DataGridViewTextBoxColumn();
-            textBoxPoliz = new TextBox();
-            textBoxResult = new TextBox();
             menuStrip1 = new MenuStrip();
             файлToolStripMenuItem = new ToolStripMenuItem();
             создатьToolStripMenuItem = new ToolStripMenuItem();
@@ -78,7 +57,6 @@
             исходныйКодПргограммыToolStripMenuItem = new ToolStripMenuItem();
             пускToolStripMenuItem = new ToolStripMenuItem();
             парсерToolStripMenuItem = new ToolStripMenuItem();
-            antlerToolStripMenuItem = new ToolStripMenuItem();
             справкаToolStripMenuItem = new ToolStripMenuItem();
             вызовСправкиToolStripMenuItem = new ToolStripMenuItem();
             оПрограммеToolStripMenuItem = new ToolStripMenuItem();
@@ -107,21 +85,42 @@
             statusSize = new ToolStripStatusLabel();
             statusLang = new ToolStripStatusLabel();
             contextMenuStrip1 = new ContextMenuStrip(components);
+            tabPage3 = new TabPage();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            textBoxResult = new TextBox();
+            textBoxPoliz = new TextBox();
+            dataGridQuads = new DataGridView();
+            Arg2 = new DataGridViewTextBoxColumn();
+            Arg1 = new DataGridViewTextBoxColumn();
+            Op = new DataGridViewTextBoxColumn();
+            Result = new DataGridViewTextBoxColumn();
+            tabPage2 = new TabPage();
+            gridScanner = new DataGridView();
+            Position = new DataGridViewTextBoxColumn();
+            Lexeme = new DataGridViewTextBoxColumn();
+            Type = new DataGridViewTextBoxColumn();
+            Code = new DataGridViewTextBoxColumn();
+            tabPage1 = new TabPage();
+            dataGridParser = new DataGridView();
+            Описание = new DataGridViewTextBoxColumn();
+            Местоположение = new DataGridViewTextBoxColumn();
+            Неверный = new DataGridViewTextBoxColumn();
+            tabControlOutput = new TabControl();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
-            tabControlOutput.SuspendLayout();
-            tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridParser).BeginInit();
-            tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)gridScanner).BeginInit();
-            tabPage3.SuspendLayout();
-            tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridQuads).BeginInit();
             menuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             statusStrip.SuspendLayout();
+            tabPage3.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridQuads).BeginInit();
+            tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)gridScanner).BeginInit();
+            tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridParser).BeginInit();
+            tabControlOutput.SuspendLayout();
             SuspendLayout();
             // 
             // splitContainer1
@@ -146,156 +145,6 @@
             tabControlEditor.Name = "tabControlEditor";
             tabControlEditor.SelectedIndex = 0;
             tabControlEditor.SelectedIndexChanged += tabControlEditor_SelectedIndexChanged;
-            // 
-            // tabControlOutput
-            // 
-            resources.ApplyResources(tabControlOutput, "tabControlOutput");
-            tabControlOutput.Controls.Add(tabPage1);
-            tabControlOutput.Controls.Add(tabPage2);
-            tabControlOutput.Controls.Add(tabPage3);
-            tabControlOutput.Name = "tabControlOutput";
-            tabControlOutput.SelectedIndex = 0;
-            // 
-            // tabPage1
-            // 
-            resources.ApplyResources(tabPage1, "tabPage1");
-            tabPage1.Controls.Add(dataGridParser);
-            tabPage1.Name = "tabPage1";
-            tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // dataGridParser
-            // 
-            resources.ApplyResources(dataGridParser, "dataGridParser");
-            dataGridParser.AllowUserToAddRows = false;
-            dataGridParser.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridParser.Columns.AddRange(new DataGridViewColumn[] { Неверный, Местоположение, Описание });
-            dataGridParser.Name = "dataGridParser";
-            dataGridParser.RowHeadersVisible = false;
-            // 
-            // Неверный
-            // 
-            Неверный.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            resources.ApplyResources(Неверный, "Неверный");
-            Неверный.Name = "Неверный";
-            Неверный.ReadOnly = true;
-            // 
-            // Местоположение
-            // 
-            Местоположение.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            resources.ApplyResources(Местоположение, "Местоположение");
-            Местоположение.Name = "Местоположение";
-            Местоположение.ReadOnly = true;
-            // 
-            // Описание
-            // 
-            Описание.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            resources.ApplyResources(Описание, "Описание");
-            Описание.Name = "Описание";
-            Описание.ReadOnly = true;
-            // 
-            // tabPage2
-            // 
-            resources.ApplyResources(tabPage2, "tabPage2");
-            tabPage2.Controls.Add(gridScanner);
-            tabPage2.Name = "tabPage2";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // gridScanner
-            // 
-            resources.ApplyResources(gridScanner, "gridScanner");
-            gridScanner.AllowUserToAddRows = false;
-            gridScanner.AllowUserToDeleteRows = false;
-            gridScanner.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            gridScanner.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            gridScanner.Columns.AddRange(new DataGridViewColumn[] { Code, Type, Lexeme, Position });
-            gridScanner.Name = "gridScanner";
-            gridScanner.ReadOnly = true;
-            gridScanner.RowHeadersVisible = false;
-            // 
-            // Code
-            // 
-            resources.ApplyResources(Code, "Code");
-            Code.Name = "Code";
-            Code.ReadOnly = true;
-            // 
-            // Type
-            // 
-            resources.ApplyResources(Type, "Type");
-            Type.Name = "Type";
-            Type.ReadOnly = true;
-            // 
-            // Lexeme
-            // 
-            resources.ApplyResources(Lexeme, "Lexeme");
-            Lexeme.Name = "Lexeme";
-            Lexeme.ReadOnly = true;
-            // 
-            // Position
-            // 
-            resources.ApplyResources(Position, "Position");
-            Position.Name = "Position";
-            Position.ReadOnly = true;
-            // 
-            // tabPage3
-            // 
-            resources.ApplyResources(tabPage3, "tabPage3");
-            tabPage3.Controls.Add(tableLayoutPanel1);
-            tabPage3.Name = "tabPage3";
-            tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel1
-            // 
-            resources.ApplyResources(tableLayoutPanel1, "tableLayoutPanel1");
-            tableLayoutPanel1.Controls.Add(dataGridQuads, 0, 0);
-            tableLayoutPanel1.Controls.Add(textBoxPoliz, 1, 0);
-            tableLayoutPanel1.Controls.Add(textBoxResult, 1, 1);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            // 
-            // dataGridQuads
-            // 
-            resources.ApplyResources(dataGridQuads, "dataGridQuads");
-            dataGridQuads.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridQuads.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridQuads.Columns.AddRange(new DataGridViewColumn[] { Result, Op, Arg1, Arg2 });
-            dataGridQuads.Name = "dataGridQuads";
-            dataGridQuads.ReadOnly = true;
-            tableLayoutPanel1.SetRowSpan(dataGridQuads, 2);
-            // 
-            // Result
-            // 
-            resources.ApplyResources(Result, "Result");
-            Result.Name = "Result";
-            Result.ReadOnly = true;
-            // 
-            // Op
-            // 
-            resources.ApplyResources(Op, "Op");
-            Op.Name = "Op";
-            Op.ReadOnly = true;
-            // 
-            // Arg1
-            // 
-            resources.ApplyResources(Arg1, "Arg1");
-            Arg1.Name = "Arg1";
-            Arg1.ReadOnly = true;
-            // 
-            // Arg2
-            // 
-            resources.ApplyResources(Arg2, "Arg2");
-            Arg2.Name = "Arg2";
-            Arg2.ReadOnly = true;
-            // 
-            // textBoxPoliz
-            // 
-            resources.ApplyResources(textBoxPoliz, "textBoxPoliz");
-            textBoxPoliz.Name = "textBoxPoliz";
-            textBoxPoliz.ReadOnly = true;
-            // 
-            // textBoxResult
-            // 
-            resources.ApplyResources(textBoxResult, "textBoxResult");
-            textBoxResult.Name = "textBoxResult";
-            textBoxResult.ReadOnly = true;
             // 
             // menuStrip1
             // 
@@ -431,18 +280,13 @@
             // пускToolStripMenuItem
             // 
             resources.ApplyResources(пускToolStripMenuItem, "пускToolStripMenuItem");
-            пускToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { парсерToolStripMenuItem, antlerToolStripMenuItem });
+            пускToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { парсерToolStripMenuItem });
             пускToolStripMenuItem.Name = "пускToolStripMenuItem";
             // 
             // парсерToolStripMenuItem
             // 
             resources.ApplyResources(парсерToolStripMenuItem, "парсерToolStripMenuItem");
             парсерToolStripMenuItem.Name = "парсерToolStripMenuItem";
-            // 
-            // antlerToolStripMenuItem
-            // 
-            resources.ApplyResources(antlerToolStripMenuItem, "antlerToolStripMenuItem");
-            antlerToolStripMenuItem.Name = "antlerToolStripMenuItem";
             // 
             // справкаToolStripMenuItem
             // 
@@ -602,6 +446,156 @@
             contextMenuStrip1.ImageScalingSize = new Size(20, 20);
             contextMenuStrip1.Name = "contextMenuStrip1";
             // 
+            // tabPage3
+            // 
+            resources.ApplyResources(tabPage3, "tabPage3");
+            tabPage3.Controls.Add(tableLayoutPanel1);
+            tabPage3.Name = "tabPage3";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(tableLayoutPanel1, "tableLayoutPanel1");
+            tableLayoutPanel1.Controls.Add(dataGridQuads, 0, 0);
+            tableLayoutPanel1.Controls.Add(textBoxPoliz, 1, 0);
+            tableLayoutPanel1.Controls.Add(textBoxResult, 1, 1);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // textBoxResult
+            // 
+            resources.ApplyResources(textBoxResult, "textBoxResult");
+            textBoxResult.Name = "textBoxResult";
+            textBoxResult.ReadOnly = true;
+            // 
+            // textBoxPoliz
+            // 
+            resources.ApplyResources(textBoxPoliz, "textBoxPoliz");
+            textBoxPoliz.Name = "textBoxPoliz";
+            textBoxPoliz.ReadOnly = true;
+            // 
+            // dataGridQuads
+            // 
+            resources.ApplyResources(dataGridQuads, "dataGridQuads");
+            dataGridQuads.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridQuads.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridQuads.Columns.AddRange(new DataGridViewColumn[] { Result, Op, Arg1, Arg2 });
+            dataGridQuads.Name = "dataGridQuads";
+            dataGridQuads.ReadOnly = true;
+            tableLayoutPanel1.SetRowSpan(dataGridQuads, 2);
+            // 
+            // Arg2
+            // 
+            resources.ApplyResources(Arg2, "Arg2");
+            Arg2.Name = "Arg2";
+            Arg2.ReadOnly = true;
+            // 
+            // Arg1
+            // 
+            resources.ApplyResources(Arg1, "Arg1");
+            Arg1.Name = "Arg1";
+            Arg1.ReadOnly = true;
+            // 
+            // Op
+            // 
+            resources.ApplyResources(Op, "Op");
+            Op.Name = "Op";
+            Op.ReadOnly = true;
+            // 
+            // Result
+            // 
+            resources.ApplyResources(Result, "Result");
+            Result.Name = "Result";
+            Result.ReadOnly = true;
+            // 
+            // tabPage2
+            // 
+            resources.ApplyResources(tabPage2, "tabPage2");
+            tabPage2.Controls.Add(gridScanner);
+            tabPage2.Name = "tabPage2";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // gridScanner
+            // 
+            resources.ApplyResources(gridScanner, "gridScanner");
+            gridScanner.AllowUserToAddRows = false;
+            gridScanner.AllowUserToDeleteRows = false;
+            gridScanner.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            gridScanner.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            gridScanner.Columns.AddRange(new DataGridViewColumn[] { Code, Type, Lexeme, Position });
+            gridScanner.Name = "gridScanner";
+            gridScanner.ReadOnly = true;
+            gridScanner.RowHeadersVisible = false;
+            // 
+            // Position
+            // 
+            resources.ApplyResources(Position, "Position");
+            Position.Name = "Position";
+            Position.ReadOnly = true;
+            // 
+            // Lexeme
+            // 
+            resources.ApplyResources(Lexeme, "Lexeme");
+            Lexeme.Name = "Lexeme";
+            Lexeme.ReadOnly = true;
+            // 
+            // Type
+            // 
+            resources.ApplyResources(Type, "Type");
+            Type.Name = "Type";
+            Type.ReadOnly = true;
+            // 
+            // Code
+            // 
+            resources.ApplyResources(Code, "Code");
+            Code.Name = "Code";
+            Code.ReadOnly = true;
+            // 
+            // tabPage1
+            // 
+            resources.ApplyResources(tabPage1, "tabPage1");
+            tabPage1.Controls.Add(dataGridParser);
+            tabPage1.Name = "tabPage1";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // dataGridParser
+            // 
+            resources.ApplyResources(dataGridParser, "dataGridParser");
+            dataGridParser.AllowUserToAddRows = false;
+            dataGridParser.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridParser.Columns.AddRange(new DataGridViewColumn[] { Неверный, Местоположение, Описание });
+            dataGridParser.Name = "dataGridParser";
+            dataGridParser.RowHeadersVisible = false;
+            // 
+            // Описание
+            // 
+            Описание.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            resources.ApplyResources(Описание, "Описание");
+            Описание.Name = "Описание";
+            Описание.ReadOnly = true;
+            // 
+            // Местоположение
+            // 
+            Местоположение.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            resources.ApplyResources(Местоположение, "Местоположение");
+            Местоположение.Name = "Местоположение";
+            Местоположение.ReadOnly = true;
+            // 
+            // Неверный
+            // 
+            Неверный.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            resources.ApplyResources(Неверный, "Неверный");
+            Неверный.Name = "Неверный";
+            Неверный.ReadOnly = true;
+            // 
+            // tabControlOutput
+            // 
+            resources.ApplyResources(tabControlOutput, "tabControlOutput");
+            tabControlOutput.Controls.Add(tabPage1);
+            tabControlOutput.Controls.Add(tabPage2);
+            tabControlOutput.Controls.Add(tabPage3);
+            tabControlOutput.Name = "tabControlOutput";
+            tabControlOutput.SelectedIndex = 0;
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
@@ -616,21 +610,21 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
-            tabControlOutput.ResumeLayout(false);
-            tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridParser).EndInit();
-            tabPage2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)gridScanner).EndInit();
-            tabPage3.ResumeLayout(false);
-            tableLayoutPanel1.ResumeLayout(false);
-            tableLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridQuads).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
+            tabPage3.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridQuads).EndInit();
+            tabPage2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)gridScanner).EndInit();
+            tabPage1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridParser).EndInit();
+            tabControlOutput.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -691,7 +685,6 @@
         private SplitContainer splitContainer1;
         internal ToolStripStatusLabel statusLines;
         private ToolStripMenuItem парсерToolStripMenuItem;
-        private ToolStripMenuItem antlerToolStripMenuItem;
         private ContextMenuStrip contextMenuStrip1;
         private TabControl tabControlOutput;
         private TabPage tabPage1;
@@ -708,11 +701,11 @@
         private TabPage tabPage3;
         private TableLayoutPanel tableLayoutPanel1;
         private DataGridView dataGridQuads;
-        private TextBox textBoxPoliz;
-        private TextBox textBoxResult;
         private DataGridViewTextBoxColumn Result;
         private DataGridViewTextBoxColumn Op;
         private DataGridViewTextBoxColumn Arg1;
         private DataGridViewTextBoxColumn Arg2;
+        private TextBox textBoxPoliz;
+        private TextBox textBoxResult;
     }
 }

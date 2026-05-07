@@ -417,7 +417,7 @@ namespace Сompiler
 
             foreach (var t in tokens)
             {
-                string pos = $"{t.Line}:{t.Start}"; 
+                string pos = $"{t.Line}:{t.Start}";
                 _output.AddScannerToken(t.Code, t.Type, t.Lexeme, pos);
             }
 
@@ -428,7 +428,7 @@ namespace Сompiler
                 {
                     int row = dataGridParser.Rows.Add(
                         t.Lexeme,
-                        $"{t.Line}:{t.Start}",   
+                        $"{t.Line}:{t.Start}",
                         "Недопустимый символ"
                     );
 
@@ -451,7 +451,7 @@ namespace Сompiler
                 {
                     int row = dataGridParser.Rows.Add(
                         err.Fragment,
-                        $"{err.Line}:{err.Col}", 
+                        $"{err.Line}:{err.Col}",
                         err.Message
                     );
 
@@ -585,5 +585,6 @@ namespace Сompiler
         {
 
         }
+
     }
 }
